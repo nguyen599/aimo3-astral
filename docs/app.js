@@ -443,6 +443,12 @@ document.addEventListener('drop', (e) => {
   }
 });
 
+// ── Auto-load AstralBench CSV ────────────────────────────────────
+fetch('astral-bench.csv')
+  .then(r => { if (r.ok) return r.text(); throw new Error('not found'); })
+  .then(text => { loadDataset('bench', parseCSV(text)); })
+  .catch(() => { /* file not available, user can upload manually */ });
+
 // ── Keyboard navigation ─────────────────────────────────────────
 document.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT') return;

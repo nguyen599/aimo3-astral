@@ -1,0 +1,462 @@
+id,problem,answer,original_problem,original_answer
+imo-bench-algebra-026,"Suppose that a function $f:\mathbb{Q}\rightarrow\mathbb{F}_2$ satisfies $f(r)+f(r')=1$ for all distinct rational numbers $r, r'$ satisfying either $r+r'=0$ or $r+r'=1$ or $rr'=1$. Suppose further that $f(11/3)=1$. Evaluate
+$f(7/3)+f(11/4)+f(2024/5)+f(109/11)+f(3/71)+f(5/204)$",1,"Suppose that a function $f:\mathbb{Q}\rightarrow\mathbb{F}_2$ satisfies $f(r)+f(r')=1$ for all distinct rational numbers $r, r'$ satisfying either $r+r'=0$ or $r+r'=1$ or $rr'=1$. Suppose further that $f(11/3)=1$. Evaluate
+$f(7/3)+f(11/4)+f(2024/5)+f(109/11)+f(3/71)+f(5/204)$",1
+imo-bench-algebra-030,"There exists an infinite sequence x_1, x_2, \ldots where each term belongs to [0, 777] such that for all positive integers m < n we have (m+n)|x_n^2 - x_m^2| \ge D. Let D denote the maximum value satisfying this condition. What is the remainder when D is divided by 99991?",3783,"Find the maximum value of $D$ satisfying the following condition: There exists an infinite sequence $x_1, x_2, \ldots$ where each term belongs to $[0, 777]$ such that for all positive integers $m < n$, we have $$(m+n)|x_n^2 - x_m^2| \ge D.$$
+",603729
+imo-bench-algebra-032,"We call $g: \mathbb{R} \rightarrow \mathbb{R}$ a good function if $g$ satisfies all the following conditions:
+
+(1) For any two distinct real numbers $a, b$, if $g(ab) = 0$, then $g(a) = 0$ or $g(b) = 0$.
+(2) For any two distinct real numbers $a, b$, if $g(ab) \neq 0$, then $$\frac{g(a)-g(b)}{a-b}=\frac{g(a)g(b)}{g(ab)}.$$
+(3) $g(1)=1$
+\\
+Let $S=\{2^a 3^b 5^c 7^d : a,b,c,d\in \mathbb{Z}\}$ and we call $h:S\rightarrow \mathbb{R}$ an essential function if there exists a good function $g$ such that $h(x)=g(x)$ for all $x\in S$. Find the number of essential functions. ",16,"We call $g: \mathbb{R} \rightarrow \mathbb{R}$ a good function if $g$ satisfies all the following conditions:
+
+(1) For any two distinct real numbers $a, b$, if $g(ab) = 0$, then $g(a) = 0$ or $g(b) = 0$.
+(2) For any two distinct real numbers $a, b$, if $g(ab) \neq 0$, then $$\frac{g(a)-g(b)}{a-b}=\frac{g(a)g(b)}{g(ab)}.$$
+(3) $g(1)=1$
+\\
+Let $S=\{2^a 3^b 5^c 7^d : a,b,c,d\in \mathbb{Z}\}$ and we call $h:S\rightarrow \mathbb{R}$ an essential function if there exists a good function $g$ such that $h(x)=g(x)$ for all $x\in S$. Find the number of essential functions. ",16
+imo-bench-algebra-039,"Let $p, q, r, s$ be constants such that the equation $py^3 + qy^2 + ry + s = 0$ has three distinct real roots. Find all possible values for the number of distinct real roots of the equation
+$$\left(pz^{3}+qz^{2}+rz+s\right)(6pz+2q)=\left(3pz^{2}+2qz+r\right)^{2}.$$
+",2,"Let $p, q, r, s$ be constants such that the equation $py^3 + qy^2 + ry + s = 0$ has three distinct real roots. Find all possible values for the number of distinct real roots of the equation
+$$\left(pz^{3}+qz^{2}+rz+s\right)(6pz+2q)=\left(3pz^{2}+2qz+r\right)^{2}.$$
+",2
+imo-bench-algebra-055,"Consider a sequence of positive integers $x_1, x_2, \ldots$ satisfying the following condition:
+\[
+    (x_{2n + d} - x_{n + d} - n)(x_{2n + d} - x_n - n - d) = 0
+\]
+for all integers $n \ge 32$ and $d \ge 1024$. Find the value of the largest possible positive integer $n$ for which $x_{n + 1} - x_n \neq 1$.",2079,"Consider a sequence of positive integers $x_1, x_2, \ldots$ satisfying the following condition:
+\[
+    (x_{2n + d} - x_{n + d} - n)(x_{2n + d} - x_n - n - d) = 0
+\]
+for all integers $n \ge 32$ and $d \ge 1024$. Find the value of the largest possible positive integer $n$ for which $x_{n + 1} - x_n \neq 1$.",2079
+imo-bench-algebra-080,"Suppose that the polynomials $f(x)$ and $g(x)$ with integer coefficients satisfy the following conditions:
+
+[Condition 1] Define integer sequences $(a_n)_{n \ge 1}$ and $(b_n)_{n \ge 1}$ by $a_1 = 2024$ and
+\[
+    b_n = f(a_n), \quad a_{n+1} = g(b_n)
+\]
+for $n \ge 1$. Then for any positive integer $k$, there exists some non-zero term of $(a_n)$ or $(b_n)$ that is divisible by $k$.
+
+[Condition 2] $2025\le f(0), g(0) \le 10000$.
+
+Find the maximum possible value of $f(0)-g(0)$",3988,"Suppose that the polynomials $f(x)$ and $g(x)$ with integer coefficients satisfy the following conditions:
+
+[Condition 1] Define integer sequences $(a_n)_{n \ge 1}$ and $(b_n)_{n \ge 1}$ by $a_1 = 2024$ and
+\[
+    b_n = f(a_n), \quad a_{n+1} = g(b_n)
+\]
+for $n \ge 1$. Then for any positive integer $k$, there exists some non-zero term of $(a_n)$ or $(b_n)$ that is divisible by $k$.
+
+[Condition 2] $2025\le f(0), g(0) \le 10000$.
+
+Find the maximum possible value of $f(0)-g(0)$",3988
+imo-bench-algebra-100,"Find number of triples $(x,y,z)$ of real numbers satisfying
+\[
+x^2 + y^2 + z^2 = xy^3 + yz^3 + zx^3 = 3.
+\]
+",8,"Find number of triples $(x,y,z)$ of real numbers satisfying
+\[
+x^2 + y^2 + z^2 = xy^3 + yz^3 + zx^3 = 3.
+\]
+",8
+imo-bench-combinatorics-005,"Consider natural numbers whose decimal representations use only the digits from the set {2, 0, 1, 8}, have at most 16 digits, and are divisible by 3. Let C denote the number of such natural numbers. What is the remainder when C is divided by 10000?",5765,"Determine the number of natural numbers $n$ that that has at most 16 digits satisfying the following conditions:
+i) $3|n.$
+ii) The digits of $n$ in decimal representation are in the set $\{2,0,1,8\}$.",1431655765
+imo-bench-combinatorics-011,"A soccer player named Ronaldo stands on a point on a circle with circumference $1$. Given an infinite sequence of positive real numbers $c_1, c_2, c_3, \dots$, Ronaldo successively runs distances $c_1, c_2, c_3, \dots$ around the circle, each time choosing to runs either clockwise or counterclockwise.
+
+Determine the largest constant $C > 0$ with the following property: for every sequence of positive real numbers $c_1, c_2, c_3, \dots$ with $c_i < C$ for all $i$, Ronaldo can (after studying the sequence) ensure that there is some point on the circle that it will never visit or run across.",0.5,"A soccer player named Ronaldo stands on a point on a circle with circumference $1$. Given an infinite sequence of positive real numbers $c_1, c_2, c_3, \dots$, Ronaldo successively runs distances $c_1, c_2, c_3, \dots$ around the circle, each time choosing to runs either clockwise or counterclockwise.
+
+Determine the largest constant $C > 0$ with the following property: for every sequence of positive real numbers $c_1, c_2, c_3, \dots$ with $c_i < C$ for all $i$, Ronaldo can (after studying the sequence) ensure that there is some point on the circle that it will never visit or run across.",0.5
+imo-bench-combinatorics-014,"In a board of $125 \times 125$ grids, we pick $k$ unit squares such that every picked square shares vertices with at most $1$ other picked square. Some squares are colored red and some squares are colored blue, where red squares and blue squares satisfy the following condition: any two squares of the same color do not share a side or a vertex. Determine the maximum of $k$.",5292,"In a board of $125 \times 125$ grids, we pick $k$ unit squares such that every picked square shares vertices with at most $1$ other picked square. Some squares are colored red and some squares are colored blue, where red squares and blue squares satisfy the following condition: any two squares of the same color do not share a side or a vertex. Determine the maximum of $k$.",5292
+imo-bench-combinatorics-029,"We call a rectangle of the size $1 \times 2$ a domino. Rectangle of the $2 \times 3$ removing two opposite (under center of rectangle) corners we call S-tetramino. These figures can be rotated. A rectangle of the size $2 \times 4$ removing two opposite (under center of rectangle) corners we call L-hexamino. These figures can be rotated.
+
+It requires to tile rectangle of size $1008  \times 1010$ by using dominoes and S-tetraminoes. What is the minimal number of dominoes should be used?",506,"We call a rectangle of the size $1 \times 2$ a domino. Rectangle of the $2 \times 3$ removing two opposite (under center of rectangle) corners we call S-tetramino. These figures can be rotated. A rectangle of the size $2 \times 4$ removing two opposite (under center of rectangle) corners we call L-hexamino. These figures can be rotated.
+
+It requires to tile rectangle of size $1008  \times 1010$ by using dominoes and S-tetraminoes. What is the minimal number of dominoes should be used?",506
+imo-bench-combinatorics-030,"A cube with size $18 \times 18 \times 18$ consists of $5832$ unit cubes, all colored white. Anton and Berta play a game on this cube. Anton chooses some pillars with size $1\times 1\times 18$ such that no two pillars share a vertex or side, and turns all chosen unit cubes to black. Berta is allowed to choose some unit cubes and ask Anton their colors. In addition, Anton also tells Berta that he painted at least two pillars. How many unit cubes, at least, that Berta need to choose so that for any answer from Anton, Berta can always determine the black unit cubes?",486,"A cube with size $18 \times 18 \times 18$ consists of $5832$ unit cubes, all colored white. Anton and Berta play a game on this cube. Anton chooses some pillars with size $1\times 1\times 18$ such that no two pillars share a vertex or side, and turns all chosen unit cubes to black. Berta is allowed to choose some unit cubes and ask Anton their colors. In addition, Anton also tells Berta that he painted at least two pillars. How many unit cubes, at least, that Berta need to choose so that for any answer from Anton, Berta can always determine the black unit cubes?",486
+imo-bench-combinatorics-032,"A classroom contains 68 pairs of nonzero integers. Suppose that for each positive integer $k$ at most one of the pairs $(k, k)$ and $(-k, -k)$ is written on the classroom board.  A student erases some of the 136 integers, subject to the condition that no two erased integers may add to 0. The student then scores one point for each of the 68 pairs in which at least one integer is erased. Additionally, the classroom has another broken whiteboard, and some integers might be invisible. Determine, with proof, the largest number $N$ of points that the student can guarantee to score regardless of which 68 pairs have been written on the board.",43,"A classroom contains 68 pairs of nonzero integers. Suppose that for each positive integer $k$ at most one of the pairs $(k, k)$ and $(-k, -k)$ is written on the classroom board.  A student erases some of the 136 integers, subject to the condition that no two erased integers may add to 0. The student then scores one point for each of the 68 pairs in which at least one integer is erased. Additionally, the classroom has another broken whiteboard, and some integers might be invisible. Determine, with proof, the largest number $N$ of points that the student can guarantee to score regardless of which 68 pairs have been written on the board.",43
+imo-bench-combinatorics-035,"Let $S$ be a subset of $2012$ points on the plane with these conditions:
+
+$i)$ There does not exist $2012$ lines in the plane such that every element of $S$ lies on at least one of them. Additionally, there does not exist any circle passing through every element of $S$.
+
+$ii)$ for all $X \in S$ there exists $2012$ lines in the plane such that every element of $S - \{X\}$ lies on at least one of them.
+
+Let $k$ be the maximum possible value of $|S|$ over all such configurations. What is the remainder when $k$ is divided by $7878$?",2445,"Let $S$ be a subset of $2012$ points on the plane with these conditions:
+
+$i)$ There does not exist $2012$ lines in the plane such that every element of $S$ lies on at least one of them. Additionally, there does not exist any circle passing through every element of $S$.
+
+$ii)$ for all $X \in S$ there exists $2012$ lines in the plane such that every element of $S - \{X\}$ lies on at least one of them.
+
+Find the maximum possible value of $\mid S\mid$.",2027091
+imo-bench-combinatorics-049,"In a research lab, scientists are studying the spread of a newly discovered bacteria on a $64 \times 64$ square petri dish. The dish is divided into small square sections, each of which is a $1 \times 1$ square and is either infected (black) or sterile (white). Initially, there are exactly $k$ infected sections, and the rest are sterile. Scientists observe that the bacteria spread according to two specific growth rules:
+
+1) If a $2 \times 2$ square section has exactly three infected sections, the last sterile section gets infected.
+2) If a $2 \times 2$ square has exactly two infected sections, the infection mutates—infected sections become sterile, and sterile sections become infected.
+The researchers want to determine the smallest number of initially infected sections, $k$, such that no matter how the infection starts, it will always be possible to spread the bacteria to the entire dish after a sequence of growth and mutation cycles.
+
+What is the smallest such $k$ that guarantees a full infection?",1057,"In a research lab, scientists are studying the spread of a newly discovered bacteria on a $64 \times 64$ square petri dish. The dish is divided into small square sections, each of which is a $1 \times 1$ square and is either infected (black) or sterile (white). Initially, there are exactly $k$ infected sections, and the rest are sterile. Scientists observe that the bacteria spread according to two specific growth rules:
+
+1) If a $2 \times 2$ square section has exactly three infected sections, the last sterile section gets infected.
+2) If a $2 \times 2$ square has exactly two infected sections, the infection mutates—infected sections become sterile, and sterile sections become infected.
+The researchers want to determine the smallest number of initially infected sections, $k$, such that no matter how the infection starts, it will always be possible to spread the bacteria to the entire dish after a sequence of growth and mutation cycles.
+
+What is the smallest such $k$ that guarantees a full infection?",1057
+imo-bench-combinatorics-055,"On a large chessboard of $2011$ by $2011$ squares, a finite number of square tiles are placed. Each tile covers a square area of $52$ by $52$ cells. In each cell, the number of tiles covering it is written, and among all nonzero values written on the board, let $k$ denote the maximum possible number of cells containing the same value, considering all possible tile configurations. What is the remainder when $k$ is divided by 99991?",86773,"On a large chessboard of 2011 by 2011 squares, a finite number of square tiles are placed. Each tile covers a square area of 52 by 52 cells. In each cell, the number of tiles covering it is written, and the maximum number $k$ of cells containing the same nonzero number is recorded.  Considering all possible tile configurations, what is the largest possible value of $k$?",3986729
+imo-bench-combinatorics-061,"A sequence of positive integers $a_1, a_2, \ldots, a_n$ is called a Korean sequence if it satisfies the following conditions:
+\begin{itemize}
+    \item $a_1 < a_2 < \ldots < a_n$
+    \item For each $1 \leq k < n$, we define two sets $A_k = \{a_1, a_2, \ldots, a_k\}$ and $B_k = \{a_{k+1}, a_{k+2}, \ldots, a_n\}$. A partition $(A_k, B_k)$ is called good if the least common multiple of the elements in $A_k$ is equal to the greatest common divisor of the elements in $B_k$.
+\end{itemize}
+Determine the minimum value of $n$ such that there exists a Korean sequence of length $n$ with exactly 2015 good partitions.",3024,"A sequence of positive integers $a_1, a_2, \ldots, a_n$ is called a Korean sequence if it satisfies the following conditions:
+\begin{itemize}
+    \item $a_1 < a_2 < \ldots < a_n$
+    \item For each $1 \leq k < n$, we define two sets $A_k = \{a_1, a_2, \ldots, a_k\}$ and $B_k = \{a_{k+1}, a_{k+2}, \ldots, a_n\}$. A partition $(A_k, B_k)$ is called good if the least common multiple of the elements in $A_k$ is equal to the greatest common divisor of the elements in $B_k$.
+\end{itemize}
+Determine the minimum value of $n$ such that there exists a Korean sequence of length $n$ with exactly 2015 good partitions.",3024
+imo-bench-combinatorics-071,"A sports tournament is organized for 256 players, where every pair of players plays exactly one match and only one match is played per day. Each player arrives on the day of their first match and departs on the day of their last match, and the organizers pay 1 coin per player per day for hotel accommodation. The match schedule is designed to minimize the total hotel cost. Let $C$ denote this minimum total cost. What is the remainder when $C$ is divided by 78787?",26721,"A sports tournament is being organized for $256$ players. Every pair of players must play exactly one match against each other. The tournament is scheduled such that each day only one match is played. Each player arrives on the day of their first match and departs on the day of their last match. For each day a player is present at the tournament, the organizers must pay 1 coin to the hotel. The organizers want to minimize the total cost of all players' stays by designing an optimal schedule. Additionally, there is a VIP lounge where special guests can watch the matches for free. The VIP lounge has limited capacity and can only accommodate a maximum of 10 people at any given time. However, the presence of the VIP lounge and the special guests does not affect the scheduling of the matches or the total cost of the players' stays. Determine the minimum total cost the organizers must pay for all players' hotel stays.",4202432
+imo-bench-combinatorics-073,"In a grand theater, there are $40000$ seats arranged into $200$ rows, each row has $200$ seats to form a $200 \times 200$ seating arrangement. Out of these seats, some seats are reserved and others remain available. The theater organizers want to assign reserved seats following these two strict conditions:
+
+1) No two reserved seats can be in rows that have the same number of reserved seats while also being in columns that have the same number of reserved seats.
+2) There must be two rows that each contain exactly $m$ reserved seats.
+
+What is the largest possible value of $m$ for which such a seating assignment can be created?
+
+",96,"In a grand theater, there are $40000$ seats arranged into $200$ rows, each row has $200$ seats to form a $200 \times 200$ seating arrangement. Out of these seats, some seats are reserved and others remain available. The theater organizers want to assign reserved seats following these two strict conditions:
+
+1) No two reserved seats can be in rows that have the same number of reserved seats while also being in columns that have the same number of reserved seats.
+2) There must be two rows that each contain exactly $m$ reserved seats.
+
+What is the largest possible value of $m$ for which such a seating assignment can be created?
+
+",96
+imo-bench-combinatorics-075,"In a crowded marketplace, $7396$ stalls are arranged in a straight line, numbered from 1 to $7396$. Each of two merchants, Ali and Baba, sells $k$ distinct items numbered from 1 to $k$; each item is sold at a lower-numbered stall and bought at a higher-numbered stall. For each merchant, and for any $i$ and $j$ with $1 \leqslant i<j \leqslant k$, the stall where item $j$ is sold is higher than the stall where item $i$ is sold; similarly, the stall where item $j$ is bought is higher than the stall where item $i$ is bought. Say that two stalls are connected by some merchant if one can start from the lower-numbered stall and reach the higher-numbered stall by buying and selling one or more items from that merchant.
+
+Determine the smallest $k$ for which one can guarantee that there are two stalls that are connected by both merchants.",7311,"In a crowded marketplace, $7396$ stalls are arranged in a straight line, numbered from 1 to $7396$. Each of two merchants, Ali and Baba, sells $k$ distinct items numbered from 1 to $k$; each item is sold at a lower-numbered stall and bought at a higher-numbered stall. For each merchant, and for any $i$ and $j$ with $1 \leqslant i<j \leqslant k$, the stall where item $j$ is sold is higher than the stall where item $i$ is sold; similarly, the stall where item $j$ is bought is higher than the stall where item $i$ is bought. Say that two stalls are connected by some merchant if one can start from the lower-numbered stall and reach the higher-numbered stall by buying and selling one or more items from that merchant.
+
+Determine the smallest $k$ for which one can guarantee that there are two stalls that are connected by both merchants.",7311
+imo-bench-combinatorics-076,"The Lucas numbers $L_{0}, L_{1}, L_{2}, \ldots$ are defined inductively by $L_{0}=2, L_{1}=1$, and $L_{n+1}=L_{n}+L_{n-1}$ for $n \geqslant 1$. The Fibonacci numbers $F_{0}, F_{1}, F_{2}, \ldots$ are defined inductively by $F_{0}=0, F_{1}=1$, and $F_{n+1}=F_{n}+F_{n-1}$ for $n \geqslant 1$. Determine the smallest size of a set $S$ of integers such that for every $k=2,3, \ldots, 125$ there exist some $x, y \in S$ such that $x-y=F_{k}$. Also, there exist some $a, b \in T$ for some set $T$ such that $a-b = L_{100}$.",64,"The Lucas numbers $L_{0}, L_{1}, L_{2}, \ldots$ are defined inductively by $L_{0}=2, L_{1}=1$, and $L_{n+1}=L_{n}+L_{n-1}$ for $n \geqslant 1$. The Fibonacci numbers $F_{0}, F_{1}, F_{2}, \ldots$ are defined inductively by $F_{0}=0, F_{1}=1$, and $F_{n+1}=F_{n}+F_{n-1}$ for $n \geqslant 1$. Determine the smallest size of a set $S$ of integers such that for every $k=2,3, \ldots, 125$ there exist some $x, y \in S$ such that $x-y=F_{k}$. Also, there exist some $a, b \in T$ for some set $T$ such that $a-b = L_{100}$.",64
+imo-bench-combinatorics-082,"In each square of a garden shaped like a $2025 \times 2025$ board, there is initially a tree of height 0. A gardener and a lumberjack alternate turns playing the following game, with the gardener taking the first turn:
+
+\begin{itemize}
+  \item The gardener chooses a square in the garden. Each tree on that square and all the surrounding squares (of which there are at most eight) then becomes one unit taller.
+  \item The lumberjack then chooses four different squares on the board. Each tree of positive height on those squares then becomes one unit shorter.
+\end{itemize}
+
+Additionally, there is a magic bird that flies around the garden and sings a beautiful song every time the lumberjack chooses a square.
+
+We say that a tree is majestic if its height is at least 10^6, and let K denote the largest number of majestic trees that the gardener can guarantee will eventually exist on the board regardless of how the lumberjack plays. What is the remainder when K is divided by 88881?",56100,"In each square of a garden shaped like a $2025 \times 2025$ board, there is initially a tree of height 0. A gardener and a lumberjack alternate turns playing the following game, with the gardener taking the first turn:
+
+\begin{itemize}
+  \item The gardener chooses a square in the garden. Each tree on that square and all the surrounding squares (of which there are at most eight) then becomes one unit taller.
+  \item The lumberjack then chooses four different squares on the board. Each tree of positive height on those squares then becomes one unit shorter.
+\end{itemize}
+
+Additionally, there is a magic bird that flies around the garden and sings a beautiful song every time the lumberjack chooses a square.
+
+We say that a tree is majestic if its height is at least $10^{6}$. Determine the largest number $K$ such that the gardener can ensure there are eventually $K$ majestic trees on the board, no matter how the lumberjack plays.",2278125
+imo-bench-combinatorics-084,"Minh is a student whose birthday is in the year $1997$, so he starts by writing $s$ integer-valued 1997-tuples on a blackboard. After doing that, he can take any two (not necessarily distinct) tuples $\mathbf{v}=\left(v_{1}, \ldots, v_{1997}\right)$ and $\mathbf{w}=\left(w_{1}, \ldots, w_{1997}\right)$ that he has already written, and apply one of the following operations to obtain a new tuple:
+
+\[
+\begin{aligned}
+& \mathbf{v}+\mathbf{w}=\left(v_{1}+w_{1}, \ldots, v_{1997}+w_{1997}\right) \\
+& \mathbf{v} \vee \mathbf{w}=\left(\max \left(v_{1}, w_{1}\right), \ldots, \max \left(v_{1997}, w_{1997}\right)\right)
+\end{aligned}
+\]
+
+and then write this tuple on the blackboard.
+
+It turns out that, in this way, Minh can write any integer-valued 2023-tuple on the blackboard after finitely many steps. What is the smallest possible number $s$ of tuples that he initially wrote?",3,"Minh is a student whose birthday is in the year $1997$, so he starts by writing $s$ integer-valued 1997-tuples on a blackboard. After doing that, he can take any two (not necessarily distinct) tuples $\mathbf{v}=\left(v_{1}, \ldots, v_{1997}\right)$ and $\mathbf{w}=\left(w_{1}, \ldots, w_{1997}\right)$ that he has already written, and apply one of the following operations to obtain a new tuple:
+
+\[
+\begin{aligned}
+& \mathbf{v}+\mathbf{w}=\left(v_{1}+w_{1}, \ldots, v_{1997}+w_{1997}\right) \\
+& \mathbf{v} \vee \mathbf{w}=\left(\max \left(v_{1}, w_{1}\right), \ldots, \max \left(v_{1997}, w_{1997}\right)\right)
+\end{aligned}
+\]
+
+and then write this tuple on the blackboard.
+
+It turns out that, in this way, Minh can write any integer-valued 2023-tuple on the blackboard after finitely many steps. What is the smallest possible number $s$ of tuples that he initially wrote?",3
+imo-bench-combinatorics-086,"Let \(\mathbb{Z}_{\geqslant 0}\) be the set of non-negative integers, and let \(f: \mathbb{Z}_{\geqslant 0} \times \mathbb{Z}_{\geqslant 0} \to \mathbb{Z}_{\geqslant 0}\) be a bijection such that whenever \(f(x_1,y_1) > f(x_2,y_2)\), we have \(f(x_1+1,y_1) > f(x_2+1,y_2)\) and \(f(x_1,y_1+1) > f(x_2,y_2+1)\). Also, let \(g: \mathbb{Z}_{\geqslant 0} \to \mathbb{Z}_{\geqslant 0}\) be defined by \(g(n)=n^2-n+1\). Let \(N\) be the number of pairs of integers \((x,y)\) with \(0\le x,y<100\) such that \(f(x,y)\) is odd, and let the smallest and largest possible values of \(N\) be \(a\) and \(b\), respectively. Let \(K\) denote the product \(ab\). What is the remainder when \(K\) is divided by 56789?",9630,"Let $\mathbb{Z}_{\geqslant 0}$ be the set of non-negative integers, and let $f: \mathbb{Z}_{\geqslant 0} \times \mathbb{Z}_{\geqslant 0} \rightarrow \mathbb{Z}_{\geqslant 0}$ be a bijection such that whenever $f\left(x_{1}, y_{1}\right)>f\left(x_{2}, y_{2}\right)$, we have $f\left(x_{1}+1, y_{1}\right)>f\left(x_{2}+1, y_{2}\right)$ and $f\left(x_{1}, y_{1}+1\right)>f\left(x_{2}, y_{2}+1\right)$. Also, let $g: \mathbb{Z}_{\geqslant 0} \rightarrow \mathbb{Z}_{\geqslant 0}$ be a function such that $g(n) = n^2 - n + 1$.
+
+Let $N$ be the number of pairs of integers $(x, y)$, with $0 \leqslant x, y<100$, such that $f(x, y)$ is odd. Let the smallest and largest possible value of $N$ be $a,b$, find the product $ab$.",18750000
+imo-bench-combinatorics-090,"A polyomino is a figure which consists of unit squares joined together by their sides. (A polyomino may contain holes.) Consider a grid of unit square cells which extends to infinity in all directions. Find the greatest positive integer $C$ which satisfies the following condition: For every colouring of the cells of the grid in $36$ colours, there is some polyomino within the grid which contains at most $35$ colours and whose area is at least $C$.
+",2450,"A polyomino is a figure which consists of unit squares joined together by their sides. (A polyomino may contain holes.) Consider a grid of unit square cells which extends to infinity in all directions. Find the greatest positive integer $C$ which satisfies the following condition: For every colouring of the cells of the grid in $36$ colours, there is some polyomino within the grid which contains at most $35$ colours and whose area is at least $C$.
+",2450
+imo-bench-combinatorics-093,"Let $s$ be positive integers such that $s<5625$. Initially, one cell out of an $n \times n$ grid is coloured green. On each turn, we pick some green cell $c$ and colour green some $s$ out of the $5625$ cells in the $75 \times 75$ square centred at $c$. No cell may be coloured green twice. We say that $s$ is sparse if there exists some positive number $C$ such that, for every positive integer $n$, the total number of green cells after any number of turns is always going to be at most $Cn$. Find the least sparse integer $s$.
+",4181,"Let $s$ be positive integers such that $s<5625$. Initially, one cell out of an $n \times n$ grid is coloured green. On each turn, we pick some green cell $c$ and colour green some $s$ out of the $5625$ cells in the $75 \times 75$ square centred at $c$. No cell may be coloured green twice. We say that $s$ is sparse if there exists some positive number $C$ such that, for every positive integer $n$, the total number of green cells after any number of turns is always going to be at most $Cn$. Find the least sparse integer $s$.
+",4181
+imo-bench-combinatorics-097,"In a circular seating arrangement at a party, there are $16$ guests sitting at the table play a game. Each guest has a unique name tag crated by the game master, and then these name tags are randomly distributed among the guests. In each of the next $n$ rounds, the guests plays the game according to the following rule:
+
+i) Any guest who has their own name tag exits the table.
+ii) The remaining guests pass their name tags to the guest sitting immediately to their right.
+
+Let K denote the number of ways the name tags can be distributed such that there exists at least one guest who does not leave the table after 4 rounds. What is the remainder when K is divided by 100000?",38549,"In a circular seating arrangement at a party, there are $16$ guests sitting at the table play a game. Each guest has a unique name tag crated by the game master, and then these name tags are randomly distributed among the guests. In each of the next $n$ rounds, the guests plays the game according to the following rule:
+
+i) Any guest who has their own name tag exits the table.
+ii) The remaining guests pass their name tags to the guest sitting immediately to their right.
+
+We are interested in finding the number of ways the name tags can be distributed such that there exists at least one guest who does not leave the table after 4 rounds.",85383238549
+imo-bench-geometry-002,"Given right triangle $ XYZ$ with hypothenuse $ XZ$ and $ \angle X = 50^{\circ}$. Points $ P$ and $ Q$ on the side $ YZ$ are such that $ \angle PXZ = \angle QXY = 10^{\circ}$. Compute the ratio $2 \times YQ/ZP$.
+",4,"Given right triangle $ XYZ$ with hypothenuse $ XZ$ and $ \angle X = 50^{\circ}$. Points $ P$ and $ Q$ on the side $ YZ$ are such that $ \angle PXZ = \angle QXY = 10^{\circ}$. Compute the ratio $2 \times YQ/ZP$.
+",4
+imo-bench-geometry-003,"Given a convex $n$-sided polygon $B_1\ldots B_n$. Let $Q_i$ ($i = 1,\ldots, n$) be points on the boundary of the polygon such that $B_iQ_i$ divides the area of the polygon in half.  Assume that none of the points $Q_i$ coincide with any vertex of the polygon and that these points lie on $k$ sides of the $n$-sided polygon. For a given value of $n$, determine the minimum possible value of $k$.
+",3,"Given a convex $n$-sided polygon $B_1\ldots B_n$. Let $Q_i$ ($i = 1,\ldots, n$) be points on the boundary of the polygon such that $B_iQ_i$ divides the area of the polygon in half.  Assume that none of the points $Q_i$ coincide with any vertex of the polygon and that these points lie on $k$ sides of the $n$-sided polygon. For a given value of $n$, determine the minimum possible value of $k$.
+",3
+imo-bench-geometry-017,"Let $P$ and $Q$ be the circumcenter and incenter of triangle $DEF$. The perpendicular from $Q$ to $PQ$ meets $DE$ and the external bisector of angle $F$ at points $M$ and $N$ respectively. What is the value of $QN/QM$?
+",2,"Let $P$ and $Q$ be the circumcenter and incenter of triangle $DEF$. The perpendicular from $Q$ to $PQ$ meets $DE$ and the external bisector of angle $F$ at points $M$ and $N$ respectively. What is the value of $QM/QN$?
+",0.5
+imo-bench-geometry-044,"Given $PQRS$ is a parallelogram. We know that $\angle S = 60^\circ$, $PS = 2$ and $PQ = \sqrt{3} + 1$. Point $N$ is the midpoint of $PS$. Segment $RE$ is the angle bisector of $R$. Find the angle $REQ$ in terms of degree.
+",75,"Given $PQRS$ is a parallelogram. We know that $\angle S = 60^\circ$, $PS = 2$ and $PQ = \sqrt{3} + 1$. Point $N$ is the midpoint of $PS$. Segment $RE$ is the angle bisector of $R$. Find the angle $REQ$ in terms of degree.
+",75
+imo-bench-geometry-090,"A convex polyhedron has $m$ faces that are all congruent triangles with angles $30^{\circ}, 75^{\circ}$, and $75^{\circ}$. Determine, with proof, the maximum possible value of $m$.
+",44,"A convex polyhedron has $m$ faces that are all congruent triangles with angles $30^{\circ}, 75^{\circ}$, and $75^{\circ}$. Determine, with proof, the maximum possible value of $m$.
+",44
+imo-bench-number_theory-017,"$\alpha$ is a real number that is not rational, and $k$ is a positive integer. A pair of positive integers $(m, n)$ is called ""pretty"" if $m\lceil n\alpha \rceil - n \lfloor m\alpha \rfloor =k$. A pretty pair $(m, n)$ is called ""cool"" if neither $(m-n, n)$ nor $(m, n-m)$ are pretty pairs. Find the number of cool pairs when $k=2310$.
+",6912,"$\alpha$ is a real number that is not rational, and $k$ is a positive integer. A pair of positive integers $(m, n)$ is called ""pretty"" if $m\lceil n\alpha \rceil - n \lfloor m\alpha \rfloor =k$. A pretty pair $(m, n)$ is called ""cool"" if neither $(m-n, n)$ nor $(m, n-m)$ are pretty pairs. Find the number of cool pairs when $k=2310$.
+",6912
+imo-bench-number_theory-021,"For a positive integer $n$, we call $g:\mathbb{Z}\rightarrow \mathbb{Z}$ a \textif{$n$-good function} if $g(1)=1$ and for any two distinct integers $a$ and $b$, $g(a)-g(b)$ divides $a^n -b^n$. We call a positive integer $n$ an \textit{exotic integer} if the number of $n$-good functions is twice of an odd integer. Find $132$th exotic integer.
+
+",69169,"For a positive integer $n$, we call $g:\mathbb{Z}\rightarrow \mathbb{Z}$ a \textif{$n$-good function} if $g(1)=1$ and for any two distinct integers $a$ and $b$, $g(a)-g(b)$ divides $a^n -b^n$. We call a positive integer $n$ an \textit{exotic integer} if the number of $n$-good functions is twice of an odd integer. Find $132$th exotic integer.
+
+",69169
+imo-bench-number_theory-086,"Positive integers $M$ and $N$ satisfy the following conditions:
+
+(1) $M$ is a 1000-digit number, and none of its digits are 0.
+(2) The decimal expansion of $\left \lfloor \frac{M}{N} \right\rfloor$ contains the digit 0 exactly $A$ times. (The leading digit of the decimal expansion is not 0.)
+
+Find the maximum possible value of $A$.
+",939,"Positive integers $M$ and $N$ satisfy the following conditions:
+
+(1) $M$ is a 1000-digit number, and none of its digits are 0.
+(2) The decimal expansion of $\left \lfloor \frac{M}{N} \right\rfloor$ contains the digit 0 exactly $A$ times. (The leading digit of the decimal expansion is not 0.)
+
+Find the maximum possible value of $A$.
+",939
+imo-bench-number_theory-022,"For a given positive integer $n$, let $m$ be the exponent of 2 in the prime factorization of $n$. Define $f(n) = \frac{n}{2^m}$. Find the sum of all positive integers $u$ for which there exists a positive integer $v$ such that
+
+(Condition) $f(u+v) - f(u), f(u+v+1) - f(u+1), \cdots, f(u+2v-1) - f(u+v-1)$ are all multiples of 4.",9,"For a given positive integer $n$, let $m$ be the exponent of 2 in the prime factorization of $n$. Define $f(n) = \frac{n}{2^m}$. Find all positive integers $u$ for which there exists a positive integer $v$ such that
+
+(Condition) $f(u+v) - f(u), f(u+v+1) - f(u+1), \cdots, f(u+2v-1) - f(u+v-1)$ are all multiples of 4.
+","1,3,5"
+imo-bench-number_theory-016,"How many functions $g:\mathbb{Q}\rightarrow \mathbb{Z}$ satisfy the following condition for any rational number $x$, integer $a$, and positive integer $b$:
+$g(x)=g\left(\frac{g(bx-a)+a}{b}\right)$",3,"Find all functions $g:\mathbb{Q}\rightarrow \mathbb{Z}$ that satisfy the following condition for any rational number $x$, integer $a$, and positive integer $b$:
+$g(x)=g(\frac{g(bx-a)+a}{b})$
+","$g(x)=c, g(x)=\lceil x \rceil, g(x)=\lfloor x \rfloor$
+"
+imo-bench-algebra-017,"A real coefficient polynomial $f(x)$ satisfies the condition that for all real numbers $a$ and $b$, $|a^2 - 2f(b)| \le 2|b|$ if and only if $|b^2 - 2f(a)| \le 2|a|$. What is the largest possible value of $f(0)$?",1/2,"A real coefficient polynomial $f(x)$ satisfies the condition that for all real numbers $a$ and $b$, $|a^2 - 2f(b)| \le 2|b|$ if and only if $|b^2 - 2f(a)| \le 2|a|$. Find all possible values of $f(0)$.
+","$(-\infty,0)\cup\{\frac{1}{2}\}$"
+imo-bench-algebra-024,"A function $C$ from the set of positive integers to itself is called ""nice"" if for all positive integers $a, b$, $C(a+b) - C(a) - C(C(b)) + 1 \ge 0$. Find the number of possible values of $C(1234)$ for a nice function $C: \mathbb{N} \rightarrow \mathbb{N}$.",1235,"A function $C$ from the set of positive integers to itself is called ""nice"" if for all positive integers $a, b$, $C(a+b) - C(a) - C(C(b)) + 1 \ge 0$. Find all possible values of $C(1234)$ for a nice function $C: \mathbb{N} \rightarrow \mathbb{N}$.
+","$1,2,\ldots, 1235$"
+imo-bench-geometry-073,"A non-equilateral triangle $XYZ$ is inscribed in a circle $\Omega$ with centre $P$, radius $R$ and its incircle has centre $Q$ and touches $YZ,ZX,XY $ at $L,M,N$, respectively. A circle with centre $Q$ and radius $\rho$ intersects the rays $[QL),[QM),[QN)$ at $X',Y',Z'$. Given that $\rho = 3$ and $R = 6$, compute the value of $\dfrac{QK}{QP}$ where $K$ is the orthocenter of $X'Y'Z'$.",1/2,"A non-equilateral triangle $XYZ$ is inscribed in a circle $\Omega$ with centre $P$, radius $R$ and its incircle has centre $Q$ and touches $YZ,ZX,XY $ at $L,M,N$, respectively. A circle with centre $Q$ and radius $\rho$ intersects the rays $[QL),[QM),[QN)$ at $X',Y',Z'$.
+
+Compute $\dfrac{QK}{QP}$ in terms of $\rho$ and $R$ where $K$ is the orthocenter of $X'Y'Z'$.
+",$\frac{\rho}{R}$
+imo-bench-algebra-018,"Let $a_0, a_1, \ldots$ be a sequence of non-negative integers. Suppose that for all non-negative integers $p$,
+$$a_{a_{a_p}} = a_{p+1} + 1.$$\nFind the sum of all possible values of $a_{2025}$.",4056,"Let $a_0, a_1, \ldots$ be a sequence of non-negative integers. Suppose that for all non-negative integers $p$,
+$$a_{a_{a_p}} = a_{p+1} + 1.$$
+Find all possible value of $a_{2025}$.
+","2026, 2030"
+imo-bench-geometry-056,"Let $ PQR $ be fixed obtuse triangle, and let $ M $ denote its orthocenter. Let $ \alpha_P $ denote the circle with center $ P $ and radius $ PM $. Let $ \alpha_Q $ and $ \alpha_R $ be defined in a similar way. Let $Y$ be a moving point outside of the circumcircle of triangle $ PQR $, let circle $ \Xi(Y) $ be defined in the following way (if possible): take the polars of point $ Y $ with respect to circles $ \alpha_P $, $ \alpha_Q $, and $ \alpha_R $, and let $ \Xi(Y) $ be the circumcircle of the triangle defined by these three lines.
+
+How many points $Y$ satisfy that point $Y$ lies on circle $ \Xi(Y) $?",1,"Let $ PQR $ be fixed obtuse triangle, and let $ M $ denote its orthocenter. Let $ \alpha_P $ denote the circle with center $ P $ and radius $ PM $. Let $ \alpha_Q $ and $ \alpha_R $ be defined in a similar way. Let $Y$ be a moving point outside of the circumcircle of triangle $ PQR $, let circle $ \Xi(Y) $ be defined in the following way (if possible): take the polars of point $ Y $ with respect to circles $ \alpha_P $, $ \alpha_Q $, and $ \alpha_R $, and let $ \Xi(Y) $ be the circumcircle of the triangle defined by these three lines.
+
+Find the locus of points $ Y $ such that point $ Y $ lies on circle $ \Xi(Y) $.
+
+",$Y = M$
+imo-bench-algebra-066,"A sequence of integers $a_0, \ldots, a_{1000}$ is called a \textit{good sequence} if there exists a sequence of integers $b_0, \ldots, b_{1000}$ such that \[ \prod_{k=0}^{1000} (x - a_k) = \prod_{k=0}^{1000} (x - k)^{b_k}, \quad \prod_{k=0}^{1000} (x - b_k) = \prod_{k=0}^{1000} (x - k)^{a_k} \] for all $x$. Let $C$ denote the sum $\sum_{i=0}^{1000} (i+1)a_i^2$ taken over all good sequences $a_0, \ldots, a_{1000}$. What is the remainder when $C$ is divided by 100000?",87052,"A sequence of integers $a_0, \ldots, a_{1000}$ is called a \textit{good sequence} if there exists a sequence of integers $b_0, \ldots, b_{1000}$ such that
+\[
+    \prod_{k=0}^{1000} (x - a_k) = \prod_{k=0}^{1000} (x - k)^{b_k}, \quad \prod_{k=0}^{1000} (x - b_k) = \prod_{k=0}^{1000} (x - k)^{a_k}
+\]
+for all $x$. Find all the possible values of $\sum_{i=0}^{1000} (i+1)a_i^2$ for good sequences $a_0, \ldots, a_{1000}$.","997008, 995026, 995018"
+imo-bench-algebra-027,"A function $g:\mathbb{R}\to\mathbb{R}$ is called a \textit{good function} if $g$ satisfies
+\[
+4g\left(x^{2}+y^{2}+2g(xy)\right)=(g(2x+2y))^{2}
+\]
+for all pairs of real numbers $x$ and $y$. For a real number $r$, we say that $t\in \mathbb{R}$ is a \textit{$r$-represented number} if there exists a good function $g$ such that $t=g(r)$. Find the number of connected components of the set of all $r$ such that there are four $r$-represented number.",2,"A function $g:\mathbb{R}\to\mathbb{R}$ is called a \textit{good function} if $g$ satisfies
+\[
+4g\left(x^{2}+y^{2}+2g(xy)\right)=(g(2x+2y))^{2}
+\]
+for all pairs of real numbers $x$ and $y$. For a real number $r$, we say that $t\in \mathbb{R}$ is a \textit{$r$-represented number} if there exists a good function $g$ such that $t=g(r)$. Find the set of all $r$ such that there are four $r$-represented number.","$(-\infty,-4)\cup (-4,-\frac{8}{3})$"
+imo-bench-geometry-023,"A truncated triangular pyramid is circumscribed around a sphere that touches its bases at points $P_1, P_2$. Let $h$ be the altitude of the pyramid, $r_1, r_2$ be the circumradii of its bases, and $C_1, C_2$ be the circumcenters of the bases. If $r_1=2$, $r_2=3$, and $h=4$, what is the value of $(r_1^2-C_1P_1^2)(r_2^2-C_2P_2^2)$?",96,"A truncated triangular pyramid is circumscribed around a sphere that touches its bases at points $P_1, P_2$. Let $h$ be the altitude of the pyramid, $r_1, r_2$ be the circumradii of its bases, and $C_1, C_2$ be the circumcenters of the bases. Compute $(r_1^2-C_1P_1^2)(r_2^2-C_2P_2^2)$ in terms of $r_1, r_2$ and $h$.
+",$r_1r_2 h^2$
+imo-bench-number_theory-031,"Let $k>l$ be given coprime positive integers greater than 1. Define a function $f: \mathbb{Z}\rightarrow \mathbb{Z}$ as follows: for $x$, $f(x)$ is the smallest value of $|a|+|b|$ among all integers $a,b$ satisfying $ka+lb = x$.
+ An integer $x$ is called 'nice' if $f(x)\geq \max (f(x-a),f(x+a),f(x-b),f(x+b))$. Denote by $F(k,l)$ the the number of nice integers when both $k$ and $l$ are odd, and denote by $G(k,l)$ the number of nice integers when either $k$ or $l$ is even. Suppose that there exists polynomials $p(k,l)$ and $q(k,l)$ such that $F(k,l)=p(k,l)$ for all odd integers $k,l$ and $G(k,l)=q(k,l)$ whenever at least one of $k$ or $l$ is even.  Evaluate $p(3,5)^2 + q(3,5)^2$.",80,"Let $k>l$ be given coprime positive integers greater than 1. Define a function $f: \mathbb{Z}\rightarrow \mathbb{Z}$ as follows: for $x$, $f(x)$ is the smallest value of $|a|+|b|$ among all integers $a,b$ satisfying $ka+lb = x$.
+ An integer $x$ is called 'nice' if $f(x)\geq \max (f(x-a),f(x+a),f(x-b),f(x+b))$. Denote by $F(k,l)$ the the number of nice integers when both $k$ and $l$ are odd, and denote by $G(k,l)$ the number of nice integers when either $k$ or $l$ is even. Suppose that there exists polynomials $p(k,l)$ and $q(k,l)$ such that $F(k,l)=p(k,l)$ for all odd integers $k,l$ and $G(k,l)=q(k,l)$ whenever at least one of $k$ or $l$ is even.  Evaluate $p(k,l)^2 + q(k,l)^2$.",$5(l-1)^2$
+Project-euler-572,"A matrix $M$ is called idempotent if $M^2 = M$.
+
+Let $M$ be a three by three matrix:
+\[M=\begin{pmatrix}
+a & b & c\\
+d & e & f\\
+g & h & i\\
+\end{pmatrix}.\]
+
+Let $C(n)$ be the number of idempotent three-by-three matrices $M$ with integer elements satisfying
+$$-n \le a,b,c,d,e,f,g,h,i \le n.$$
+It is known that $C(1)=164$ and $C(2)=848$.
+
+Let $N$ denote $C(200)$.
+
+What is the remainder when $N$ is divided by 99997?",38247,"A matrix $M$ is called idempotent if $M^2 = M$.
+
+Let $M$ be a three by three matrix :
+$M=\begin{pmatrix}
+a & b & c\\
+d & e & f\\
+g &h &i\\
+\end{pmatrix}$.
+
+Let $C(n)$ be the number of idempotent three by three matrices $M$ with integer elements such that
+
+$ -n \le a,b,c,d,e,f,g,h,i \le n$.
+
+$C(1)=164$ and $C(2)=848$.
+
+Find $C(200)$.",19737656
+project-euler-260,"A game is played with three piles of stones and two players.
+
+On each player's turn, the player may remove one or more stones from the piles. However, if the player takes stones from more than one pile, then the same number of stones must be removed from each of the selected piles.
+
+In other words, the player chooses some $N > 0$ and removes:
+
+- $N$ stones from any single pile; or
+
+- $N$ stones from each of any two piles ($2N$ total); or
+
+- $N$ stones from each of the three piles ($3N$ total).
+
+The player taking the last stone(s) wins the game.
+
+A winning configuration is one where the first player can force a win.
+
+For example, $(0,0,13)$, $(0,11,11)$, and $(5,5,5)$ are winning configurations because the first player can immediately remove all stones.
+
+A losing configuration is one where the second player can force a win, no matter what the first player does.
+
+For example, $(0,1,2)$ and $(1,3,3)$ are losing configurations: any legal move leaves a winning configuration for the second player.
+
+Consider all losing configurations $(x_i, y_i, z_i)$ where $x_i \le y_i \le z_i \le 100$.
+
+We can verify that $\sum (x_i + y_i + z_i) = 173895$ for these.
+
+Let $S$ denote $\displaystyle\sum (x_i + y_i + z_i)$ where $(x_i, y_i, z_i)$ ranges over the losing configurations with $x_i \le y_i \le z_i \le 1000$.
+
+What is the remainder when $S$ is divided by 99981?",73882,"A game is played with three piles of stones and two players.
+
+On each player's turn, the player may remove one or more stones from the piles. However, if the player takes stones from more than one pile, then the same number of stones must be removed from each of the selected piles.
+
+In other words, the player chooses some $N \gt 0$ and removes:
+
+- $N$ stones from any single pile; or
+
+- $N$ stones from each of any two piles ($2N$ total); or
+
+- $N$ stones from each of the three piles ($3N$ total).
+
+The player taking the last stone(s) wins the game.
+
+A winning configuration is one where the first player can force a win.
+
+For example, $(0,0,13)$, $(0,11,11)$, and $(5,5,5)$ are winning configurations because the first player can immediately remove all stones.
+
+A losing configuration is one where the second player can force a win, no matter what the first player does.
+
+For example, $(0,1,2)$ and $(1,3,3)$ are losing configurations: any legal move leaves a winning configuration for the second player.
+
+Consider all losing configurations $(x_i, y_i, z_i)$ where $x_i \le y_i \le z_i \le 100$.
+
+We can verify that $\sum (x_i + y_i + z_i) = 173895$ for these.
+
+Find $\sum (x_i + y_i + z_i)$ where $(x_i, y_i, z_i)$ ranges over the losing configurations with $x_i \le y_i \le z_i \le 1000$.",167542057
+Project-euler-689,"For $0 \le x < 1$, define $d_i(x)$ to be the $i$th digit after the binary point of the binary representation of $x$.
+
+For example $d_2(0.25) = 1$, $d_i(0.25) = 0$ for $i \ne 2$.
+
+Let $f(x) = \displaystyle{\sum_{i=1}^{\infty}\frac{d_i(x)}{i^2}}$.
+
+Let $p(a)$ be the probability that $f(x) > a$, given that $x$ is uniformly distributed between $0$ and $1$.
+
+Let $u$ denote the probability $p(0.5)$.
+
+What is the remainder when $u$ is divided by 77781?",33385,"For $0 \le x \lt 1$, define $d_i(x)$ to be the $i$th digit after the binary point of the binary representation of $x$.
+
+For example $d_2(0.25) = 1$, $d_i(0.25) = 0$ for $i \ne 2$.
+
+Let $f(x) = \displaystyle{\sum_{i=1}^{\infty}\frac{d_i(x)}{i^2}}$.
+
+Let $p(a)$ be probability that $f(x) \gt a$, given that $x$ is uniformly distributed between $0$ and $1$.
+
+Find $p(0.5)$. Give your answer rounded to $8$ digits after the decimal point.",0.56565454
+Project-euler-328,"We are trying to find a hidden number selected from the set of integers $\{1, 2, \dots, n\}$ by asking questions. Each number (question) we ask, has a cost equal to the number asked and we get one of three possible answers:
+
+-  ""Your guess is lower than the hidden number"", or
+
+-  ""Yes, that's it!"", or
+
+-  ""Your guess is higher than the hidden number"".
+
+Given the value of $n$, an optimal strategy minimizes the total cost (i.e. the sum of all the questions asked) for the worst possible case. E.g.
+
+If $n=3$, the best we can do is obviously to ask the number ""2"". The answer will immediately lead us to find the hidden number (at a total cost $= 2$).
+
+If $n=8$, we might decide to use a ""binary search"" type of strategy: Our first question would be ""\mathbf 4"" and if the hidden number is higher than $4$ we will need one or two additional questions.
+
+Let our second question be ""\mathbf 6"". If the hidden number is still higher than $6$, we will need a third question in order to discriminate between $7$ and $8$.
+
+Thus, our third question will be ""\mathbf 7"" and the total cost for this worst-case scenario will be $4+6+7={\color{red}\mathbf{17}}$.
+
+We can improve considerably the worst-case cost for $n=8$, by asking ""\mathbf 5"" as our first question.
+
+If we are told that the hidden number is higher than $5$, our second question will be ""\mathbf 7"", then we'll know for certain what the hidden number is (for a total cost of $5+7={\color{blue}\mathbf{12}}$).
+
+If we are told that the hidden number is lower than $5$, our second question will be ""\mathbf 3"" and if the hidden number is lower than $3$ our third question will be ""\mathbf 1"", giving a total cost of $5+3+1={\color{blue}\mathbf 9}$.
+
+Since ${\color{blue}\mathbf{12}} > {\color{blue}\mathbf 9}$, the worst-case cost for this strategy is ${\color{red}\mathbf{12}}$. That's better than what we achieved previously with the ""binary search"" strategy; it is also better than or equal to any other strategy.
+
+So, in fact, we have just described an optimal strategy for $n=8$.
+
+Let $C(n)$ be the worst-case cost achieved by an optimal strategy for $n$, as described above.
+
+Thus $C(1) = 0$, $C(2) = 1$, $C(3) = 2$ and $C(8) = 12$.
+
+Similarly, $C(100) = 400$ and $\sum_{n = 1}^{100} C(n) = 17575$.
+
+Let $S$ denote the sum $\displaystyle\sum_{n=1}^{200000} C(n)$. What is the remainder when $S$ is divided by $5^7$?",53347,"We are trying to find a hidden number selected from the set of integers $\{1, 2, \dots, n\}$ by asking questions.
+Each number (question) we ask, has a cost equal to the number asked and we get one of three possible answers:
+
+-  ""Your guess is lower than the hidden number"", or
+
+-  ""Yes, that's it!"", or
+
+-  ""Your guess is higher than the hidden number"".
+
+Given the value of $n$, an optimal strategy minimizes the total cost (i.e. the sum of all the questions asked) for the worst possible case. E.g.
+
+If $n=3$, the best we can do is obviously to ask the number ""2"". The answer will immediately lead us to find the hidden number (at a total cost $= 2$).
+
+If $n=8$, we might decide to use a ""binary search"" type of strategy: Our first question would be ""$\mathbf 4$"" and if the hidden number is higher than $4$ we will need one or two additional questions.
+
+Let our second question be ""$\mathbf 6$"". If the hidden number is still higher than $6$, we will need a third question in order to discriminate between $7$ and $8$.
+
+Thus, our third question will be ""$\mathbf 7$"" and the total cost for this worst-case scenario will be $4+6+7={\color{red}\mathbf{17}}$.
+
+We can improve considerably the worst-case cost for $n=8$, by asking ""$\mathbf 5$"" as our first question.
+
+If we are told that the hidden number is higher than $5$, our second question will be ""$\mathbf 7$"", then we'll know for certain what the hidden number is (for a total cost of $5+7={\color{blue}\mathbf{12}}$).
+
+If we are told that the hidden number is lower than $5$, our second question will be ""$\mathbf 3$"" and if the hidden number is lower than $3$ our third question will be ""$\mathbf 1$"", giving a total cost of $5+3+1={\color{blue}\mathbf 9}$.
+
+Since ${\color{blue}\mathbf{12}} \gt {\color{blue}\mathbf 9}$, the worst-case cost for this strategy is ${\color{red}\mathbf{12}}$. That's better than what we achieved previously with the ""binary search"" strategy; it is also better than or equal to any other strategy.
+
+So, in fact, we have just described an optimal strategy for $n=8$.
+
+Let $C(n)$ be the worst-case cost achieved by an optimal strategy for $n$, as described above.
+
+Thus $C(1) = 0$, $C(2) = 1$, $C(3) = 2$ and $C(8) = 12$.
+
+Similarly, $C(100) = 400$ and $\sum \limits_{n = 1}^{100} C(n) = 17575$.
+
+Find $\sum \limits_{n = 1}^{200000} C(n)$.",260511850222
