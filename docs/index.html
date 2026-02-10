@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstralMath-v1</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="nav-logo">&#9733;</span> AstralMath-v1
+  </div>
+  <div class="nav-links">
+    <a href="#stage1" class="nav-link" data-page="stage1">Stage 1</a>
+    <a href="#stage2" class="nav-link" data-page="stage2">Stage 2</a>
+    <a href="#bench" class="nav-link" data-page="bench">AstralBench</a>
+  </div>
+</nav>
+
+<!-- Stage 1 Page -->
+<div id="page-stage1" class="page">
+  <div class="page-header">
+    <h1>Stage 1 — SFT Training Data</h1>
+    <p class="subtitle">236,594 TIR traces from 3 frontier models, target for SFT training or RL warmup</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val" id="s1-total">—</span><span class="stat-label">Total Traces</span></div>
+      <div class="stat"><span class="stat-val" id="s1-models">3</span><span class="stat-label">Models</span></div>
+      <div class="stat"><span class="stat-val" id="s1-format">JSONL</span><span class="stat-label">Format</span></div>
+    </div>
+  </div>
+  <div class="viewer-controls">
+    <button class="btn" id="s1-prev" disabled>&larr; Previous</button>
+    <span class="counter" id="s1-counter">0 / 0</span>
+    <button class="btn" id="s1-next">Next &rarr;</button>
+    <input type="number" class="jump-input" id="s1-jump" placeholder="Go to #" min="1">
+    <button class="btn btn-sm" id="s1-go">Go</button>
+  </div>
+  <div class="card" id="s1-card">
+    <div class="card-placeholder">
+      <p>Load a JSONL file to browse the dataset.</p>
+      <label class="btn btn-primary file-label">
+        Choose stage1.jsonl
+        <input type="file" id="s1-file" accept=".jsonl" hidden>
+      </label>
+      <p class="hint">Or drop a file anywhere on this page</p>
+    </div>
+  </div>
+</div>
+
+<!-- Stage 2 Page -->
+<div id="page-stage2" class="page">
+  <div class="page-header">
+    <h1>Stage 2 — RL Finetuning Data</h1>
+    <p class="subtitle">3,419 TIR traces from 3,304 hardest questions, target for RL finetuning</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val" id="s2-total">—</span><span class="stat-label">Total Traces</span></div>
+      <div class="stat"><span class="stat-val" id="s2-models">3</span><span class="stat-label">Models</span></div>
+      <div class="stat"><span class="stat-val" id="s2-format">JSONL</span><span class="stat-label">Format</span></div>
+    </div>
+  </div>
+  <div class="viewer-controls">
+    <button class="btn" id="s2-prev" disabled>&larr; Previous</button>
+    <span class="counter" id="s2-counter">0 / 0</span>
+    <button class="btn" id="s2-next">Next &rarr;</button>
+    <input type="number" class="jump-input" id="s2-jump" placeholder="Go to #" min="1">
+    <button class="btn btn-sm" id="s2-go">Go</button>
+  </div>
+  <div class="card" id="s2-card">
+    <div class="card-placeholder">
+      <p>Load a JSONL file to browse the dataset.</p>
+      <label class="btn btn-primary file-label">
+        Choose stage2.jsonl
+        <input type="file" id="s2-file" accept=".jsonl" hidden>
+      </label>
+      <p class="hint">Or drop a file anywhere on this page</p>
+    </div>
+  </div>
+</div>
+
+<!-- AstralBench Page -->
+<div id="page-bench" class="page">
+  <div class="page-header">
+    <h1>AstralBench — Benchmark</h1>
+    <p class="subtitle">50 curated hard problems from IMOBench &amp; Project Euler for offline evaluation</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val">50</span><span class="stat-label">Problems</span></div>
+      <div class="stat"><span class="stat-val">24</span><span class="stat-label">Transformed</span></div>
+      <div class="stat"><span class="stat-val">CSV</span><span class="stat-label">Format</span></div>
+    </div>
+    <table class="bench-scores">
+      <thead><tr><th>Model</th><th>Accuracy (Pass@64)</th></tr></thead>
+      <tbody>
+        <tr><td>DeepSeek-V3.2</td><td>18%</td></tr>
+        <tr><td>GPT-OSS-120B</td><td>12%</td></tr>
+        <tr><td>Step-3.5-Flash</td><td>8%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="viewer-controls">
+    <button class="btn" id="b-prev" disabled>&larr; Previous</button>
+    <span class="counter" id="b-counter">0 / 0</span>
+    <button class="btn" id="b-next">Next &rarr;</button>
+    <input type="number" class="jump-input" id="b-jump" placeholder="Go to #" min="1">
+    <button class="btn btn-sm" id="b-go">Go</button>
+  </div>
+  <div class="card" id="b-card">
+    <div class="card-placeholder">
+      <p>Load a CSV file to browse the benchmark.</p>
+      <label class="btn btn-primary file-label">
+        Choose AstralBench.csv
+        <input type="file" id="b-file" accept=".csv" hidden>
+      </label>
+      <p class="hint">Or drop a file anywhere on this page</p>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>AstralMath-v1 &middot; A Tool-Integrated Reasoning dataset for AIMO3</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
