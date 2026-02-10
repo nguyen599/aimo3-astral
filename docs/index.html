@@ -109,9 +109,9 @@
     <button class="btn btn-sm" id="b-go">Go</button>
   </div>
   <div class="card" id="b-card">
-    <div class="card-placeholder">
-      <p>Loading AstralBench...</p>
-      <p class="hint">If loading fails, upload manually:</p>
+    <div class="card-placeholder" id="b-placeholder">
+      <div class="loading-spinner" id="b-loading">Loading AstralBench...</div>
+      <p class="hint">Or upload manually:</p>
       <label class="btn btn-primary file-label">
         Choose AstralBench.csv
         <input type="file" id="b-file" accept=".csv" hidden>

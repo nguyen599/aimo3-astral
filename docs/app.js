@@ -444,10 +444,28 @@ document.addEventListener('drop', (e) => {
 });
 
 // ── Auto-load AstralBench CSV ────────────────────────────────────
-fetch('astral-bench.csv')
-  .then(r => { if (r.ok) return r.text(); throw new Error('not found'); })
-  .then(text => { loadDataset('bench', parseCSV(text)); })
-  .catch(() => { /* file not available, user can upload manually */ });
+(function autoLoadBench() {
+  const loadingEl = document.getElementById('b-loading');
+
+  function showUploadFallback() {
+    if (loadingEl) loadingEl.textContent = 'Could not auto-load. Please upload:';
+  }
+
+  // fetch doesn't work with file:// protocol
+  if (location.protocol === 'file:') { showUploadFallback(); return; }
+
+  fetch('astral-bench.csv')
+    .then(r => { if (r.ok) return r.text(); throw new Error(r.status); })
+    .then(text => {
+      const data = parseCSV(text);
+      if (data.length > 0) {
+        loadDataset('bench', data);
+      } else {
+        showUploadFallback();
+      }
+    })
+    .catch(() => { showUploadFallback(); });
+})();
 
 // ── Keyboard navigation ─────────────────────────────────────────
 document.addEventListener('keydown', (e) => {
