@@ -595,6 +595,11 @@ function setupControls(key) {
     }
     input.value = '';
   });
+  document.getElementById(`${prefix}-random`).addEventListener('click', () => {
+    if (state[key].total > 0) {
+      goToIndex(key, Math.floor(Math.random() * state[key].total));
+    }
+  });
   document.getElementById(`${prefix}-jump`).addEventListener('keydown', (e) => {
     if (e.key === 'Enter') document.getElementById(`${prefix}-go`).click();
   });
