@@ -66,6 +66,11 @@ function navigate() {
   if ((page === 'stage1' || page === 'stage2') && !state[page].localData && !state[page].hfSplit) {
     initHFStream(page);
   }
+
+  // Auto-load bench CSV when navigating to bench page
+  if (page === 'bench' && !state.bench.localData && !state.bench.loading) {
+    loadBenchCSV();
+  }
 }
 window.addEventListener('hashchange', navigate);
 navigate();
@@ -352,8 +357,22 @@ function renderMessages(messages) {
       for (const tc of msg.tool_calls) {
         const fname = tc.function?.name || 'tool';
         let args = tc.function?.arguments || '';
-        if (typeof args === 'object') {
-          args = args.code || JSON.stringify(args, null, 2);
+        // Parse JSON string args and pretty-print code fields
+        if (typeof args === 'string') {
+          try {
+            const parsed = JSON.parse(args);
+            if (parsed && typeof parsed.code === 'string') {
+              args = parsed.code;
+            } else {
+              args = JSON.stringify(parsed, null, 2);
+            }
+          } catch (e) { /* keep raw string */ }
+        } else if (typeof args === 'object') {
+          if (typeof args.code === 'string') {
+            args = args.code;
+          } else {
+            args = JSON.stringify(args, null, 2);
+          }
         }
         html += `<div style="margin-top:0.3rem"><span style="color:#f5a623;font-size:0.75rem">${escapeHtml(fname)}()</span></div>`;
         html += `<div class="tool-code">${escapeHtml(args)}</div>`;
@@ -642,10 +661,13 @@ document.addEventListener('drop', (e) => {
 });
 
 // ── Auto-load AstralBench CSV ────────────────────────────────────
-(function autoLoadBench() {
-  const loadingEl = document.getElementById('b-loading');
+function loadBenchCSV() {
+  if (state.bench.localData || state.bench.loading) return;
+  state.bench.loading = true;
 
   function showUploadFallback() {
+    state.bench.loading = false;
+    const loadingEl = document.getElementById('b-loading');
     if (loadingEl) loadingEl.textContent = 'Could not auto-load. Please upload:';
   }
 
@@ -655,6 +677,7 @@ document.addEventListener('drop', (e) => {
     .then(r => { if (r.ok) return r.text(); throw new Error(r.status); })
     .then(text => {
       const data = parseCSV(text);
+      state.bench.loading = false;
       if (data.length > 0) {
         loadLocalDataset('bench', data);
       } else {
@@ -662,7 +685,8 @@ document.addEventListener('drop', (e) => {
       }
     })
     .catch(() => { showUploadFallback(); });
-})();
+}
+loadBenchCSV();
 
 // ── Keyboard navigation ─────────────────────────────────────────
 document.addEventListener('keydown', (e) => {
