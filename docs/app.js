@@ -398,7 +398,7 @@ function renderDatasetItem(item) {
   const pills = [];
   if (item.model) pills.push(['Model', item.model]);
   if (item.source) pills.push(['Source', item.source]);
-  if (item.category) pills.push(['Category', item.category]);
+  if (item.topic) pills.push(['Topic', item.topic]);
   if (item.success_rate != null) pills.push(['Success Rate', Number(item.success_rate).toFixed(3)]);
   if (item.attempts != null) pills.push(['Attempts', item.attempts]);
   if (item.tokens_len != null) pills.push(['Tokens', Number(item.tokens_len).toLocaleString()]);
