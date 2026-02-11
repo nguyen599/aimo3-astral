@@ -19,6 +19,7 @@
     <a href="#stage1" class="nav-link" data-page="stage1">Stage 1</a>
     <a href="#stage2" class="nav-link" data-page="stage2">Stage 2</a>
     <a href="#bench" class="nav-link" data-page="bench">AstralBench</a>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode">&#9790;</button>
   </div>
 </nav>
 
@@ -42,12 +43,12 @@
   </div>
   <div class="card" id="s1-card">
     <div class="card-placeholder">
-      <p>Load a JSONL file to browse the dataset.</p>
+      <div class="loading-spinner">Connecting to HuggingFace...</div>
+      <p class="hint">Or upload manually:</p>
       <label class="btn btn-primary file-label">
         Choose stage1.jsonl
         <input type="file" id="s1-file" accept=".jsonl" hidden>
       </label>
-      <p class="hint">Or drop a file anywhere on this page</p>
     </div>
   </div>
 </div>
@@ -72,12 +73,12 @@
   </div>
   <div class="card" id="s2-card">
     <div class="card-placeholder">
-      <p>Load a JSONL file to browse the dataset.</p>
+      <div class="loading-spinner">Connecting to HuggingFace...</div>
+      <p class="hint">Or upload manually:</p>
       <label class="btn btn-primary file-label">
         Choose stage2.jsonl
         <input type="file" id="s2-file" accept=".jsonl" hidden>
       </label>
-      <p class="hint">Or drop a file anywhere on this page</p>
     </div>
   </div>
 </div>

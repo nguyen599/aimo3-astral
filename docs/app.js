@@ -1,10 +1,53 @@
 /* ── AstralMath-v1 Dataset Viewer ─────────────────────────────── */
 
+// ── Theme toggle ─────────────────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+  // Light is default (no attribute needed)
+})();
+
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (isDark) {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('theme', 'light');
+    document.getElementById('theme-toggle').innerHTML = '&#9790;'; // ☾
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+    document.getElementById('theme-toggle').innerHTML = '&#9728;'; // ☀
+  }
+});
+
+// Update icon on load
+if (document.documentElement.getAttribute('data-theme') === 'dark') {
+  document.getElementById('theme-toggle').innerHTML = '&#9728;';
+}
+
+// ── Config ───────────────────────────────────────────────────────
+const HF_DATASET = 'nguyen599/AstralMath-v1';
+const HF_API = 'https://datasets-server.huggingface.co';
+const BATCH_SIZE = 20;  // rows to prefetch per batch
+
+// HF datasets-server uses config+split. We try multiple patterns
+// since HF auto-generates these from filenames in different ways.
+const HF_SPLITS = {
+  stage1: [
+    { config: 'default', split: 'train' },
+  ],
+  stage2: [
+    { config: 'default', split: 'train_2' },
+  ],
+};
+
 // ── State ────────────────────────────────────────────────────────
 const state = {
-  stage1: { data: [], idx: 0 },
-  stage2: { data: [], idx: 0 },
-  bench:  { data: [], idx: 0 },
+  stage1: { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
+  stage2: { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
+  bench:  { cache: new Map(), idx: 0, total: 0, localData: null, loading: false },
 };
 
 // ── Routing ──────────────────────────────────────────────────────
@@ -18,11 +61,155 @@ function navigate() {
   document.getElementById('page-' + page).classList.add('active');
   const link = document.querySelector(`.nav-link[data-page="${page}"]`);
   if (link) link.classList.add('active');
+
+  // Auto-init HF streaming when navigating to a stage page
+  if ((page === 'stage1' || page === 'stage2') && !state[page].localData && !state[page].hfSplit) {
+    initHFStream(page);
+  }
 }
 window.addEventListener('hashchange', navigate);
 navigate();
 
-// ── File Loading ─────────────────────────────────────────────────
+// ── HuggingFace Datasets Server API ─────────────────────────────
+async function hfFetchRows(config, split, offset, length) {
+  const url = `${HF_API}/rows?dataset=${encodeURIComponent(HF_DATASET)}&config=${encodeURIComponent(config)}&split=${encodeURIComponent(split)}&offset=${offset}&length=${length}`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`HF API ${resp.status}`);
+  return resp.json();
+}
+
+async function initHFStream(key) {
+  const s = state[key];
+  if (s.hfSplit || s.localData || s.loading) return;
+  s.loading = true;
+
+  const prefix = key === 'stage1' ? 's1' : 's2';
+  const card = document.getElementById(`${prefix}-card`);
+  showCardLoading(card, `Connecting to HuggingFace...`);
+
+  const candidates = HF_SPLITS[key] || [];
+  let found = false;
+
+  for (const { config, split } of candidates) {
+    try {
+      const result = await hfFetchRows(config, split, 0, 1);
+      if (result && result.num_rows_total > 0) {
+        s.hfConfig = config;
+        s.hfSplit = split;
+        s.total = result.num_rows_total;
+        // Cache first row
+        if (result.rows && result.rows.length > 0) {
+          s.cache.set(0, result.rows[0].row);
+        }
+        found = true;
+        break;
+      }
+    } catch (e) {
+      // Try next candidate
+    }
+  }
+
+  s.loading = false;
+
+  if (found) {
+    const totalEl = document.getElementById(`${prefix}-total`);
+    if (totalEl) totalEl.textContent = s.total.toLocaleString();
+    await fetchAndRender(key, 0);
+  } else {
+    showCardUpload(card, prefix);
+  }
+}
+
+async function fetchAndRender(key, idx) {
+  const s = state[key];
+  if (idx < 0 || idx >= s.total) return;
+  s.idx = idx;
+
+  const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
+
+  // If local data loaded (from file upload)
+  if (s.localData) {
+    renderItemFromData(key, s.localData[idx]);
+    updateControls(key);
+    return;
+  }
+
+  // Check cache
+  if (s.cache.has(idx)) {
+    renderItemFromData(key, s.cache.get(idx));
+    updateControls(key);
+    // Prefetch next batch in background
+    prefetchBatch(key, idx + 1);
+    return;
+  }
+
+  // Fetch from HF
+  const card = document.getElementById(`${prefix}-card`);
+  showCardLoading(card, `Loading row ${idx + 1}...`);
+
+  try {
+    const batchStart = idx;
+    const batchLen = Math.min(BATCH_SIZE, s.total - batchStart);
+    const result = await hfFetchRows(s.hfConfig, s.hfSplit, batchStart, batchLen);
+
+    if (result.rows) {
+      for (let i = 0; i < result.rows.length; i++) {
+        s.cache.set(batchStart + i, result.rows[i].row);
+      }
+    }
+
+    if (s.cache.has(idx)) {
+      renderItemFromData(key, s.cache.get(idx));
+    }
+  } catch (e) {
+    card.innerHTML = `<div class="card-placeholder"><p style="color:#f85149">Failed to load: ${escapeHtml(e.message)}</p></div>`;
+  }
+
+  updateControls(key);
+}
+
+function prefetchBatch(key, startIdx) {
+  const s = state[key];
+  if (!s.hfSplit || startIdx >= s.total) return;
+  // Don't prefetch if already cached
+  if (s.cache.has(startIdx)) return;
+
+  const batchLen = Math.min(BATCH_SIZE, s.total - startIdx);
+  hfFetchRows(s.hfConfig, s.hfSplit, startIdx, batchLen)
+    .then(result => {
+      if (result.rows) {
+        for (let i = 0; i < result.rows.length; i++) {
+          s.cache.set(startIdx + i, result.rows[i].row);
+        }
+      }
+    })
+    .catch(() => { /* silent prefetch failure */ });
+}
+
+// ── Card helpers ─────────────────────────────────────────────────
+function showCardLoading(card, text) {
+  card.innerHTML = `<div class="card-placeholder"><div class="loading-spinner">${escapeHtml(text)}</div></div>`;
+}
+
+function showCardUpload(card, prefix) {
+  card.innerHTML = `
+    <div class="card-placeholder">
+      <p>Could not connect to HuggingFace. Upload file manually:</p>
+      <label class="btn btn-primary file-label">
+        Choose JSONL file
+        <input type="file" id="${prefix}-file-fallback" accept=".jsonl" hidden>
+      </label>
+      <p class="hint">Or drop a file anywhere on this page</p>
+    </div>`;
+  const input = document.getElementById(`${prefix}-file-fallback`);
+  if (input) {
+    input.addEventListener('change', (e) => {
+      readFile(e.target.files[0], prefix === 's1' ? 'stage1' : 'stage2', 'jsonl');
+    });
+  }
+}
+
+// ── File Loading (local fallback) ────────────────────────────────
 function parseJSONL(text) {
   const lines = text.trim().split('\n');
   const data = [];
@@ -48,16 +235,13 @@ function parseCSV(text) {
     if (inQuotes) {
       if (ch === '"') {
         if (i + 1 < text.length && text[i + 1] === '"') {
-          // Escaped quote ""
           field += '"';
           i += 2;
         } else {
-          // End of quoted field
           inQuotes = false;
           i++;
         }
       } else {
-        // Any char inside quotes (including newlines, commas)
         field += ch;
         i++;
       }
@@ -70,7 +254,6 @@ function parseCSV(text) {
         field = '';
         i++;
       } else if (ch === '\r' && i + 1 < text.length && text[i + 1] === '\n') {
-        // CRLF line ending
         row.push(field);
         field = '';
         rows.push(row);
@@ -88,13 +271,11 @@ function parseCSV(text) {
       }
     }
   }
-  // Push last field/row
   if (field || row.length > 0) {
     row.push(field);
     rows.push(row);
   }
 
-  // Remove trailing empty rows
   while (rows.length > 0 && rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === '') {
     rows.pop();
   }
@@ -104,7 +285,7 @@ function parseCSV(text) {
   const headers = rows[0];
   const data = [];
   for (let r = 1; r < rows.length; r++) {
-    if (rows[r].length === 1 && rows[r][0] === '') continue; // skip empty rows
+    if (rows[r].length === 1 && rows[r][0] === '') continue;
     const obj = {};
     headers.forEach((h, j) => { obj[h.trim()] = rows[r][j] != null ? rows[r][j] : ''; });
     data.push(obj);
@@ -112,13 +293,17 @@ function parseCSV(text) {
   return data;
 }
 
-function loadDataset(key, data) {
-  state[key].data = data;
-  state[key].idx = 0;
+function loadLocalDataset(key, data) {
+  const s = state[key];
+  s.localData = data;
+  s.total = data.length;
+  s.idx = 0;
+
   const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
-  const totalEl = document.getElementById(prefix === 'b' ? null : `${prefix}-total`);
+  const totalEl = document.getElementById(`${prefix}-total`);
   if (totalEl) totalEl.textContent = data.length.toLocaleString();
-  renderItem(key);
+
+  renderItemFromData(key, data[0]);
   updateControls(key);
 }
 
@@ -229,7 +414,7 @@ function renderDatasetItem(item) {
   if (item.messages) {
     html += '<div class="field-group">';
     html += '<div class="field-label">Messages / TIR Trace</div>';
-    html += `<div class="field-value">${renderMessages(item.messages)}</div>`;
+    html += `<div class="field-value messages-field">${renderMessages(item.messages)}</div>`;
     html += '</div>';
   }
 
@@ -287,13 +472,11 @@ function renderBenchItem(item) {
   // Problem + Original Problem side by side
   html += '<div class="bench-field-row">';
 
-  // Problem (transformed)
   html += '<div class="field-group">';
   html += '<div class="field-label">Problem</div>';
   html += `<div class="field-value question-text">${escapeHtml(item.problem || '')}</div>`;
   html += '</div>';
 
-  // Original Problem
   html += '<div class="field-group">';
   html += '<div class="field-label">Original Problem</div>';
   html += `<div class="field-value question-text">${escapeHtml(item.original_problem || '')}</div>`;
@@ -319,14 +502,11 @@ function renderBenchItem(item) {
   return html;
 }
 
-function renderItem(key) {
-  const s = state[key];
+function renderItemFromData(key, item) {
   const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
   const card = document.getElementById(`${prefix}-card`);
+  if (!item) { card.innerHTML = '<div class="card-placeholder"><p>No data</p></div>'; return; }
 
-  if (s.data.length === 0) return;
-
-  const item = s.data[s.idx];
   let html;
   if (key === 'bench') {
     html = renderBenchItem(item);
@@ -334,8 +514,6 @@ function renderItem(key) {
     html = renderDatasetItem(item);
   }
   card.innerHTML = html;
-
-  // Render math after DOM update
   requestAnimationFrame(() => renderMath(card));
 }
 
@@ -344,9 +522,9 @@ function updateControls(key) {
   const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
 
   document.getElementById(`${prefix}-counter`).textContent =
-    s.data.length > 0 ? `${s.idx + 1} / ${s.data.length.toLocaleString()}` : '0 / 0';
+    s.total > 0 ? `${s.idx + 1} / ${s.total.toLocaleString()}` : '0 / 0';
   document.getElementById(`${prefix}-prev`).disabled = s.idx <= 0;
-  document.getElementById(`${prefix}-next`).disabled = s.idx >= s.data.length - 1;
+  document.getElementById(`${prefix}-next`).disabled = s.idx >= s.total - 1;
 }
 
 // ── Reasoning toggle ─────────────────────────────────────────────
@@ -359,21 +537,42 @@ window.toggleReasoning = function(id) {
   }
 };
 
+// ── Navigation helpers ───────────────────────────────────────────
+function goToIndex(key, idx) {
+  const s = state[key];
+  if (idx < 0 || idx >= s.total) return;
+
+  if (s.localData) {
+    s.idx = idx;
+    renderItemFromData(key, s.localData[idx]);
+    updateControls(key);
+  } else if (s.hfSplit) {
+    fetchAndRender(key, idx);
+  } else if (key === 'bench') {
+    // bench with local CSV
+    s.idx = idx;
+    if (s.cache.has(idx)) {
+      renderItemFromData(key, s.cache.get(idx));
+    }
+    updateControls(key);
+  }
+}
+
 // ── Wire up controls ─────────────────────────────────────────────
 function setupControls(key) {
   const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
 
   document.getElementById(`${prefix}-prev`).addEventListener('click', () => {
-    if (state[key].idx > 0) { state[key].idx--; renderItem(key); updateControls(key); }
+    goToIndex(key, state[key].idx - 1);
   });
   document.getElementById(`${prefix}-next`).addEventListener('click', () => {
-    if (state[key].idx < state[key].data.length - 1) { state[key].idx++; renderItem(key); updateControls(key); }
+    goToIndex(key, state[key].idx + 1);
   });
   document.getElementById(`${prefix}-go`).addEventListener('click', () => {
     const input = document.getElementById(`${prefix}-jump`);
     const val = parseInt(input.value, 10);
-    if (val >= 1 && val <= state[key].data.length) {
-      state[key].idx = val - 1; renderItem(key); updateControls(key);
+    if (val >= 1 && val <= state[key].total) {
+      goToIndex(key, val - 1);
     }
     input.value = '';
   });
@@ -385,7 +584,7 @@ setupControls('stage1');
 setupControls('stage2');
 setupControls('bench');
 
-// ── File inputs ──────────────────────────────────────────────────
+// ── File inputs (fallback) ───────────────────────────────────────
 document.getElementById('s1-file').addEventListener('change', (e) => {
   readFile(e.target.files[0], 'stage1', 'jsonl');
 });
@@ -407,7 +606,7 @@ function readFile(file, key, format) {
     } else {
       data = parseJSONL(text);
     }
-    loadDataset(key, data);
+    loadLocalDataset(key, data);
   };
   reader.readAsText(file);
 }
@@ -430,7 +629,6 @@ document.addEventListener('drop', (e) => {
   if (!file) return;
 
   const name = file.name.toLowerCase();
-  // Auto-detect which dataset based on filename
   if (name.includes('bench') || name.endsWith('.csv')) {
     readFile(file, 'bench', 'csv');
     location.hash = 'bench';
@@ -451,7 +649,6 @@ document.addEventListener('drop', (e) => {
     if (loadingEl) loadingEl.textContent = 'Could not auto-load. Please upload:';
   }
 
-  // fetch doesn't work with file:// protocol
   if (location.protocol === 'file:') { showUploadFallback(); return; }
 
   fetch('astral-bench.csv')
@@ -459,7 +656,7 @@ document.addEventListener('drop', (e) => {
     .then(text => {
       const data = parseCSV(text);
       if (data.length > 0) {
-        loadDataset('bench', data);
+        loadLocalDataset('bench', data);
       } else {
         showUploadFallback();
       }
@@ -472,11 +669,10 @@ document.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT') return;
   const hash = location.hash.replace('#', '') || 'stage1';
   const key = hash === 'bench' ? 'bench' : hash;
-  const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
 
   if (e.key === 'ArrowLeft' || e.key === 'a') {
-    document.getElementById(`${prefix}-prev`).click();
+    goToIndex(key, state[key].idx - 1);
   } else if (e.key === 'ArrowRight' || e.key === 'd') {
-    document.getElementById(`${prefix}-next`).click();
+    goToIndex(key, state[key].idx + 1);
   }
 });
