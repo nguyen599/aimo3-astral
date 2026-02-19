@@ -292,6 +292,134 @@ body {
   .bench-field-row { grid-template-columns: 1fr; }
 }
 
+/* ── Overview page ────────────────────────────────────────────── */
+.overview-content {
+  max-width: 1000px; margin: 0 auto;
+}
+.overview-section {
+  margin-bottom: 2.5rem;
+}
+.overview-section h2 {
+  font-size: 1.25rem; font-weight: 700; color: var(--text-heading);
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--accent);
+  display: inline-block;
+}
+.overview-text {
+  color: var(--text-primary); font-size: 0.92rem; line-height: 1.7;
+  margin-bottom: 1rem;
+}
+.overview-note {
+  color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;
+  margin-top: 0.6rem;
+}
+
+/* Overview key-value table */
+.overview-table {
+  width: 100%; border-collapse: collapse; font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+.overview-table th, .overview-table td {
+  padding: 0.55rem 1rem; border: 1px solid var(--border);
+  text-align: left;
+}
+.overview-table th {
+  background: var(--bg-nav); color: var(--text-heading);
+  font-weight: 600; font-size: 0.85rem;
+}
+.overview-table td { color: var(--text-primary); }
+.overview-table .ot-key {
+  font-weight: 600; color: var(--text-heading);
+  white-space: nowrap; width: 140px;
+  background: var(--bg-field);
+}
+.source-table td:nth-child(2),
+.source-table td:nth-child(3),
+.source-table td:nth-child(4),
+.source-table th:nth-child(2),
+.source-table th:nth-child(3),
+.source-table th:nth-child(4) {
+  text-align: right;
+}
+.total-row td {
+  border-top: 2px solid var(--accent); background: var(--bg-field);
+}
+
+/* Pipeline steps */
+.pipeline-steps {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  margin: 1rem 0;
+}
+.pipe-step {
+  display: flex; align-items: baseline; gap: 0.6rem;
+  padding: 0.5rem 0.8rem; border-radius: 6px;
+  background: var(--bg-field); border: 1px solid var(--border-light);
+  font-size: 0.88rem; color: var(--text-primary); line-height: 1.5;
+}
+.pipe-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
+}
+.pipe-label {
+  font-weight: 600; color: var(--text-heading);
+  white-space: nowrap; margin-right: 0.3rem;
+}
+
+/* Transform cards */
+.transform-grid, .novel-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  margin: 1rem 0;
+}
+.transform-card, .novel-card {
+  padding: 1rem 1.2rem; border-radius: 8px;
+  background: var(--bg-field); border: 1px solid var(--border-light);
+}
+.transform-card h3, .novel-card h3 {
+  font-size: 0.92rem; font-weight: 700; color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.transform-card p, .novel-card p {
+  font-size: 0.85rem; line-height: 1.55; color: var(--text-primary);
+}
+
+/* Image row */
+.image-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  margin: 1rem 0;
+}
+.image-card {
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  background: var(--bg-card);
+}
+.image-card img {
+  width: 100%; display: block;
+}
+.image-caption {
+  padding: 0.8rem 1rem;
+  font-size: 0.83rem; line-height: 1.55;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-light);
+}
+
+/* Findings list */
+.findings-list {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+.finding-item {
+  padding: 0.6rem 1rem; padding-left: 1.2rem;
+  border-left: 3px solid var(--accent);
+  background: var(--bg-field); border-radius: 0 6px 6px 0;
+  font-size: 0.88rem; line-height: 1.55; color: var(--text-primary);
+}
+
+@media (max-width: 700px) {
+  .transform-grid, .novel-grid, .image-row { grid-template-columns: 1fr; }
+}
+
 /* ── Footer ───────────────────────────────────────────────────── */
 .footer {
   text-align: center; padding: 2rem 1rem;
@@ -310,6 +438,106 @@ body.drag-over::after {
   font-size: 1.4rem; color: var(--accent); font-weight: 600;
   pointer-events: none;
 }
+
+/* ── Table of Contents ────────────────────────────────────────── */
+.toc {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
+  padding: 0.7rem 1rem; margin-bottom: 2rem;
+  background: var(--bg-field); border: 1px solid var(--border-light); border-radius: 8px;
+}
+.toc-label {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--text-secondary); margin-right: 0.3rem;
+}
+.toc-link {
+  font-size: 0.82rem; color: var(--accent); text-decoration: none;
+  padding: 0.2rem 0.55rem; border-radius: 4px;
+  transition: background 0.15s;
+}
+.toc-link:hover { background: var(--accent-light); }
+.toc-link::before { content: "·"; margin-right: 0.1rem; color: var(--text-muted); }
+.toc-link:first-of-type::before { content: ""; margin-right: 0; }
+
+/* ── Filter row ──────────────────────────────────────────────── */
+.filter-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.6rem; margin-bottom: 0.5rem; flex-wrap: wrap;
+}
+.filter-label {
+  font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);
+}
+.filter-select {
+  padding: 0.3rem 0.6rem; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--bg-input); color: var(--text-primary);
+  font-size: 0.82rem; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.filter-select:hover { border-color: var(--accent); }
+.filter-select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+.filter-count {
+  font-size: 0.78rem; color: var(--text-muted); font-style: italic;
+}
+
+/* ── Mini stats bar ──────────────────────────────────────────── */
+.mini-stats {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem;
+  margin-bottom: 0.6rem; min-height: 0;
+}
+.mini-stat {
+  display: inline-flex; align-items: center; gap: 0.25rem;
+  padding: 0.15rem 0.55rem; border-radius: 12px;
+  font-size: 0.72rem; background: var(--bg-pill); border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+}
+.mini-stat-val { font-weight: 700; color: var(--accent); }
+
+/* ── Collapsible tool output ─────────────────────────────────── */
+.tool-output-wrapper { position: relative; }
+.tool-output-collapsed {
+  max-height: 120px; overflow: hidden;
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+.tool-output-toggle {
+  display: block; text-align: center; cursor: pointer;
+  font-size: 0.75rem; color: var(--accent); padding: 0.3rem 0;
+  border: none; background: none; width: 100%;
+}
+.tool-output-toggle:hover { text-decoration: underline; }
+
+/* ── Prism.js overrides ──────────────────────────────────────── */
+.tool-code {
+  background: var(--bg-code); padding: 0.6rem; border-radius: 4px;
+  font-family: "Fira Code", "Cascadia Code", "Consolas", monospace;
+  font-size: 0.8rem; overflow-x: auto; margin: 0;
+}
+.tool-code code[class*="language-"],
+.tool-code[class*="language-"] {
+  background: none !important;
+  text-shadow: none !important;
+  font-size: 0.8rem;
+}
+/* Light theme: high-contrast VS Code-inspired colors */
+:root .tool-code code[class*="language-"],
+:root .tool-code { color: #1f2937 !important; }
+:root .tool-code .token.comment,
+:root .tool-code .token.prolog,
+:root .tool-code .token.doctype { color: #6a737d; font-style: italic; }
+:root .tool-code .token.keyword,
+:root .tool-code .token.tag { color: #d73a49; }
+:root .tool-code .token.string,
+:root .tool-code .token.attr-value { color: #032f62; }
+:root .tool-code .token.number,
+:root .tool-code .token.boolean { color: #005cc5; }
+:root .tool-code .token.function { color: #6f42c1; }
+:root .tool-code .token.builtin,
+:root .tool-code .token.class-name { color: #e36209; }
+:root .tool-code .token.operator,
+:root .tool-code .token.punctuation { color: #24292e; }
+:root .tool-code .token.decorator,
+:root .tool-code .token.annotation { color: #6f42c1; }
+:root .tool-code .token.triple-quoted-string { color: #032f62; }
+/* Dark theme: keep prism-tomorrow defaults (bright on dark) */
 
 /* ── Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }

@@ -4,10 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AstralMath-v1</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭐</text></svg>">
+<meta property="og:title" content="AstralMath-v1">
+<meta property="og:description" content="251,975 Tool-Integrated Reasoning traces for mathematical problem solving — SFT and RL training for AIMO3">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2Fbb3603f2acea4d8f987103147fbf04b6%2Ftoken_length_distribution_st1.png?generation=1771184289728188&alt=media">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AstralMath-v1">
+<meta name="twitter:description" content="251,975 Tool-Integrated Reasoning traces for mathematical problem solving — SFT and RL training for AIMO3">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
 </head>
 <body>
 
@@ -16,12 +27,219 @@
     <span class="nav-logo">&#9733;</span> AstralMath-v1
   </div>
   <div class="nav-links">
+    <a href="#overview" class="nav-link" data-page="overview">Overview</a>
     <a href="#stage1" class="nav-link" data-page="stage1">Stage 1</a>
     <a href="#stage2" class="nav-link" data-page="stage2">Stage 2</a>
     <a href="#bench" class="nav-link" data-page="bench">AstralBench</a>
     <button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode">&#9790;</button>
   </div>
 </nav>
+
+<!-- Overview Page -->
+<div id="page-overview" class="page">
+  <div class="page-header">
+    <h1>AstralMath-v1</h1>
+    <p class="subtitle">A large-scale Tool-Integrated Reasoning (TIR) dataset for mathematical problem solving, designed for SFT and RL training targeting competitive mathematics (AIMO3).</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val">251,975</span><span class="stat-label">Datapoints</span></div>
+      <div class="stat"><span class="stat-val">136,151</span><span class="stat-label">Unique Questions</span></div>
+      <div class="stat"><span class="stat-val">5</span><span class="stat-label">Models</span></div>
+      <div class="stat"><span class="stat-val">50</span><span class="stat-label">Benchmark Problems</span></div>
+    </div>
+  </div>
+
+  <div class="overview-content">
+
+    <!-- Table of Contents -->
+    <nav class="toc">
+      <span class="toc-label">Contents</span>
+      <a href="#glance" class="toc-link">At a Glance</a>
+      <a href="#sources" class="toc-link">Data Sources</a>
+      <a href="#filtering" class="toc-link">Filtering</a>
+      <a href="#transforms" class="toc-link">Transforms</a>
+      <a href="#generation" class="toc-link">Generation</a>
+      <a href="#tokens" class="toc-link">Token Length</a>
+      <a href="#topics" class="toc-link">Topics</a>
+      <a href="#training" class="toc-link">Training</a>
+      <a href="#novel" class="toc-link">Novel</a>
+      <a href="#findings" class="toc-link">Findings</a>
+    </nav>
+
+    <!-- Key Properties -->
+    <section class="overview-section" id="glance">
+      <h2>Dataset at a Glance</h2>
+      <table class="overview-table">
+        <tbody>
+          <tr><td class="ot-key">Models</td><td>DeepSeek-V3.2, GPT-OSS-120B, Step-3.5-Flash, GLM-5, Kimi-K2.5</td></tr>
+          <tr><td class="ot-key">Answer Format</td><td>Cleaned verifiable numeric answers, integers in [0, 99999]</td></tr>
+          <tr><td class="ot-key">File Format</td><td>JSONL (training) / CSV (benchmark)</td></tr>
+          <tr><td class="ot-key">Stage 1</td><td>247,030 TIR traces &mdash; SFT training or RL warmup</td></tr>
+          <tr><td class="ot-key">Stage 2</td><td>4,945 TIR traces from 3,304 hardest questions &mdash; RL finetuning</td></tr>
+        </tbody>
+      </table>
+      <p class="overview-note">Each unique question is solved independently by multiple frontier models, producing diverse solution trajectories for the same problem.</p>
+    </section>
+
+    <!-- Data Sources -->
+    <section class="overview-section" id="sources">
+      <h2>Data Sources</h2>
+      <p class="overview-text">AstralMath-v1 is built from curated questions across multiple high-quality mathematical datasets, deduplicated to remove overlapping problems. A significant portion is synthetically transformed into AIMO3-competition-style questions.</p>
+      <table class="overview-table source-table">
+        <thead><tr><th>Source</th><th>Selected</th><th>Transformed</th><th>Share</th></tr></thead>
+        <tbody>
+          <tr><td>Nemotron-Math-v2</td><td>89,344</td><td>70,596</td><td>51.9%</td></tr>
+          <tr><td>AI-MO/NuminaMath-1.5</td><td>28,363</td><td>0</td><td>20.8%</td></tr>
+          <tr><td>ScaleQuest-Math</td><td>10,139</td><td>0</td><td>7.4%</td></tr>
+          <tr><td>DeepScaleR-Preview-Dataset</td><td>7,580</td><td>7,580</td><td>5.0%</td></tr>
+          <tr><td>DeepMath-103K</td><td>540</td><td>540</td><td>0.4%</td></tr>
+          <tr><td>Project Euler</td><td>199</td><td>0</td><td>0.2%</td></tr>
+          <tr><td>IMO AnswerBench</td><td>24</td><td>0</td><td>&mdash;</td></tr>
+          <tr class="total-row"><td><strong>Total</strong></td><td><strong>136,151</strong></td><td><strong>78,716</strong></td><td><strong>100%</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="overview-note">Nemotron-Math-v2 is the largest contributor, with over half the questions undergoing AIMO3-style transformation. NuminaMath and ScaleQuest provide diverse untransformed problems from competition archives.</p>
+    </section>
+
+    <!-- Filtering Pipeline -->
+    <section class="overview-section" id="filtering">
+      <h2>Multi-Stage Filtering Pipeline</h2>
+      <p class="overview-text">We apply aggressive filtering to retain only challenging, well-formed problems:</p>
+      <div class="pipeline-steps">
+        <div class="pipe-step"><span class="pipe-num">1</span><span class="pipe-label">Question length</span> Only select if question &gt; 100 chars and &lt; 50 lines</div>
+        <div class="pipe-step"><span class="pipe-num">2</span><span class="pipe-label">Contains image</span> Remove if contains both "![]" and "figure"</div>
+        <div class="pipe-step"><span class="pipe-num">3</span><span class="pipe-label">Trivial answer</span> Remove any question with answer in [0, 1]</div>
+        <div class="pipe-step"><span class="pipe-num">4</span><span class="pipe-label">Multiple choice</span> Remove if contains MC patterns like "\nA. ", "\nB. "</div>
+        <div class="pipe-step"><span class="pipe-num">5</span><span class="pipe-label">Double question</span> Remove questions containing two unrelated questions (detected via LLM)</div>
+        <div class="pipe-step"><span class="pipe-num">6</span><span class="pipe-label">Pre-Filter 1</span> Filter by LLM solution metadata (solution length, pass rate)</div>
+        <div class="pipe-step"><span class="pipe-num">7</span><span class="pipe-label">Deduplication</span> Deduplicate across all sources using minhash + LSH</div>
+        <div class="pipe-step"><span class="pipe-num">8</span><span class="pipe-label">Pre-Filter 2</span> Remove easy questions that gpt-oss-120b solves in 1 try (no tool, 28k tokens)</div>
+        <div class="pipe-step"><span class="pipe-num">9</span><span class="pipe-label">AIMO3 Transform</span> Synthetic transforms with 12-run consensus verification</div>
+      </div>
+    </section>
+
+    <!-- Synthetic Transforms -->
+    <section class="overview-section" id="transforms">
+      <h2>Synthetic AIMO3-Style Transforms</h2>
+      <p class="overview-text">A key differentiator: existing math problems are rewritten into AIMO3-competition-style questions. All transformed answers are integers in [0, 99999].</p>
+      <div class="transform-grid">
+        <div class="transform-card">
+          <h3>Modular Arithmetic</h3>
+          <p>"Find X" &rarr; "Find the remainder when X is divided by M"<br><span class="overview-note">M randomly selected from primes/powers: 99991, 10^5, 5^7, 77781, etc.</span></p>
+        </div>
+        <div class="transform-card">
+          <h3>Power Transforms</h3>
+          <p>For small answers k &le; 10: "Find base^k mod M"<br><span class="overview-note">base randomly from [2,7]. For k in (10,20] only base 2 or 3.</span></p>
+        </div>
+        <div class="transform-card">
+          <h3>Answer-Power Transforms</h3>
+          <p>For answers 20 &lt; k &le; 50: "Find k^n mod M"<br><span class="overview-note">n randomly from [2,6].</span></p>
+        </div>
+        <div class="transform-card">
+          <h3>Symbol Substitution</h3>
+          <p>Replace numeric parameters with algebraic symbols for parametric variants.</p>
+        </div>
+      </div>
+      <p class="overview-note">Each transformation is verified through <strong>12-run consensus</strong>: the same prompt with fixed random parameters is sent to gpt-oss-120b 12 times, and the result is only accepted if all runs return the identical answer.</p>
+    </section>
+
+    <!-- Model Generation Stats -->
+    <section class="overview-section" id="generation">
+      <h2>Reasoning Trace Generation</h2>
+      <p class="overview-text">Solutions are generated using 5 frontier models in a Kaggle-identical Docker environment. After the first correct solution, improvement iterations produce shorter solutions with less total tool run time.</p>
+      <table class="overview-table source-table">
+        <thead><tr><th>Model</th><th>Datapoints</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>DeepSeek-V3.2</td><td>116,719</td><td>Tends to write longer code with longer execution time</td></tr>
+          <tr><td>Step-3.5-Flash</td><td>74,248</td><td>Always writes very long reasoning text before code</td></tr>
+          <tr><td>GPT-OSS-120B</td><td>49,046</td><td></td></tr>
+          <tr><td>GLM-5</td><td>+2,634</td><td>Added after deadline</td></tr>
+          <tr><td>Kimi-K2.5</td><td>+9,367</td><td>Added after deadline</td></tr>
+          <tr class="total-row"><td><strong>Total</strong></td><td><strong>251,975</strong></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Token Length Distribution -->
+    <section class="overview-section" id="tokens">
+      <h2>Token Length Distribution</h2>
+      <p class="overview-text">Token length distribution between Stage 1 and Stage 2 (estimated using gpt-oss-120b harmony encoding). Stage 2 contains the hardest questions, resulting in longer and more complex solution traces.</p>
+      <div class="image-row">
+        <div class="image-card">
+          <img src="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2Fbb3603f2acea4d8f987103147fbf04b6%2Ftoken_length_distribution_st1.png?generation=1771184289728188&alt=media" alt="Stage 1 token length distribution">
+          <p class="image-caption">Stage 1 &mdash; Majority of traces are under 10k tokens, with a long tail of complex problems reaching 40k+. The distribution shows a healthy spread across difficulty levels.</p>
+        </div>
+        <div class="image-card">
+          <img src="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2F65116797849e7797c931541d4651abf0%2Ftoken_length_distribution_st2.png?generation=1771184432455164&alt=media" alt="Stage 2 token length distribution">
+          <p class="image-caption">Stage 2 &mdash; Shifted right compared to Stage 1, reflecting the higher difficulty. These are the hardest questions that require extended multi-step reasoning and multiple tool calls.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Topic Distribution -->
+    <section class="overview-section" id="topics">
+      <h2>Topic Distribution</h2>
+      <p class="overview-text">Topic distribution comparison between the full AstralMath-v1 dataset and the AstralBench benchmark subset.</p>
+      <div class="image-row">
+        <div class="image-card">
+          <img src="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2F14236485fc5d01d744307394070cc3e3%2FScreenshot_20260216_023111_50.png?generation=1771184502604250&alt=media" alt="AstralMath-v1 topic distribution">
+          <p class="image-caption">AstralMath-v1 &mdash; Broad coverage across algebra, number theory, combinatorics, geometry, and analysis. The hierarchical topic classification supports fine-grained curriculum design.</p>
+        </div>
+        <div class="image-card">
+          <img src="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2F4b4ad69bff6227e1c7554c645ee09225%2FScreenshot_20260216_023451.png?generation=1771184540030770&alt=media" alt="AstralBench topic distribution">
+          <p class="image-caption">AstralBench &mdash; 50 curated problems spanning the hardest topics. Selected from IMOBench and Project Euler with current model accuracy between 5-30%.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Training Results -->
+    <section class="overview-section" id="training">
+      <h2>Training Results</h2>
+      <p class="overview-text">We validated AstralMath-v1 by fine-tuning Qwen3-4B using supervised fine-tuning (SFT):</p>
+      <table class="overview-table source-table">
+        <thead><tr><th>Model</th><th>Before</th><th>After</th><th>Setting</th></tr></thead>
+        <tbody>
+          <tr><td>Qwen/Qwen3-4B-Thinking-2507</td><td>0</td><td>22</td><td>1050 SFT steps, max length 40960, batch size 8, ~11h on 1x H100</td></tr>
+          <tr><td colspan="4" style="text-align:center;color:var(--text-secondary);font-style:italic">More results coming soon</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- What Makes It Novel -->
+    <section class="overview-section" id="novel">
+      <h2>What Makes It Novel</h2>
+      <div class="novel-grid">
+        <div class="novel-card">
+          <h3>Multi-Model TIR Solutions</h3>
+          <p>Each question is solved independently by multiple frontier models, capturing diverse reasoning strategies and code patterns. This is not a single-model distillation dataset.</p>
+        </div>
+        <div class="novel-card">
+          <h3>Consensus-Verified Transforms</h3>
+          <p>AIMO3-style transformations are validated through 12-run consensus, ensuring all transformed answers are computationally correct &mdash; not just plausible.</p>
+        </div>
+        <div class="novel-card">
+          <h3>Rich Per-Datapoint Metadata</h3>
+          <p>Every solution carries detailed metadata: generation config, execution timing, quality metrics &mdash; enabling difficulty-aware curriculum learning.</p>
+        </div>
+        <div class="novel-card">
+          <h3>Execution Environment Parity</h3>
+          <p>Solutions generated and verified in a Kaggle-identical Docker environment, ensuring code execution compatibility at competition time.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experiment Findings -->
+    <section class="overview-section" id="findings">
+      <h2>Findings from Experiments</h2>
+      <div class="findings-list">
+        <div class="finding-item">DeepSeek-V3.2 usually writes longer code with longer execution time.</div>
+        <div class="finding-item">Step-3.5-Flash always writes very long reasoning text before code.</div>
+        <div class="finding-item">Training on variants of problems (e.g., different moduli, different parameters) improves solve rates on the original problems, even when the original answer never appears in the training corpus.</div>
+        <div class="finding-item">Difficulty-aware selection matters: training on a curated hard subset can match or exceed full-dataset training.</div>
+      </div>
+    </section>
+
+  </div>
+</div>
 
 <!-- Stage 1 Page -->
 <div id="page-stage1" class="page">
@@ -34,6 +252,13 @@
       <div class="stat"><span class="stat-val" id="s1-format">JSONL</span><span class="stat-label">Format</span></div>
     </div>
   </div>
+  <div class="filter-row" id="s1-filters">
+    <label class="filter-label">Filter:</label>
+    <select class="filter-select" id="s1-filter-model"><option value="">All Models</option></select>
+    <select class="filter-select" id="s1-filter-source"><option value="">All Sources</option></select>
+    <span class="filter-count" id="s1-filter-count"></span>
+  </div>
+  <div class="mini-stats" id="s1-mini-stats"></div>
   <div class="viewer-controls">
     <button class="btn" id="s1-prev" disabled>&larr; Previous</button>
     <span class="counter" id="s1-counter">0 / 0</span>
@@ -65,6 +290,13 @@
       <div class="stat"><span class="stat-val" id="s2-format">JSONL</span><span class="stat-label">Format</span></div>
     </div>
   </div>
+  <div class="filter-row" id="s2-filters">
+    <label class="filter-label">Filter:</label>
+    <select class="filter-select" id="s2-filter-model"><option value="">All Models</option></select>
+    <select class="filter-select" id="s2-filter-source"><option value="">All Sources</option></select>
+    <span class="filter-count" id="s2-filter-count"></span>
+  </div>
+  <div class="mini-stats" id="s2-mini-stats"></div>
   <div class="viewer-controls">
     <button class="btn" id="s2-prev" disabled>&larr; Previous</button>
     <span class="counter" id="s2-counter">0 / 0</span>

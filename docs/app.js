@@ -50,10 +50,23 @@ const state = {
   bench:  { cache: new Map(), idx: 0, total: 0, localData: null, loading: false },
 };
 
+const KNOWN_MODELS = [
+  'zai-org/GLM-5',
+  'moonshotai/Kimi-K2.5',
+];
+
+const statsTracker = {
+  stage1: { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
+  stage2: { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
+};
+
 // ── Routing ──────────────────────────────────────────────────────
 function navigate() {
-  const hash = location.hash.replace('#', '') || 'stage1';
-  const page = ['stage1', 'stage2', 'bench'].includes(hash) ? hash : 'stage1';
+  const raw = location.hash.replace('#', '') || 'overview';
+  // Support shareable URLs like #stage1/42
+  const parts = raw.split('/');
+  const page = ['overview', 'stage1', 'stage2', 'bench'].includes(parts[0]) ? parts[0] : 'overview';
+  const urlIdx = parts[1] ? parseInt(parts[1], 10) - 1 : null;
 
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -64,12 +77,36 @@ function navigate() {
 
   // Auto-init HF streaming when navigating to a stage page
   if ((page === 'stage1' || page === 'stage2') && !state[page].localData && !state[page].hfSplit) {
-    initHFStream(page);
+    initHFStream(page).then(() => {
+      if (urlIdx !== null && urlIdx >= 0 && urlIdx < state[page].total) {
+        goToIndex(page, urlIdx);
+      }
+    });
+  } else if ((page === 'stage1' || page === 'stage2') && urlIdx !== null && urlIdx >= 0) {
+    goToIndex(page, urlIdx);
   }
 
   // Auto-load bench CSV when navigating to bench page
   if (page === 'bench' && !state.bench.localData && !state.bench.loading) {
     loadBenchCSV();
+  } else if (page === 'bench' && urlIdx !== null && urlIdx >= 0) {
+    goToIndex('bench', urlIdx);
+  }
+
+  // Render math on overview page
+  if (page === 'overview') {
+    requestAnimationFrame(() => {
+      const el = document.getElementById('page-overview');
+      if (el && typeof renderMathInElement === 'function') {
+        renderMathInElement(el, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false },
+          ],
+          throwOnError: false,
+        });
+      }
+    });
   }
 }
 window.addEventListener('hashchange', navigate);
@@ -159,7 +196,18 @@ async function fetchAndRender(key, idx) {
 
     if (result.rows) {
       for (let i = 0; i < result.rows.length; i++) {
-        s.cache.set(batchStart + i, result.rows[i].row);
+        const row = result.rows[i].row;
+        s.cache.set(batchStart + i, row);
+        // Track stats for filter population
+        if (key !== 'bench' && statsTracker[key]) {
+          const t = statsTracker[key];
+          if (row.model) t.models[row.model] = (t.models[row.model] || 0) + 1;
+          if (row.source) t.sources[row.source] = (t.sources[row.source] || 0) + 1;
+        }
+      }
+      if (key !== 'bench') {
+        updateFilterOptions(key);
+        updateMiniStats(key);
       }
     }
 
@@ -184,7 +232,18 @@ function prefetchBatch(key, startIdx) {
     .then(result => {
       if (result.rows) {
         for (let i = 0; i < result.rows.length; i++) {
-          s.cache.set(startIdx + i, result.rows[i].row);
+          const row = result.rows[i].row;
+          s.cache.set(startIdx + i, row);
+          // Track stats for filter population
+          if (key !== 'bench' && statsTracker[key]) {
+            const t = statsTracker[key];
+            if (row.model) t.models[row.model] = (t.models[row.model] || 0) + 1;
+            if (row.source) t.sources[row.source] = (t.sources[row.source] || 0) + 1;
+          }
+        }
+        if (key !== 'bench') {
+          updateFilterOptions(key);
+          updateMiniStats(key);
         }
       }
     })
@@ -308,6 +367,17 @@ function loadLocalDataset(key, data) {
   const totalEl = document.getElementById(`${prefix}-total`);
   if (totalEl) totalEl.textContent = data.length.toLocaleString();
 
+  // Bulk-track stats for local data so filters populate immediately
+  if (key !== 'bench' && typeof statsTracker !== 'undefined' && statsTracker[key]) {
+    const t = statsTracker[key];
+    for (const item of data) {
+      if (item.model) t.models[item.model] = (t.models[item.model] || 0) + 1;
+      if (item.source) t.sources[item.source] = (t.sources[item.source] || 0) + 1;
+    }
+    updateFilterOptions(key);
+    updateMiniStats(key);
+  }
+
   renderItemFromData(key, data[0]);
   updateControls(key);
 }
@@ -357,12 +427,14 @@ function renderMessages(messages) {
       for (const tc of msg.tool_calls) {
         const fname = tc.function?.name || 'tool';
         let args = tc.function?.arguments || '';
+        let isPython = false;
         // Parse JSON string args and pretty-print code fields
         if (typeof args === 'string') {
           try {
             const parsed = JSON.parse(args);
             if (parsed && typeof parsed.code === 'string') {
               args = parsed.code;
+              isPython = true;
             } else {
               args = JSON.stringify(parsed, null, 2);
             }
@@ -370,19 +442,33 @@ function renderMessages(messages) {
         } else if (typeof args === 'object') {
           if (typeof args.code === 'string') {
             args = args.code;
+            isPython = true;
           } else {
             args = JSON.stringify(args, null, 2);
           }
         }
         html += `<div style="margin-top:0.3rem"><span style="color:#f5a623;font-size:0.75rem">${escapeHtml(fname)}()</span></div>`;
-        html += `<div class="tool-code">${escapeHtml(args)}</div>`;
+        if (isPython) {
+          html += `<pre class="tool-code"><code class="language-python">${escapeHtml(args)}</code></pre>`;
+        } else {
+          html += `<div class="tool-code">${escapeHtml(args)}</div>`;
+        }
       }
     }
 
-    // Content
+    // Content - collapsible for tool messages with long output
     if (msg.content && !(typeof msg.content === 'string' && msg.content.trim() === '')) {
       const text = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content, null, 2);
-      html += `<div style="margin-top:0.2rem">${escapeHtml(text)}</div>`;
+      const isLongTool = role === 'tool' && text.length > 600;
+      if (isLongTool) {
+        const tid = 'to_' + Math.random().toString(36).slice(2, 10);
+        html += `<div class="tool-output-wrapper">`;
+        html += `<div class="tool-output-collapsed" id="${tid}" style="margin-top:0.2rem">${escapeHtml(text)}</div>`;
+        html += `<button class="tool-output-toggle" onclick="toggleToolOutput('${tid}')">Show full output</button>`;
+        html += `</div>`;
+      } else {
+        html += `<div style="margin-top:0.2rem">${escapeHtml(text)}</div>`;
+      }
     }
 
     html += '</div>';
@@ -533,7 +619,16 @@ function renderItemFromData(key, item) {
     html = renderDatasetItem(item);
   }
   card.innerHTML = html;
-  requestAnimationFrame(() => renderMath(card));
+  requestAnimationFrame(() => {
+    renderMath(card);
+    // Syntax highlighting for Python code blocks
+    if (typeof Prism !== 'undefined') {
+      Prism.highlightAllUnder(card);
+    }
+  });
+
+  // Track stats for filters + mini-bar
+  if (key !== 'bench') trackItemStats(key, item);
 }
 
 function updateControls(key) {
@@ -556,10 +651,27 @@ window.toggleReasoning = function(id) {
   }
 };
 
+// ── Tool output toggle (collapsible) ─────────────────────────────
+window.toggleToolOutput = function(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    const isCollapsed = el.classList.contains('tool-output-collapsed');
+    el.classList.toggle('tool-output-collapsed');
+    const btn = el.parentElement.querySelector('.tool-output-toggle');
+    if (btn) btn.textContent = isCollapsed ? 'Collapse output' : 'Show full output';
+  }
+};
+
 // ── Navigation helpers ───────────────────────────────────────────
 function goToIndex(key, idx) {
   const s = state[key];
   if (idx < 0 || idx >= s.total) return;
+
+  // Update shareable URL (without triggering hashchange)
+  const newHash = `#${key}/${idx + 1}`;
+  if (location.hash !== newHash) {
+    history.replaceState(null, '', newHash);
+  }
 
   if (s.localData) {
     s.idx = idx;
@@ -582,10 +694,12 @@ function setupControls(key) {
   const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
 
   document.getElementById(`${prefix}-prev`).addEventListener('click', () => {
-    goToIndex(key, state[key].idx - 1);
+    if (key !== 'bench') goToFilteredIndex(key, -1);
+    else goToIndex(key, state[key].idx - 1);
   });
   document.getElementById(`${prefix}-next`).addEventListener('click', () => {
-    goToIndex(key, state[key].idx + 1);
+    if (key !== 'bench') goToFilteredIndex(key, 1);
+    else goToIndex(key, state[key].idx + 1);
   });
   document.getElementById(`${prefix}-go`).addEventListener('click', () => {
     const input = document.getElementById(`${prefix}-jump`);
@@ -693,15 +807,158 @@ function loadBenchCSV() {
 }
 loadBenchCSV();
 
+// ── Filter & Stats tracking ──────────────────────────────────────
+function trackItemStats(key, item) {
+  if (!item || !statsTracker[key]) return;
+  const t = statsTracker[key];
+  if (item.model) t.models[item.model] = (t.models[item.model] || 0) + 1;
+  if (item.source) t.sources[item.source] = (t.sources[item.source] || 0) + 1;
+  updateFilterOptions(key);
+  updateMiniStats(key);
+}
+
+function updateFilterOptions(key) {
+  const prefix = key === 'stage1' ? 's1' : 's2';
+  const t = statsTracker[key];
+
+  const modelSelect = document.getElementById(`${prefix}-filter-model`);
+  const sourceSelect = document.getElementById(`${prefix}-filter-source`);
+
+  // Preserve current selection
+  const curModel = modelSelect.value;
+  const curSource = sourceSelect.value;
+
+  // Update model options
+  const models = Object.keys(t.models).sort();
+  const modelOpts = '<option value="">All Models</option>' + models.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
+  if (modelSelect.innerHTML !== modelOpts) {
+    modelSelect.innerHTML = modelOpts;
+    modelSelect.value = curModel;
+  }
+
+  // Update source options
+  const sources = Object.keys(t.sources).sort();
+  const sourceOpts = '<option value="">All Sources</option>' + sources.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+  if (sourceSelect.innerHTML !== sourceOpts) {
+    sourceSelect.innerHTML = sourceOpts;
+    sourceSelect.value = curSource;
+  }
+}
+
+function updateMiniStats(key) {
+  const prefix = key === 'stage1' ? 's1' : 's2';
+  const t = statsTracker[key];
+  const container = document.getElementById(`${prefix}-mini-stats`);
+
+  let html = '';
+  // Model stats (only show models we've actually seen)
+  const models = Object.entries(t.models).filter(([, c]) => c > 0).sort((a, b) => b[1] - a[1]);
+  for (const [name, count] of models) {
+    const short = name.replace(/^.*\//, ''); // strip org prefix
+    html += `<span class="mini-stat">${escapeHtml(short)} <span class="mini-stat-val">${count}</span></span>`;
+  }
+  container.innerHTML = html;
+}
+
+function getActiveFilter(key) {
+  const prefix = key === 'stage1' ? 's1' : 's2';
+  const modelEl = document.getElementById(`${prefix}-filter-model`);
+  const sourceEl = document.getElementById(`${prefix}-filter-source`);
+  return {
+    model: modelEl ? modelEl.value : '',
+    source: sourceEl ? sourceEl.value : '',
+  };
+}
+
+function itemMatchesFilter(key, item) {
+  if (!item) return true;
+  const f = getActiveFilter(key);
+  if (f.model && item.model !== f.model) return false;
+  if (f.source && item.source !== f.source) return false;
+  return true;
+}
+
+// Filtered navigation: find next matching item in given direction
+async function goToFilteredIndex(key, direction) {
+  const s = state[key];
+  const f = getActiveFilter(key);
+  if (!f.model && !f.source) {
+    // No filter active, normal nav
+    goToIndex(key, s.idx + direction);
+    return;
+  }
+
+  const prefix = key === 'stage1' ? 's1' : 's2';
+  let checked = 0;
+  let idx = s.idx + direction;
+
+  while (idx >= 0 && idx < s.total && checked < 100) {
+    // Try to get item from cache or fetch
+    let item = s.cache.get(idx) || (s.localData ? s.localData[idx] : null);
+    if (!item && s.hfSplit) {
+      // Fetch batch
+      try {
+        const batchStart = idx;
+        const batchLen = Math.min(BATCH_SIZE, s.total - batchStart);
+        const result = await hfFetchRows(s.hfConfig, s.hfSplit, batchStart, batchLen);
+        if (result.rows) {
+          for (let i = 0; i < result.rows.length; i++) {
+            s.cache.set(batchStart + i, result.rows[i].row);
+          }
+        }
+        item = s.cache.get(idx);
+      } catch (e) { break; }
+    }
+
+    if (item && itemMatchesFilter(key, item)) {
+      goToIndex(key, idx);
+      return;
+    }
+    idx += direction;
+    checked++;
+  }
+
+  // Update filter count to show no more matches
+  const countEl = document.getElementById(`${prefix}-filter-count`);
+  if (countEl) countEl.textContent = checked >= 100 ? '(no match in next 100)' : '(end of data)';
+}
+
+// Wire filter change events
+['stage1', 'stage2'].forEach(key => {
+  const prefix = key === 'stage1' ? 's1' : 's2';
+  const modelSel = document.getElementById(`${prefix}-filter-model`);
+  const sourceSel = document.getElementById(`${prefix}-filter-source`);
+  const countEl = document.getElementById(`${prefix}-filter-count`);
+
+  function onFilterChange() {
+    const f = getActiveFilter(key);
+    if (f.model || f.source) {
+      countEl.textContent = '(filtered)';
+    } else {
+      countEl.textContent = '';
+    }
+  }
+
+  modelSel.addEventListener('change', onFilterChange);
+  sourceSel.addEventListener('change', onFilterChange);
+
+  // Pre-populate dropdowns with known models
+  updateFilterOptions(key);
+});
+
 // ── Keyboard navigation ─────────────────────────────────────────
 document.addEventListener('keydown', (e) => {
-  if (e.target.tagName === 'INPUT') return;
-  const hash = location.hash.replace('#', '') || 'stage1';
-  const key = hash === 'bench' ? 'bench' : hash;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  const raw = location.hash.replace('#', '') || 'overview';
+  const page = raw.split('/')[0];
+  if (page === 'overview') return;
+  const key = page === 'bench' ? 'bench' : page;
 
   if (e.key === 'ArrowLeft' || e.key === 'a') {
-    goToIndex(key, state[key].idx - 1);
+    if (key !== 'bench') goToFilteredIndex(key, -1);
+    else goToIndex(key, state[key].idx - 1);
   } else if (e.key === 'ArrowRight' || e.key === 'd') {
-    goToIndex(key, state[key].idx + 1);
+    if (key !== 'bench') goToFilteredIndex(key, 1);
+    else goToIndex(key, state[key].idx + 1);
   }
 });
