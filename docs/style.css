@@ -537,7 +537,26 @@ body.drag-over::after {
 :root .tool-code .token.decorator,
 :root .tool-code .token.annotation { color: #6f42c1; }
 :root .tool-code .token.triple-quoted-string { color: #032f62; }
-/* Dark theme: keep prism-tomorrow defaults (bright on dark) */
+/* Dark theme: bright Monokai-inspired colors */
+[data-theme="dark"] .tool-code code[class*="language-"],
+[data-theme="dark"] .tool-code { color: #e6edf3 !important; }
+[data-theme="dark"] .tool-code .token.comment,
+[data-theme="dark"] .tool-code .token.prolog,
+[data-theme="dark"] .tool-code .token.doctype { color: #8b949e; font-style: italic; }
+[data-theme="dark"] .tool-code .token.keyword,
+[data-theme="dark"] .tool-code .token.tag { color: #ff7b72; }
+[data-theme="dark"] .tool-code .token.string,
+[data-theme="dark"] .tool-code .token.attr-value { color: #a5d6ff; }
+[data-theme="dark"] .tool-code .token.number,
+[data-theme="dark"] .tool-code .token.boolean { color: #79c0ff; }
+[data-theme="dark"] .tool-code .token.function { color: #d2a8ff; }
+[data-theme="dark"] .tool-code .token.builtin,
+[data-theme="dark"] .tool-code .token.class-name { color: #ffa657; }
+[data-theme="dark"] .tool-code .token.operator,
+[data-theme="dark"] .tool-code .token.punctuation { color: #c9d1d9; }
+[data-theme="dark"] .tool-code .token.decorator,
+[data-theme="dark"] .tool-code .token.annotation { color: #d2a8ff; }
+[data-theme="dark"] .tool-code .token.triple-quoted-string { color: #a5d6ff; }
 
 /* ── Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
