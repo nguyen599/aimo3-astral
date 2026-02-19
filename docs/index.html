@@ -41,7 +41,7 @@
     <h1>AstralMath-v1</h1>
     <p class="subtitle">A large-scale Tool-Integrated Reasoning (TIR) dataset for mathematical problem solving, designed for SFT and RL training targeting competitive mathematics (AIMO3).</p>
     <div class="stats-bar">
-      <div class="stat"><span class="stat-val">251,975</span><span class="stat-label">Datapoints</span></div>
+      <div class="stat"><span class="stat-val">268,614</span><span class="stat-label">Datapoints</span></div>
       <div class="stat"><span class="stat-val">136,151</span><span class="stat-label">Unique Questions</span></div>
       <div class="stat"><span class="stat-val">5</span><span class="stat-label">Models</span></div>
       <div class="stat"><span class="stat-val">50</span><span class="stat-label">Benchmark Problems</span></div>
@@ -121,12 +121,15 @@
     <section class="overview-section" id="transforms">
       <h2>Synthetic AIMO3-Style Transforms</h2>
       <p class="overview-text">A key differentiator: existing math problems are rewritten into AIMO3-competition-style questions. All transformed answers are integers in [0, 99999].</p>
-      <div class="pipeline-steps">
-        <div class="pipe-step"><span class="pipe-num">1</span><span class="pipe-label">Modular Arithmetic</span> "Find X" &rarr; "Find the remainder when X is divided by M"<br><span class="overview-note">M randomly selected from primes/powers: 99991, 10<sup>5</sup>, 5<sup>7</sup>, 77781, etc. Example: "Find the sum of..." &rarr; "Find the remainder when the sum is divided by 99991"</span></div>
-        <div class="pipe-step"><span class="pipe-num">2</span><span class="pipe-label">Power Transforms</span> For small answers k &le; 10: compute base<sup>k</sup> mod M<br><span class="overview-note">base randomly from [2, 7]. For k in (10, 20] only base 2 or 3. Example: answer = 7 &rarr; "Find 5<sup>7</sup> mod 99991" = 78120</span></div>
-        <div class="pipe-step"><span class="pipe-num">3</span><span class="pipe-label">Answer-Power Transforms</span> For answers 20 &lt; k &le; 50: compute k<sup>n</sup> mod M<br><span class="overview-note">n randomly from [2, 6]. Example: answer = 42 &rarr; "Find 42<sup>3</sup> mod 99991" = 74088</span></div>
-        <div class="pipe-step"><span class="pipe-num">4</span><span class="pipe-label">Symbol Substitution</span> Replace numeric parameters with algebraic symbols for parametric variants<br><span class="overview-note">Creates new problem families from a single seed problem by varying constants</span></div>
-      </div>
+      <table class="overview-table">
+        <thead><tr><th>Transform</th><th>Rule</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td class="ot-key">Modular Arithmetic</td><td>"Find X" &rarr; "Find the remainder when X is divided by M"<br><span class="overview-note">M from primes/powers: 99991, 10<sup>5</sup>, 5<sup>7</sup>, 77781, etc.</span></td><td>"Find the sum of..." &rarr; "Find the remainder when the sum is divided by 99991"</td></tr>
+          <tr><td class="ot-key">Power Transforms</td><td>For small answers k &le; 10: compute base<sup>k</sup> mod M<br><span class="overview-note">base from [2, 7]. For k in (10, 20] only base 2 or 3.</span></td><td>answer = 7 &rarr; "Find 5<sup>7</sup> mod 99991" = 78120</td></tr>
+          <tr><td class="ot-key">Answer-Power</td><td>For answers 20 &lt; k &le; 50: compute k<sup>n</sup> mod M<br><span class="overview-note">n from [2, 6].</span></td><td>answer = 42 &rarr; "Find 42<sup>3</sup> mod 99991" = 74088</td></tr>
+          <tr><td class="ot-key">Symbol Substitution</td><td>Replace numeric parameters with algebraic symbols for parametric variants</td><td>Creates new problem families from a single seed by varying constants</td></tr>
+        </tbody>
+      </table>
       <p class="overview-note">Each transformation is verified through <strong>12-run consensus</strong>: the same prompt with fixed random parameters is sent to gpt-oss-120b 12 times, and the result is only accepted if all runs return the identical answer.</p>
     </section>
 
@@ -135,14 +138,14 @@
       <h2>Reasoning Trace Generation</h2>
       <p class="overview-text">Solutions are generated using 5 frontier models in a Kaggle-identical Docker environment. After the first correct solution, improvement iterations produce shorter solutions with less total tool run time.</p>
       <table class="overview-table source-table">
-        <thead><tr><th>Model</th><th>Datapoints</th><th>Notes</th></tr></thead>
+        <thead><tr><th>Model</th><th>Datapoints</th><th>After Deadline</th></tr></thead>
         <tbody>
-          <tr><td>DeepSeek-V3.2</td><td>116,719</td><td>Tends to write longer code with longer execution time</td></tr>
-          <tr><td>Step-3.5-Flash</td><td>74,248</td><td>Always writes very long reasoning text before code</td></tr>
+          <tr><td>DeepSeek-V3.2</td><td>116,719</td><td></td></tr>
+          <tr><td>Step-3.5-Flash</td><td>74,248</td><td></td></tr>
           <tr><td>GPT-OSS-120B</td><td>49,046</td><td></td></tr>
-          <tr><td>GLM-5</td><td>+2,634</td><td>Added after deadline</td></tr>
-          <tr><td>Kimi-K2.5</td><td>+9,367</td><td>Added after deadline</td></tr>
-          <tr class="total-row"><td><strong>Total</strong></td><td><strong>251,975</strong></td><td></td></tr>
+          <tr><td>GLM-5</td><td>&mdash;</td><td>+6,132</td></tr>
+          <tr><td>Kimi-K2.5</td><td>&mdash;</td><td>+22,469</td></tr>
+          <tr class="total-row"><td><strong>Total</strong></td><td><strong>240,013</strong></td><td><strong>+28,601</strong></td></tr>
         </tbody>
       </table>
     </section>
@@ -191,16 +194,7 @@
           <tr class="total-row"><td><strong>Total</strong></td><td><strong>50</strong></td><td><strong>24</strong></td></tr>
         </tbody>
       </table>
-      <p class="overview-text" style="margin-top:1rem">Model performance on AstralBench (Pass@64, max tokens=49152, tool timeout=60s):</p>
-      <table class="overview-table source-table">
-        <thead><tr><th>Model</th><th>Accuracy</th></tr></thead>
-        <tbody>
-          <tr><td>DeepSeek-V3.2</td><td>18%</td></tr>
-          <tr><td>GPT-OSS-120B</td><td>12%</td></tr>
-          <tr><td>Step-3.5-Flash</td><td>8%</td></tr>
-        </tbody>
-      </table>
-      <p class="overview-note">All models run in a Kaggle-identical Docker environment. Problems that originally had symbolic or fraction answers are transformed via modular arithmetic and parameter changes while preserving their original complexity.</p>
+      <p class="overview-note">All models run in a Kaggle-identical Docker environment with no time limit. Problems that originally had symbolic or fraction answers are transformed via modular arithmetic and parameter changes while preserving their original complexity.</p>
     </section>
 
     <!-- Training Results -->
@@ -333,7 +327,6 @@
       <tbody>
         <tr><td>GPT-OSS-120B (public notebook)</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-gpt-oss-120b-14-50?scriptVersionId=296931824">9</a>, <a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-gpt-oss-120b-14-50?scriptVersionId=297080076">14</a>/50</td></tr>
         <tr><td>GPT-OSS-120B (10h timeout)</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-gpt-oss-120b-14-50?scriptVersionId=296924707">15</a>/50 (30%)</td></tr>
-        <tr><td colspan="2" style="text-align:center;color:var(--text-secondary);font-style:italic">More results coming soon</td></tr>
       </tbody>
     </table>
   </div>
