@@ -18,7 +18,7 @@ Let $S=\{2^a 3^b 5^c 7^d : a,b,c,d\in \mathbb{Z}\}$ and we call $h:S\rightarrow 
 \\
 Let $S=\{2^a 3^b 5^c 7^d : a,b,c,d\in \mathbb{Z}\}$ and we call $h:S\rightarrow \mathbb{R}$ an essential function if there exists a good function $g$ such that $h(x)=g(x)$ for all $x\in S$. Find the number of essential functions. ",16
 imo-bench-algebra-039,"Let $p, q, r, s$ be constants such that the equation $py^3 + qy^2 + ry + s = 0$ has three distinct real roots. Find all possible values for the number of distinct real roots of the equation
-$$\left(pz^{3}+qz^{2}+rz+s\right)(6pz+2q)=\left(3pz^{2}+2qz+r\right)^{2}.$$
+$$\left(pz^{3}+qz^{2}+rz+s\right)(12pz+4q)=\left(3pz^{2}+2qz+r\right)^{2}.$$
 ",2,"Let $p, q, r, s$ be constants such that the equation $py^3 + qy^2 + ry + s = 0$ has three distinct real roots. Find all possible values for the number of distinct real roots of the equation
 $$\left(pz^{3}+qz^{2}+rz+s\right)(6pz+2q)=\left(3pz^{2}+2qz+r\right)^{2}.$$
 ",2
