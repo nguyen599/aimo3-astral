@@ -6,12 +6,12 @@
 <title>AstralMath-v1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⭐</text></svg>">
 <meta property="og:title" content="AstralMath-v1">
-<meta property="og:description" content="251,975 Tool-Integrated Reasoning traces for mathematical problem solving — SFT and RL training for AIMO3">
+<meta property="og:description" content="346,067 Tool-Integrated Reasoning traces for mathematical problem solving — SFT and RL training for AIMO3">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2Fbb3603f2acea4d8f987103147fbf04b6%2Ftoken_length_distribution_st1.png?generation=1771184289728188&alt=media">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="AstralMath-v1">
-<meta name="twitter:description" content="251,975 Tool-Integrated Reasoning traces for mathematical problem solving — SFT and RL training for AIMO3">
+<meta name="twitter:description" content="346,067 Tool-Integrated Reasoning traces for mathematical problem solving — SFT and RL training for AIMO3">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
@@ -41,7 +41,7 @@
     <h1>AstralMath-v1</h1>
     <p class="subtitle">A large-scale Tool-Integrated Reasoning (TIR) dataset for mathematical problem solving, designed for SFT and RL training targeting competitive mathematics (AIMO3).</p>
     <div class="stats-bar">
-      <div class="stat"><span class="stat-val">345,656</span><span class="stat-label">Datapoints</span></div>
+      <div class="stat"><span class="stat-val">346,067</span><span class="stat-label">Datapoints</span></div>
       <div class="stat"><span class="stat-val">136,151</span><span class="stat-label">Unique Questions</span></div>
       <div class="stat"><span class="stat-val">6</span><span class="stat-label">Models</span></div>
       <div class="stat"><span class="stat-val">50</span><span class="stat-label">Benchmark Problems</span></div>
@@ -73,7 +73,7 @@
           <tr><td class="ot-key">Models</td><td>DeepSeek-V3.2, GPT-OSS-120B, Step-3.5-Flash, GLM-5, Kimi-K2.5, Qwen3.5-397B-A17B</td></tr>
           <tr><td class="ot-key">Answer Format</td><td>Cleaned verifiable numeric answers</td></tr>
           <tr><td class="ot-key">File Format</td><td>JSONL (training) / CSV (benchmark)</td></tr>
-          <tr><td class="ot-key">Stage 1</td><td>345,565 TIR traces &mdash; SFT training or RL warmup</td></tr>
+          <tr><td class="ot-key">Stage 1</td><td>340,411 TIR traces &mdash; SFT training or RL warmup</td></tr>
           <tr><td class="ot-key">Stage 2</td><td>5,656 TIR traces from 3,304 hardest questions &mdash; RL finetuning</td></tr>
         </tbody>
       </table>
@@ -136,7 +136,7 @@
     <!-- Model Generation Stats -->
     <section class="overview-section" id="generation">
       <h2>Reasoning Trace Generation</h2>
-      <p class="overview-text">Solutions are generated using 5 frontier models in a Kaggle-identical Docker environment. After the first correct solution, improvement iterations produce shorter solutions with less total tool run time.</p>
+      <p class="overview-text">Solutions are generated using 6 frontier models in a Kaggle-identical Docker environment. After the first correct solution, improvement iterations produce shorter solutions with less total tool run time.</p>
       <table class="overview-table source-table">
         <thead><tr><th>Model</th><th>Datapoints</th><th>After Deadline</th></tr></thead>
         <tbody>
@@ -144,9 +144,9 @@
           <tr><td>Step-3.5-Flash</td><td>74,248</td><td></td></tr>
           <tr><td>GPT-OSS-120B</td><td>49,046</td><td></td></tr>
           <tr><td>GLM-5</td><td>&mdash;</td><td>+9,042</td></tr>
-          <tr><td>Kimi-K2.5</td><td>&mdash;</td><td>+65,060</td></tr>
-          <tr><td>Qwen3.5-397B-A17B</td><td>&mdash;</td><td>+31,541</td></tr>
-          <tr class="total-row"><td><strong>Total</strong></td><td><strong>240,013</strong></td><td><strong>+105,643</strong></td></tr>
+          <tr><td>Kimi-K2.5</td><td>&mdash;</td><td>+65,977</td></tr>
+          <tr><td>Qwen3.5-397B-A17B</td><td>&mdash;</td><td>+31,035</td></tr>
+          <tr class="total-row"><td><strong>Total</strong></td><td><strong>240,013</strong></td><td><strong>+106,054</strong></td></tr>
         </tbody>
       </table>
     </section>
@@ -209,11 +209,12 @@
     <!-- Training Results -->
     <section class="overview-section" id="training">
       <h2>Training Results</h2>
-      <p class="overview-text">We validated AstralMath-v1 by fine-tuning Qwen3-4B using supervised fine-tuning (SFT):</p>
+      <p class="overview-text">We validated AstralMath-v1 by fine-tuning Qwen3-4B and gpt-oss-20b using supervised fine-tuning (SFT):</p>
       <table class="overview-table source-table">
         <thead><tr><th>Model</th><th>Before</th><th>After</th><th>Setting</th></tr></thead>
         <tbody>
-          <tr><td>Qwen/Qwen3-4B-Thinking-2507</td><td>0</td><td>22</td><td>1050 SFT steps, max length 40960, batch size 8, ~11h on 1x H100</td></tr>
+          <tr><td>Qwen/Qwen3-4B-Thinking-2507</td><td>0</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-qwen3-4b-astral-finetune?scriptVersionId=296163785">22</a>, <a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-qwen3-4b-astral-finetune?scriptVersionId=297553855">23</a></td><td>1050 SFT steps, max length 40960, batch size 8, ~11h on 1x H100</td></tr>
+          <tr><td>openai/gpt-oss-20b</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-skills-optional-luck-required-gpt-oss-20b">30</a></td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-gpt-oss-20b-astral-finetune?scriptVersionId=300741136">34</a></td><td>400 lora(rank 1, alpha 32) finetune steps, max length 50176, batch size 12, ~11.5h on 1x H100</td></tr>
           <tr><td colspan="4" style="text-align:center;color:var(--text-secondary);font-style:italic">More results coming soon</td></tr>
         </tbody>
       </table>
@@ -249,7 +250,7 @@
 <div id="page-stage1" class="page">
   <div class="page-header">
     <h1>Stage 1 — SFT Training Data</h1>
-    <p class="subtitle">345,656 TIR traces from 6 frontier models, target for SFT training or RL warmup</p>
+    <p class="subtitle">340,411 TIR traces from 6 frontier models, target for SFT training or RL warmup</p>
     <div class="stats-bar">
       <div class="stat"><span class="stat-val" id="s1-total">—</span><span class="stat-label">Total Traces</span></div>
       <div class="stat"><span class="stat-val" id="s1-models">6</span><span class="stat-label">Models</span></div>
