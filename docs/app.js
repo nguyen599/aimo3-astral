@@ -53,6 +53,9 @@ const state = {
 const KNOWN_MODELS = [
   'zai-org/GLM-5',
   'moonshotai/Kimi-K2.5',
+  'Qwen/Qwen3.5-397B-A17B',
+  'deepseek-ai/DeepSeek-V3.2',
+  'openai/gpt-oss-120b'
 ];
 
 const statsTracker = {
