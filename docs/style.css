@@ -427,6 +427,9 @@ body {
   border-top: 1px solid var(--border-light);
   margin-top: 3rem;
 }
+.footer-visitors { margin-top: 0.5rem; }
+.visitor-icon { margin-right: 0.25rem; }
+.visitor-count { font-weight: 600; color: var(--text-secondary); }
 
 /* ── Drag-over highlight ──────────────────────────────────────── */
 body.drag-over::after {

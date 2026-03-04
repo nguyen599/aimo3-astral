@@ -362,8 +362,40 @@
 
 <footer class="footer">
   <p>AstralMath-v1 &middot; A Tool-Integrated Reasoning dataset for AIMO3</p>
+  <p class="footer-visitors">
+    <span class="visitor-icon">&#128065;</span>
+    Total page views: <span id="visitor-count-val" class="visitor-count">loading…</span>
+  </p>
 </footer>
 
 <script src="app.js"></script>
+
+<!-- ── Visitor tracking via GoatCounter ──────────────────────────────
+     Sign up free at https://www.goatcounter.com/ and replace
+     YOUR_SITE_CODE below with your GoatCounter site code.
+     Example: if your URL is https://astralmath.goatcounter.com, use "astralmath".
+─────────────────────────────────────────────────────────────────── -->
+<script>
+  window.goatcounter = {
+    path: function(p) { return location.pathname + location.search + location.hash; }
+  };
+</script>
+<script async src="//gc.zgo.at/count.js"
+  data-goatcounter="https://YOUR_SITE_CODE.goatcounter.com/count"></script>
+<script>
+  // Show visitor count in footer once GoatCounter loads (optional).
+  // This uses GoatCounter's public path counter — enable "Public view" in
+  // your GoatCounter dashboard settings for this to work.
+  document.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('visitor-count-val');
+    if (!el) return;
+    var code = 'YOUR_SITE_CODE'; // ← same code as above
+    if (code === 'YOUR_SITE_CODE') { el.textContent = '—'; return; }
+    fetch('https://' + code + '.goatcounter.com/counter//index.html.json')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(d) { if (d && d.count) el.textContent = d.count; })
+      .catch(function() { el.textContent = '—'; });
+  });
+</script>
 </body>
 </html>
