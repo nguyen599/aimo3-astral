@@ -381,7 +381,7 @@
   };
 </script>
 <script async src="//gc.zgo.at/count.js"
-  data-goatcounter="https://YOUR_SITE_CODE.goatcounter.com/count"></script>
+  data-goatcounter="https://manhnguyen.goatcounter.com/count"></script>
 <script>
   // Show visitor count in footer once GoatCounter loads (optional).
   // This uses GoatCounter's public path counter — enable "Public view" in
@@ -389,8 +389,8 @@
   document.addEventListener('DOMContentLoaded', function() {
     var el = document.getElementById('visitor-count-val');
     if (!el) return;
-    var code = 'YOUR_SITE_CODE'; // ← same code as above
-    if (code === 'YOUR_SITE_CODE') { el.textContent = '—'; return; }
+    var code = 'manhnguyen'; // ← same code as above
+    if (code === 'manhnguyen') { el.textContent = '—'; return; }
     fetch('https://' + code + '.goatcounter.com/counter//index.html.json')
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(d) { if (d && d.count) el.textContent = d.count; })
