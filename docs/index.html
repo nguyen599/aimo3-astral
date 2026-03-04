@@ -370,31 +370,34 @@
 
 <script src="app.js"></script>
 
-<!-- ── Visitor tracking via GoatCounter ──────────────────────────────
-     Sign up free at https://www.goatcounter.com/ and replace
-     YOUR_SITE_CODE below with your GoatCounter site code.
-     Example: if your URL is https://astralmath.goatcounter.com, use "astralmath".
-─────────────────────────────────────────────────────────────────── -->
+<!-- GoatCounter Analytics -->
+<script data-goatcounter="https://manhnguyen.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 <script>
-  window.goatcounter = {
-    path: function(p) { return location.pathname + location.search + location.hash; }
-  };
-</script>
-<script async src="//gc.zgo.at/count.js"
-  data-goatcounter="https://manhnguyen.goatcounter.com/count"></script>
-<script>
-  // Show visitor count in footer once GoatCounter loads (optional).
-  // This uses GoatCounter's public path counter — enable "Public view" in
-  // your GoatCounter dashboard settings for this to work.
-  document.addEventListener('DOMContentLoaded', function() {
+  function updatePageviews() {
     var el = document.getElementById('visitor-count-val');
-    if (!el) return;
-    var code = 'manhnguyen'; // ← same code as above
-    if (code === 'manhnguyen') { el.textContent = '—'; return; }
-    fetch('https://' + code + '.goatcounter.com/counter//index.html.json')
-      .then(function(r) { return r.ok ? r.json() : null; })
-      .then(function(d) { if (d && d.count) el.textContent = d.count; })
-      .catch(function() { el.textContent = '—'; });
+    if (!el) { setTimeout(updatePageviews, 500); return; }
+    fetch('https://manhnguyen.goatcounter.com/api/v0/stats/hits?start=2026-03-01', {
+      headers: {
+        'Authorization': 'Bearer u02piijfz1wp10e12aai8wy7jgd0emzpzhb1j16a848s38zxg0',
+        'Accept': 'application/json'
+      }
+    })
+    .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(d) {
+      var hit = (d.hits || []).find(function(h) { return h.path === '/aimo3-astral'; });
+      el.textContent = hit ? hit.count.toLocaleString() : '0';
+    })
+    .catch(function() { el.textContent = '—'; });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updatePageviews);
+  } else {
+    updatePageviews();
+  }
+  setTimeout(updatePageviews, 1000);
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') updatePageviews();
   });
 </script>
 </body>
