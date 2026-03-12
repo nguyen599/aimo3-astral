@@ -91,7 +91,11 @@ function navigate() {
 
   // Auto-load bench CSV when navigating to bench page
   if (page === 'bench' && !state.bench.localData && !state.bench.loading) {
-    loadBenchCSV();
+    loadBenchCSV().then(() => {
+      if (urlIdx !== null && urlIdx >= 0 && urlIdx < state.bench.total) {
+        goToIndex('bench', urlIdx);
+      }
+    });
   } else if (page === 'bench' && urlIdx !== null && urlIdx >= 0) {
     goToIndex('bench', urlIdx);
   }
@@ -640,8 +644,8 @@ function updateControls(key) {
 
   document.getElementById(`${prefix}-counter`).textContent =
     s.total > 0 ? `${s.idx + 1} / ${s.total.toLocaleString()}` : '0 / 0';
-  document.getElementById(`${prefix}-prev`).disabled = s.idx <= 0;
-  document.getElementById(`${prefix}-next`).disabled = s.idx >= s.total - 1;
+  document.getElementById(`${prefix}-prev`).disabled = s.total <= 0;
+  document.getElementById(`${prefix}-next`).disabled = s.total <= 0;
 }
 
 // ── Reasoning toggle ─────────────────────────────────────────────
@@ -668,7 +672,8 @@ window.toggleToolOutput = function(id) {
 // ── Navigation helpers ───────────────────────────────────────────
 function goToIndex(key, idx) {
   const s = state[key];
-  if (idx < 0 || idx >= s.total) return;
+  if (s.total <= 0) return;
+  idx = ((idx % s.total) + s.total) % s.total;
 
   // Update shareable URL (without triggering hashchange)
   const newHash = `#${key}/${idx + 1}`;
@@ -784,7 +789,7 @@ document.addEventListener('drop', (e) => {
 
 // ── Auto-load AstralBench CSV ────────────────────────────────────
 function loadBenchCSV() {
-  if (state.bench.localData || state.bench.loading) return;
+  if (state.bench.localData || state.bench.loading) return Promise.resolve();
   state.bench.loading = true;
 
   function showUploadFallback() {
@@ -793,9 +798,9 @@ function loadBenchCSV() {
     if (loadingEl) loadingEl.textContent = 'Could not auto-load. Please upload:';
   }
 
-  if (location.protocol === 'file:') { showUploadFallback(); return; }
+  if (location.protocol === 'file:') { showUploadFallback(); return Promise.resolve(); }
 
-  fetch('astral-bench.csv')
+  return fetch('astral-bench.csv')
     .then(r => { if (r.ok) return r.text(); throw new Error(r.status); })
     .then(text => {
       const data = parseCSV(text);
@@ -895,7 +900,10 @@ async function goToFilteredIndex(key, direction) {
   let checked = 0;
   let idx = s.idx + direction;
 
-  while (idx >= 0 && idx < s.total && checked < 100) {
+  const startIdx = s.idx;
+  while (checked < 100) {
+    idx = ((idx % s.total) + s.total) % s.total;
+    if (checked > 0 && idx === startIdx) break; // wrapped all the way around
     // Try to get item from cache or fetch
     let item = s.cache.get(idx) || (s.localData ? s.localData[idx] : null);
     if (!item && s.hfSplit) {

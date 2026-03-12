@@ -1,53 +1,7 @@
 id,problem,answer,original_problem,original_answer
-open-rl-combinatorics-247678,"Let $G$ be a graph with vertex set $V(G)$.  
-Fix an integer $k \ge 1$. A subset $S \subseteq V(G)$ is said to be a $k$-tuple total dominating set if every vertex $v \in V(G)$ has at least $k$ neighbors belonging to $S$, that is,
-\[
-|N(v)\cap S| \ge k \quad \text{for all } v \in V(G).
-\]
-The smallest possible size of such a set is called the $k$-tuple total domination number of $G$ and is denoted by $\gamma_{\times k,t}(G)$.
-
-For each integer $n \ge 2$, let $P_n$ denote the path on $n$ vertices and let $C_n$ denote the cycle on $n$ vertices.  The Cartesian product of graphs is denoted by $\square$.
-
-Consider the following three Cartesian products:
-\[
-E_1 = P_3 \square P_{902}, \qquad
-E_2 = C_{512} \square C_{333}, \qquad
-E_3 = P_3 \square P_{451}.
-\]
-
-Form the weighted sum
-\[
-\mathcal{W}=
-3\,\gamma_{\times 2,t}(E_1)+
-\gamma_{\times 2,t}(E_2)-
-2\,\gamma_{\times 2,t}(E_3).
-\]
-
-What is the remainder when $\mathcal{W}$ is divided by 8676?",2100,"Let $G$ be a graph with vertex set $V(G)$.  
-Fix an integer $k \ge 1$. A subset $S \subseteq V(G)$ is said to be a $k$-tuple total dominating set if every vertex $v \in V(G)$ has at least $k$ neighbors belonging to $S$, that is,
-\[
-|N(v)\cap S| \ge k \quad \text{for all } v \in V(G).
-\]
-The smallest possible size of such a set is called the $k$-tuple total domination number of $G$ and is denoted by $\gamma_{\times k,t}(G)$.
-
-For each integer $n \ge 2$, let $P_n$ denote the path on $n$ vertices and let $C_n$ denote the cycle on $n$ vertices.  The Cartesian product of graphs is denoted by $\square$.
-
-Consider the following three Cartesian products:
-\[
-E_1 = P_3 \square P_{902}, \qquad
-E_2 = C_{512} \square C_{333}, \qquad
-E_3 = P_3 \square P_{451}.
-\]
-
-Form the weighted sum
-\[
-\mathcal{W}=
-3\,\gamma_{\times 2,t}(E_1)+
-\gamma_{\times 2,t}(E_2)-
-2\,\gamma_{\times 2,t}(E_3).
-\]
-
-Determine the numerical value of $\mathcal{W}$.",88860
+smt-2025-p10-algebra,"Let $f(x) = 4x + a$, $g(x) = 6x + b$, and $h(x) = 9x + c$. Let $S(a,b,c)$ be the set of the $3^{20}$ functions formed by all possible compositions of $f, g, h$ a total of $20$ times, and let $R(a,b,c)$ be the number of distinct roots over all functions in $S(a,b,c)$. Compute the second smallest possible value of $R(a,b,c)$ as $a,b,c$ range over all reals.
+",41,"Let $f(x) = 4x + a$, $g(x) = 6x + b$, and $h(x) = 9x + c$. Let $S(a,b,c)$ be the set of the $3^{20}$ functions formed by all possible compositions of $f, g, h$ a total of $20$ times, and let $R(a,b,c)$ be the number of distinct roots over all functions in $S(a,b,c)$. Compute the second smallest possible value of $R(a,b,c)$ as $a,b,c$ range over all reals.
+",41
 imo-bench-algebra-030,"There exists an infinite sequence $x_1, x_2, \ldots$ where each term belongs to $[0, 777]$ such that for all positive integers $m < n$, we have $$(m+n)|x_n^2 - x_m^2| \ge D.$$
 Let D denote the maximum value satisfying this condition. What is the remainder when D is divided by 99991?
 ",3783,"Find the maximum value of $D$ satisfying the following condition: There exists an infinite sequence $x_1, x_2, \ldots$ where each term belongs to $[0, 777]$ such that for all positive integers $m < n$, we have $$(m+n)|x_n^2 - x_m^2| \ge D.$$
@@ -139,43 +93,13 @@ It requires to tile rectangle of size $1008  \times 1010$ by using dominoes and 
 It requires to tile rectangle of size $1008  \times 1010$ by using dominoes and S-tetraminoes. What is the minimal number of dominoes should be used?",506
 imo-bench-combinatorics-030,"A cube with size $18 \times 18 \times 18$ consists of $5832$ unit cubes, all colored white. Anton and Berta play a game on this cube. Anton chooses some pillars with size $1\times 1\times 18$ such that no two pillars share a vertex or side, and turns all chosen unit cubes to black. Berta is allowed to choose some unit cubes and ask Anton their colors. In addition, Anton also tells Berta that he painted at least two pillars. How many unit cubes, at least, that Berta need to choose so that for any answer from Anton, Berta can always determine the black unit cubes?",486,"A cube with size $18 \times 18 \times 18$ consists of $5832$ unit cubes, all colored white. Anton and Berta play a game on this cube. Anton chooses some pillars with size $1\times 1\times 18$ such that no two pillars share a vertex or side, and turns all chosen unit cubes to black. Berta is allowed to choose some unit cubes and ask Anton their colors. In addition, Anton also tells Berta that he painted at least two pillars. How many unit cubes, at least, that Berta need to choose so that for any answer from Anton, Berta can always determine the black unit cubes?",486
 imo-bench-combinatorics-032,"A classroom contains 68 pairs of nonzero integers. Suppose that for each positive integer $k$ at most one of the pairs $(k, k)$ and $(-k, -k)$ is written on the classroom board.  A student erases some of the 136 integers, subject to the condition that no two erased integers may add to 0. The student then scores one point for each of the 68 pairs in which at least one integer is erased. Additionally, the classroom has another broken whiteboard, and some integers might be invisible. Determine, with proof, the largest number $N$ of points that the student can guarantee to score regardless of which 68 pairs have been written on the board.",43,"A classroom contains 68 pairs of nonzero integers. Suppose that for each positive integer $k$ at most one of the pairs $(k, k)$ and $(-k, -k)$ is written on the classroom board.  A student erases some of the 136 integers, subject to the condition that no two erased integers may add to 0. The student then scores one point for each of the 68 pairs in which at least one integer is erased. Additionally, the classroom has another broken whiteboard, and some integers might be invisible. Determine, with proof, the largest number $N$ of points that the student can guarantee to score regardless of which 68 pairs have been written on the board.",43
-open-rl-number_theory-248190,"If \[
-\sum_{n=1}^{\infty} (-1)^{n-1}\frac{O_n \overline{O}_n}{n^2}
-= \frac{p}{q}\pi^2 G+ r \beta(4) ,
-\]
-where
+EGMO-2024-p6-combinatorics,"How many positive integers $d$ for which there exists a degree $d$ polynomial $P$ with real coefficients such that there are at most $d$ different values among
 \[
-O_n = \sum_{k=1}^{n} \frac{1}{2k-1}
-\]
-is the $n$th harmonic number of the second kind,
+P(0), P(1), \ldots, P(d^2 - d).
+\]",3,"Find all positive integers $d$ for which there exists a degree $d$ polynomial $P$ with real coefficients such that there are at most $d$ different values among
 \[
-\overline{O}_n = \sum_{k=1}^{n} (-1)^{k-1}\frac{1}{2k-1}
-\]
-represents the $n$th skew-harmonic number of the second kind,
-$\zeta$ denotes the Riemann zeta function,
-$G$ designates Catalan's constant, and
-\[
-\beta(s) = \sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{(2n-1)^s}
-\]
-signifies the Dirichlet beta function. If \(p\) and \(q\) are coprime and \(r\) is an integer, If $p$ and $q$ are coprime and $r$ is an integer, let $k$ denote $p+q+r$. What is the remainder when $k^3$ is divided by 88885?",21952,"If \[
-\sum_{n=1}^{\infty} (-1)^{n-1}\frac{O_n \overline{O}_n}{n^2}
-= \frac{p}{q}\pi^2 G+ r \beta(4) ,
-\]
-where
-\[
-O_n = \sum_{k=1}^{n} \frac{1}{2k-1}
-\]
-is the $n$th harmonic number of the second kind,
-\[
-\overline{O}_n = \sum_{k=1}^{n} (-1)^{k-1}\frac{1}{2k-1}
-\]
-represents the $n$th skew-harmonic number of the second kind,
-$\zeta$ denotes the Riemann zeta function,
-$G$ designates Catalan's constant, and
-\[
-\beta(s) = \sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{(2n-1)^s}
-\]
-signifies the Dirichlet beta function. If \(p\) and \(q\) are coprime and \(r\) is an integer, find \(p+q+r\).",28
+P(0), P(1), \ldots, P(d^2 - d).
+\]","1,2,3"
 imo-bench-combinatorics-049,"In a research lab, scientists are studying the spread of a newly discovered bacteria on a $64 \times 64$ square petri dish. The dish is divided into small square sections, each of which is a $1 \times 1$ square and is either infected (black) or sterile (white). Initially, there are exactly $k$ infected sections, and the rest are sterile. Scientists observe that the bacteria spread according to two specific growth rules:
 
 1) If a $2 \times 2$ square section has exactly three infected sections, the last sterile section gets infected.
@@ -201,7 +125,7 @@ Determine the minimum value of $n$ such that there exists a Korean sequence of l
     \item For each $1 \leq k < n$, we define two sets $A_k = \{a_1, a_2, \ldots, a_k\}$ and $B_k = \{a_{k+1}, a_{k+2}, \ldots, a_n\}$. A partition $(A_k, B_k)$ is called good if the least common multiple of the elements in $A_k$ is equal to the greatest common divisor of the elements in $B_k$.
 \end{itemize}
 Determine the minimum value of $n$ such that there exists a Korean sequence of length $n$ with exactly 2015 good partitions.",3024
-USEMO-2024-combinatorics,"There are 1001 stacks of coins $S_{1},S_{2},\ldots,S_{1001}$ .Initially, stack $S_{k}$ has k coins for each $k=1,2,\ldots,1001$ . In an operation, one selects an ordered pair $(i,j)$ of indices i and j satisfying $1\leq i<j\leq1001$ . subject to two conditions:
+usemo-2024-combinatorics,"There are 1001 stacks of coins $S_{1},S_{2},\ldots,S_{1001}$ .Initially, stack $S_{k}$ has k coins for each $k=1,2,\ldots,1001$ . In an operation, one selects an ordered pair $(i,j)$ of indices i and j satisfying $1\leq i<j\leq1001$ . subject to two conditions:
 
 - The stacks $S_{i}$ and $S_{j}$ must each have at least one coin.
 
@@ -235,33 +159,31 @@ What is the largest possible value of $m$ for which such a seating assignment ca
 What is the largest possible value of $m$ for which such a seating assignment can be created?
 
 ",96
-usa-tstst-2024-conbinatorics-Q9,"Let $n\geq2$ be a fixed integer. The cells of an $n\times n$ table are filled with the integers from 1 to $n^{2}$ with each number appearing exactly once. Let N be the number of unordered quadruples of cells on this board which form an axis-aligned rectangle,with the two smaller integers being on opposite vertices of this rectangle. Find the largest possible value of $N$ when $n = 17$.",6936,"Let $n \ge 2$ be a fixed integer. The cells of an $n \times n$ table are filled with the integers from $1$ to $n^2$ with each number appearing exactly once. Let $N$ be the number of unordered quadruples of cells on this board which form an axis-aligned rectangle, with the two smaller integers being on opposite vertices of this rectangle. Find the largest possible value of $N$.",$\frac{1}{12}n^2(n-1)^2$
+usa-tstst-2024-combinatorics-p9,"Let $n\geq2$ be a fixed integer. The cells of an $n\times n$ table are filled with the integers from 1 to $n^{2}$ with each number appearing exactly once. Let N be the number of unordered quadruples of cells on this board which form an axis-aligned rectangle,with the two smaller integers being on opposite vertices of this rectangle. Find the largest possible value of $N$ when $n = 17$.",6936,"Let $n \ge 2$ be a fixed integer. The cells of an $n \times n$ table are filled with the integers from $1$ to $n^2$ with each number appearing exactly once. Let $N$ be the number of unordered quadruples of cells on this board which form an axis-aligned rectangle, with the two smaller integers being on opposite vertices of this rectangle. Find the largest possible value of $N$.",$\frac{1}{12}n^2(n-1)^2$
 imo-bench-combinatorics-076,"The Lucas numbers $L_{0}, L_{1}, L_{2}, \ldots$ are defined inductively by $L_{0}=2, L_{1}=1$, and $L_{n+1}=L_{n}+L_{n-1}$ for $n \geqslant 1$. The Fibonacci numbers $F_{0}, F_{1}, F_{2}, \ldots$ are defined inductively by $F_{0}=0, F_{1}=1$, and $F_{n+1}=F_{n}+F_{n-1}$ for $n \geqslant 1$. Determine the smallest size of a set $S$ of integers such that for every $k=2,3, \ldots, 125$ there exist some $x, y \in S$ such that $x-y=F_{k}$. Also, there exist some $a, b \in T$ for some set $T$ such that $a-b = L_{100}$.",64,"The Lucas numbers $L_{0}, L_{1}, L_{2}, \ldots$ are defined inductively by $L_{0}=2, L_{1}=1$, and $L_{n+1}=L_{n}+L_{n-1}$ for $n \geqslant 1$. The Fibonacci numbers $F_{0}, F_{1}, F_{2}, \ldots$ are defined inductively by $F_{0}=0, F_{1}=1$, and $F_{n+1}=F_{n}+F_{n-1}$ for $n \geqslant 1$. Determine the smallest size of a set $S$ of integers such that for every $k=2,3, \ldots, 125$ there exist some $x, y \in S$ such that $x-y=F_{k}$. Also, there exist some $a, b \in T$ for some set $T$ such that $a-b = L_{100}$.",64
-open-rl-calculus-214132,"Let $\mathcal{K}$ be a constant defined by the limit
-\[
-\ln \mathcal{K}=\lim_{N\to\infty}\left[\sum_{k=1}^N k\ln k-\left(\frac{N^2}{2}+\frac{N}{2}+\frac{1}{12}\right)\ln N+\frac{N^2}{4}+\frac{1}{24}\ln(2\pi)-\frac{1}{36}\ln 2\right].
-\]
-Consider the definite integral
-\[
-\Psi=\int_{0}^{\infty}\ln(1+x^{2})\ln\!\left(\frac{e^{\pi x}-1}{e^{\pi x}+1}\right)\,dx.
-\]
-It is known that
-\[
-\Psi=\pi\bigl(n-q\ln\mathcal{K}\bigr),
-\]
-where $q$ is the smallest positive integer for which such a representation holds and $n$ is a real constant independent of $\mathcal{K}$. If $n = a + b\ln(2) + c\ln(\pi)$ for rational constants $a, b, c$, determine the value of $1q+2a+4b+8c$.",13,"Let $\mathcal{K}$ be a constant defined by the limit
-\[
-\ln \mathcal{K}=\lim_{N\to\infty}\left[\sum_{k=1}^N k\ln k-\left(\frac{N^2}{2}+\frac{N}{2}+\frac{1}{12}\right)\ln N+\frac{N^2}{4}+\frac{1}{24}\ln(2\pi)-\frac{1}{36}\ln 2\right].
-\]
-Consider the definite integral
-\[
-\Psi=\int_{0}^{\infty}\ln(1+x^{2})\ln\!\left(\frac{e^{\pi x}-1}{e^{\pi x}+1}\right)\,dx.
-\]
-It is known that
-\[
-\Psi=\pi\bigl(n-q\ln\mathcal{K}\bigr),
-\]
-where $q$ is the smallest positive integer for which such a representation holds and $n$ is a real constant independent of $\mathcal{K}$. Determine the value of $n+q$.",7+\frac{3}{4}\ln 2+\frac{1}{4}\ln\pi
+cmo-2025-p3-combinatorics,"Let $n$ be a positive integer. There are $n$ red cards and $n$ blue cards. Initially, each red card has a real number $0$ written on it, and each blue card has a real number $1$ written on it.
+
+One operation is as follows:
+Select one red card and one blue card whose numbers satisfy
+$
+(\text{real number x on red}) < (\text{real number y on blue}),
+$
+replace these two numbers with their average
+$\frac{x + y}{2}$
+and write that average on $both$ cards.
+
+Find the smallest positive integer $n$ such that, after performing a finite number of legal operations, the sum of the numbers on all $n$ red cards can be made greater than 100.",106,"Let $n$ be a positive integer. There are $n$ red cards and $n$ blue cards. Initially, each red card has a real number $0$ written on it, and each blue card has a real number $1$ written on it.
+
+One operation is as follows:
+Select one red card and one blue card whose numbers satisfy
+$
+(\text{real number x on red}) < (\text{real number y on blue}),
+$
+replace these two numbers with their average
+$\frac{x + y}{2}$
+and write that average on $both$ cards.
+
+Find the smallest positive integer $n$ such that, after performing a finite number of legal operations, the sum of the numbers on all $n$ red cards can be made greater than 100.",106
 imo-bench-combinatorics-084,"Minh is a student whose birthday is in the year $1997$, so he starts by writing $s$ integer-valued 1997-tuples on a blackboard. After doing that, he can take any two (not necessarily distinct) tuples $\mathbf{v}=\left(v_{1}, \ldots, v_{1997}\right)$ and $\mathbf{w}=\left(w_{1}, \ldots, w_{1997}\right)$ that he has already written, and apply one of the following operations to obtain a new tuple:
 
 \[
@@ -285,7 +207,17 @@ It turns out that, in this way, Minh can write any integer-valued 2023-tuple on 
 and then write this tuple on the blackboard.
 
 It turns out that, in this way, Minh can write any integer-valued 2023-tuple on the blackboard after finitely many steps. What is the smallest possible number $s$ of tuples that he initially wrote?",3
-SMT-2014-gemetry-Q5,"Let ABC be a triangle where $\angle BAC=30^{\circ}$ '.Construct D in ?ABC such t hat $\angle ABD=$ $\angle ACD=30^{\circ}$ . Let the circumcircle of ?ABD intersect AC at X. Let the circumcircle of $\triangle A C D$ intersect AB at Y. Given that $DB-DC=10 and BC=20$ ,find $A X\cdot A Y$",150,"Let ABC be a triangle where $\angle BAC=30^{\circ}$ '.Construct D in ?ABC such t hat $\angle ABD=$ $\angle ACD=30^{\circ}$ . Let the circumcircle of ?ABD intersect AC at X. Let the circumcircle of $\triangle A C D$ intersect AB at Y. Given that $DB-DC=10 and BC=20$ ,find $A X\cdot A Y$",150
+Open-rl-special-function-246644,"Given: \(I=\int_0^\infty\frac{\sqrt x\log(\log(x))}{(-1+x)^2(1+x)}\,dx \)
+
+The closed form of \(I\)  is of the form \(\displaystyle\frac{A}{B}\left(-\log (C)+ \pi \log \left(-\frac{(1+i )\sqrt{\frac{H}{\pi}}\, \Gamma(\frac{D}{E})}{ \Gamma(-\frac{F}{G})}\right)\right)\), where \(\Gamma\) denotes the Gamma function and \(A,B,C,D,E,F,G,H \in \mathbb{N}\).
+
+
+Find the value of \(A+2B+C+2D+3E+2F+G+2H\).",31,"Given: \(I=\int_0^\infty\frac{\sqrt x\log(\log(x))}{(-1+x)^2(1+x)}\,dx \)
+
+The closed form of \(I\)  is of the form \(\displaystyle\frac{A}{B}\left(-\log (C)+ \pi \log \left(-\frac{(1+i )\sqrt{\frac{H}{\pi}}\, \Gamma(\frac{D}{E})}{ \Gamma(-\frac{F}{G})}\right)\right)\), where \(\Gamma\) denotes the Gamma function and \(A,B,C,D,E,F,G,H \in \mathbb{N}\).
+
+
+Find the value of \(A+2B+C+2D+3E+2F+G+2H\).",31
 imo-bench-combinatorics-090,"A polyomino is a figure which consists of unit squares joined together by their sides. (A polyomino may contain holes.) Consider a grid of unit square cells which extends to infinity in all directions. Find the greatest positive integer $C$ which satisfies the following condition: For every colouring of the cells of the grid in $36$ colours, there is some polyomino within the grid which contains at most $35$ colours and whose area is at least $C$.
 ",2450,"A polyomino is a figure which consists of unit squares joined together by their sides. (A polyomino may contain holes.) Consider a grid of unit square cells which extends to infinity in all directions. Find the greatest positive integer $C$ which satisfies the following condition: For every colouring of the cells of the grid in $36$ colours, there is some polyomino within the grid which contains at most $35$ colours and whose area is at least $C$.
 ",2450
@@ -311,9 +243,17 @@ Suppose that the three line segments $B_{1}C_{2},C_{1}A_{2}$ ,and $A_{1}B_{2}$ a
 imo-bench-geometry-003,"Given a convex $n$-sided polygon $B_1\ldots B_n$. Let $Q_i$ ($i = 1,\ldots, n$) be points on the boundary of the polygon such that $B_iQ_i$ divides the area of the polygon in half.  Assume that none of the points $Q_i$ coincide with any vertex of the polygon and that these points lie on $k$ sides of the $n$-sided polygon. For a given value of $n$, determine the minimum possible value of $k$.
 ",3,"Given a convex $n$-sided polygon $B_1\ldots B_n$. Let $Q_i$ ($i = 1,\ldots, n$) be points on the boundary of the polygon such that $B_iQ_i$ divides the area of the polygon in half.  Assume that none of the points $Q_i$ coincide with any vertex of the polygon and that these points lie on $k$ sides of the $n$-sided polygon. For a given value of $n$, determine the minimum possible value of $k$.
 ",3
-imo-bench-geometry-017,"Let $P$ and $Q$ be the circumcenter and incenter of triangle $DEF$. The perpendicular from $Q$ to $PQ$ meets $DE$ and the external bisector of angle $F$ at points $M$ and $N$ respectively. What is the value of $QN/QM$?
-",2,"Let $P$ and $Q$ be the circumcenter and incenter of triangle $DEF$. The perpendicular from $Q$ to $PQ$ meets $DE$ and the external bisector of angle $F$ at points $M$ and $N$ respectively. What is the value of $QM/QN$?
-",0.5
+pumac-2025-Q8-geometry,"Let $\triangle ABC$ be a triangle with $AC = 33$, $BC = 16$, $AB = 28$ and incenter $I$. 
+Let $U$ and $V$ be points on sides $AB$ and $AC$ respectively such that $AU = AV = 20$. 
+Let $P$ be the reflection of $B$ over $U$ and let $Q$ be the reflection of $C$ over $V$. 
+The circumcircles of triangles $BIP$ and $CIQ$ intersect at a point $S \ne I$. 
+Let $M$ be the midpoint of $BC$. Compute the value of $MS^2$.
+",1352,"Let $\triangle ABC$ be a triangle with $AC = 33$, $BC = 16$, $AB = 28$ and incenter $I$. 
+Let $U$ and $V$ be points on sides $AB$ and $AC$ respectively such that $AU = AV = 20$. 
+Let $P$ be the reflection of $B$ over $U$ and let $Q$ be the reflection of $C$ over $V$. 
+The circumcircles of triangles $BIP$ and $CIQ$ intersect at a point $S \ne I$. 
+Let $M$ be the midpoint of $BC$. Find $MS$.
+",\frac{26\sqrt{10}}{5}
 imo-bench-geometry-044,"Given $PQRS$ is a parallelogram. We know that $\angle S = 60^\circ$, $PS = 2$ and $PQ = \sqrt{3} + 1$. Point $N$ is the midpoint of $PS$. Segment $RE$ is the angle bisector of $R$. Find the angle $REQ$ in terms of degree.
 ",75,"Given $PQRS$ is a parallelogram. We know that $\angle S = 60^\circ$, $PS = 2$ and $PQ = \sqrt{3} + 1$. Point $N$ is the midpoint of $PS$. Segment $RE$ is the angle bisector of $R$. Find the angle $REQ$ in terms of degree.
 ",75
@@ -365,13 +305,6 @@ $$a_{a_{a_p}} = a_{p+1} + 1.$$\nFind the sum of all possible values of $a_{2025}
 $$a_{a_{a_p}} = a_{p+1} + 1.$$
 Find all possible value of $a_{2025}$.
 ","2026, 2030"
-imo-bench-geometry-056,"Let $ PQR $ be fixed obtuse triangle, and let $ M $ denote its orthocenter. Let $ \alpha_P $ denote the circle with center $ P $ and radius $ PM $. Let $ \alpha_Q $ and $ \alpha_R $ be defined in a similar way. Let $Y$ be a moving point outside of the circumcircle of triangle $ PQR $, let circle $ \Xi(Y) $ be defined in the following way (if possible): take the polars of point $ Y $ with respect to circles $ \alpha_P $, $ \alpha_Q $, and $ \alpha_R $, and let $ \Xi(Y) $ be the circumcircle of the triangle defined by these three lines.
-
-How many points $Y$ satisfy that point $Y$ lies on circle $ \Xi(Y) $?",1,"Let $ PQR $ be fixed obtuse triangle, and let $ M $ denote its orthocenter. Let $ \alpha_P $ denote the circle with center $ P $ and radius $ PM $. Let $ \alpha_Q $ and $ \alpha_R $ be defined in a similar way. Let $Y$ be a moving point outside of the circumcircle of triangle $ PQR $, let circle $ \Xi(Y) $ be defined in the following way (if possible): take the polars of point $ Y $ with respect to circles $ \alpha_P $, $ \alpha_Q $, and $ \alpha_R $, and let $ \Xi(Y) $ be the circumcircle of the triangle defined by these three lines.
-
-Find the locus of points $ Y $ such that point $ Y $ lies on circle $ \Xi(Y) $.
-
-",$Y = M$
 imo-bench-algebra-066,"A sequence of integers $a_0, \ldots, a_{1000}$ is called a \textit{good sequence} if there exists a sequence of integers $b_0, \ldots, b_{1000}$ such that \[ \prod_{k=0}^{1000} (x - a_k) = \prod_{k=0}^{1000} (x - k)^{b_k}, \quad \prod_{k=0}^{1000} (x - b_k) = \prod_{k=0}^{1000} (x - k)^{a_k} \] for all $x$. Let $C$ denote the sum $\sum_{i=0}^{1000} (i+1)a_i^2$ taken over all good sequences $a_0, \ldots, a_{1000}$. What is the remainder when $C$ is divided by 100000?",87052,"A sequence of integers $a_0, \ldots, a_{1000}$ is called a \textit{good sequence} if there exists a sequence of integers $b_0, \ldots, b_{1000}$ such that
 \[
     \prod_{k=0}^{1000} (x - a_k) = \prod_{k=0}^{1000} (x - k)^{b_k}, \quad \prod_{k=0}^{1000} (x - b_k) = \prod_{k=0}^{1000} (x - k)^{a_k}
@@ -386,26 +319,81 @@ for all pairs of real numbers $x$ and $y$. For a real number $r$, we say that $t
 4g\left(x^{2}+y^{2}+2g(xy)\right)=(g(2x+2y))^{2}
 \]
 for all pairs of real numbers $x$ and $y$. For a real number $r$, we say that $t\in \mathbb{R}$ is a \textit{$r$-represented number} if there exists a good function $g$ such that $t=g(r)$. Find the set of all $r$ such that there are four $r$-represented number.","$(-\infty,-4)\cup (-4,-\frac{8}{3})$"
-imo-bench-geometry-023,"A truncated triangular pyramid is circumscribed around a sphere that touches its bases at points $P_1, P_2$. Let $h$ be the altitude of the pyramid, $r_1, r_2$ be the circumradii of its bases, and $C_1, C_2$ be the circumcenters of the bases. If $r_1=2$, $r_2=3$, and $h=4$, what is the value of $(r_1^2-C_1P_1^2)(r_2^2-C_2P_2^2)$?",96,"A truncated triangular pyramid is circumscribed around a sphere that touches its bases at points $P_1, P_2$. Let $h$ be the altitude of the pyramid, $r_1, r_2$ be the circumradii of its bases, and $C_1, C_2$ be the circumcenters of the bases. Compute $(r_1^2-C_1P_1^2)(r_2^2-C_2P_2^2)$ in terms of $r_1, r_2$ and $h$.
-",$r_1r_2 h^2$
+stm-2025-p10-geometry,"Let $AFDC$ be a rectangle. Construct points $E$ and $B$ outside of $AFDC$ such that 
+\[
+AB = BC = DE = EF = 45
+\]
+and $ABCDEF$ is a convex hexagon. Let $\mathcal{E}$ be an inscribed ellipse tangent to sides 
+$AB, BC, CD, DE, EF, FA$ at points $U, V, W, X, Y,$ and $Z$, respectively. 
+
+Points $F_1$ and $F_2$, with $F_1$ closer to $B$, are the foci of $\mathcal{E}$ satisfying
+\[
+\triangle ABC \cong \triangle F_1WF_2 \cong \triangle DEF.
+\]
+
+Let $Q$ be on line $CD$ such that $F_1Y \perp ZQ$. Let the area of quadrilateral $F_1QYZ$ is $S$. What is the remainder when $S^2$ is divided by $3^7$?
+",2500,"Let $AFDC$ be a rectangle. Construct points $E$ and $B$ outside of $AFDC$ such that 
+\[
+AB = BC = DE = EF = 45
+\]
+and $ABCDEF$ is a convex hexagon. Let $\mathcal{E}$ be an inscribed ellipse tangent to sides 
+$AB, BC, CD, DE, EF, FA$ at points $U, V, W, X, Y,$ and $Z$, respectively. 
+
+Points $F_1$ and $F_2$, with $F_1$ closer to $B$, are the foci of $\mathcal{E}$ satisfying
+\[
+\triangle ABC \cong \triangle F_1WF_2 \cong \triangle DEF.
+\]
+
+Let $Q$ be on line $CD$ such that $F_1Y \perp ZQ$. Compute the area of quadrilateral $F_1QYZ$.
+",1350\sqrt{3}
 imo-bench-number_theory-031,"Let $k>l$ be given coprime positive integers greater than 1. Define a function $f: \mathbb{Z}\rightarrow \mathbb{Z}$ as follows: for $x$, $f(x)$ is the smallest value of $|a|+|b|$ among all integers $a,b$ satisfying $ka+lb = x$.
  An integer $x$ is called 'nice' if $f(x)\geq \max (f(x-a),f(x+a),f(x-b),f(x+b))$. Denote by $F(k,l)$ the the number of nice integers when both $k$ and $l$ are odd, and denote by $G(k,l)$ the number of nice integers when either $k$ or $l$ is even. Suppose that there exists polynomials $p(k,l)$ and $q(k,l)$ such that $F(k,l)=p(k,l)$ for all odd integers $k,l$ and $G(k,l)=q(k,l)$ whenever at least one of $k$ or $l$ is even.  Evaluate $p(3,5)^2 + q(3,5)^2$.",80,"Let $k>l$ be given coprime positive integers greater than 1. Define a function $f: \mathbb{Z}\rightarrow \mathbb{Z}$ as follows: for $x$, $f(x)$ is the smallest value of $|a|+|b|$ among all integers $a,b$ satisfying $ka+lb = x$.
  An integer $x$ is called 'nice' if $f(x)\geq \max (f(x-a),f(x+a),f(x-b),f(x+b))$. Denote by $F(k,l)$ the the number of nice integers when both $k$ and $l$ are odd, and denote by $G(k,l)$ the number of nice integers when either $k$ or $l$ is even. Suppose that there exists polynomials $p(k,l)$ and $q(k,l)$ such that $F(k,l)=p(k,l)$ for all odd integers $k,l$ and $G(k,l)=q(k,l)$ whenever at least one of $k$ or $l$ is even.  Evaluate $p(k,l)^2 + q(k,l)^2$.",$5(l-1)^2$
-CFE-number_theory,"Let $p$ be a prime satisfying $p^{2}\mid2^{p-1}-1$, and let $n$ be a positive integer. Define
+putnam-2025-p6b-algebra,"Let $\mathbb{N} = \{1,2,3,\ldots\}$. If $r$ is the largest real constant such that there exists a function
+\[
+g : \mathbb{N} \to \mathbb{N}
+\]
+such that
+\[
+g(n+1) - g(n) \ge \bigl(g(g(n))\bigr)^r
+\]
+for all $n \in \mathbb{N}$. Determine the value of $2024r$.
+",506,"Let $n$ be an integer with $n \ge 2$. For a sequence $s = (s_1, \ldots, s_{n-1})$, where each $s_i = \pm 1$, let $f(s)$ be the number of permutations $(a_1, \ldots, a_n)$ of $(1,2,\ldots,n)$ such that
+\[
+s_i(a_{i+1} - a_i) > 0 \quad \text{for all } i.
+\]
+For each $n$, determine the sequences $s$ for which $f(s)$ is maximal.",\frac{1}{4}
+Project-euler-572,"A matrix $M$ is called idempotent if $M^2 = M$.
 
-$$f(x)=\frac{(x-1)^{p^{n}}-(x^{p^{n}}-1)}{p(x-1)}.$$
+Let $M$ be a three by three matrix:
+\[M=\begin{pmatrix}
+a & b & c\\
+d & e & f\\
+g & h & i\\
+\end{pmatrix}.\]
 
-Let $k$ denote the largest positive integer for which there exist polynomials $g(x),\,h(x)$ with integer coefficients and an integer $r$ such that
+Let $C(n)$ be the number of idempotent three-by-three matrices $M$ with integer elements satisfying
+$$-n \le a,b,c,d,e,f,g,h,i \le n.$$
+It is known that $C(1)=164$ and $C(2)=848$.
 
-$$f(x)=(x-r)^{k}\,g(x)+p\cdot h(x),$$
+Let $N$ denote $C(200)$.
 
-where $p = 1093$, $n = 1$, and $f(x)=\frac{(x-1)^{p^{n}}-(x^{p^{n}}-1)}{p(x-1)}$.
+What is the remainder when $N$ is divided by 99997?",38247,"A matrix $M$ is called idempotent if $M^2 = M$.
 
-What is the remainder when $(6)^{k}$ is divided by 99989?",36,"Let p be a prime satisfying. $p^{2}\mid2^{p-1}-1$ ., and let n be a positive integer. Define 
+Let $M$ be a three by three matrix :
+$M=\begin{pmatrix}
+a & b & c\\
+d & e & f\\
+g &h &i\\
+\end{pmatrix}$.
 
-$$f(x)=\frac{(x-1)^{p^{n}}-(x^{p^{n}}-1)}{p(x-1)}.$$ 
+Let $C(n)$ be the number of idempotent three by three matrices $M$ with integer elements such that
 
-Find the largest positive integer N such that there exist polynomials $g(x),h(x)$ with integer coefficients and an integer $r$ satisfying $f(x)=(x-r)^{N}g(x)+p\cdot h(x)$, where $p = 1093$, $n = 1$, and $f(x)=\frac{(x-1)^{p^{n}}-(x^{p^{n}}-1)}{p(x-1)}$.",2
+$ -n \le a,b,c,d,e,f,g,h,i \le n$.
+
+$C(1)=164$ and $C(2)=848$.
+
+Find $C(200)$.",19737656
 project-euler-260,"A game is played with three piles of stones and two players.
 
 On each player's turn, the player may remove one or more stones from the piles. However, if the player takes stones from more than one pile, then the same number of stones must be removed from each of the selected piles.
