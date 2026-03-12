@@ -11,7 +11,7 @@ xyz = 3,
 (x+y)(y+z)(z+x) = 40.
 \]
 
-Let $k$ denote the minimum possible value of $x$, and define $n = \\lfloor 37k \\rfloor$. What is the remainder when $3^n$ is divided by 78787?",39574,"Positive real numbers \( x, y, \) and \( z \) satisfy the following equations:
+Let $k$ denote the minimum possible value of $x$, and define $n = \lfloor 37k \rfloor$. What is the remainder when $3^n$ is divided by 78787?",39574,"Positive real numbers \( x, y, \) and \( z \) satisfy the following equations:
 
 \[
 xyz = 3,
