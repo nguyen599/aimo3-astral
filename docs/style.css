@@ -454,7 +454,7 @@ body.drag-over::after {
 }
 .toc-link {
   font-size: 0.82rem; color: var(--accent); text-decoration: none;
-  padding: 0.2rem 0.55rem; border-radius: 4px;
+  padding: 0.2rem 0.4rem; border-radius: 4px; white-space: nowrap;
   transition: background 0.15s;
 }
 .toc-link:hover { background: var(--accent-light); }
