@@ -55,6 +55,7 @@ const KNOWN_MODELS = [
   'moonshotai/Kimi-K2.5',
   'Qwen/Qwen3.5-397B-A17B',
   'deepseek-ai/DeepSeek-V3.2',
+  'stepfun-ai/Step-3.5-Flash',
   'openai/gpt-oss-120b',
   'nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16'
 ];

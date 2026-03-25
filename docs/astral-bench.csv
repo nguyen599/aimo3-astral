@@ -1,31 +1,45 @@
 id,problem,answer,original_problem,original_answer
-hmmt-feb-2026-algebra-p7,"Positive real numbers \( x, y, \) and \( z \) satisfy the following equations:
-
+open-rl-combinatorics-247678,"Let $G$ be a graph with vertex set $V(G)$.
+Fix an integer $k \ge 1$. A subset $S \subseteq V(G)$ is said to be a $k$-tuple total dominating set if every vertex $v \in V(G)$ has at least $k$ neighbors belonging to $S$, that is,
 \[
-xyz = 3,
+|N(v)\cap S| \ge k \quad \text{for all } v \in V(G).
 \]
+The smallest possible size of such a set is called the $k$-tuple total domination number of $G$ and is denoted by $\gamma_{\times k,t}(G)$.
+For each integer $n \ge 2$, let $P_n$ denote the path on $n$ vertices and let $C_n$ denote the cycle on $n$ vertices.  The Cartesian product of graphs is denoted by $\square$.
+Consider the following three Cartesian products:
 \[
-(x-y)(y-z)(z-x) = 4,
+E_1 = P_3 \square P_{902}, \qquad
+E_2 = C_{512} \square C_{333}, \qquad
+E_3 = P_3 \square P_{451}.
 \]
+Form the weighted sum
 \[
-(x+y)(y+z)(z+x) = 40.
+\mathcal{W}=
+3\,\gamma_{\times 2,t}(E_1)+
+\gamma_{\times 2,t}(E_2)-
+2\,\gamma_{\times 2,t}(E_3).
 \]
-
-Let $k$ denote the minimum possible value of $x$, and define $n = \lfloor 37k \rfloor$. What is the remainder when $3^n$ is divided by 78787?",39574,"Positive real numbers \( x, y, \) and \( z \) satisfy the following equations:
-
+What is the remainder when $\mathcal{W}$ is divided by 8676?",2100,"Let $G$ be a graph with vertex set $V(G)$.
+Fix an integer $k \ge 1$. A subset $S \subseteq V(G)$ is said to be a $k$-tuple total dominating set if every vertex $v \in V(G)$ has at least $k$ neighbors belonging to $S$, that is,
 \[
-xyz = 3,
+|N(v)\cap S| \ge k \quad \text{for all } v \in V(G).
 \]
+The smallest possible size of such a set is called the $k$-tuple total domination number of $G$ and is denoted by $\gamma_{\times k,t}(G)$.
+For each integer $n \ge 2$, let $P_n$ denote the path on $n$ vertices and let $C_n$ denote the cycle on $n$ vertices.  The Cartesian product of graphs is denoted by $\square$.
+Consider the following three Cartesian products:
 \[
-(x-y)(y-z)(z-x) = 4,
+E_1 = P_3 \square P_{902}, \qquad
+E_2 = C_{512} \square C_{333}, \qquad
+E_3 = P_3 \square P_{451}.
 \]
+Form the weighted sum
 \[
-(x+y)(y+z)(z+x) = 40.
+\mathcal{W}=
+3\,\gamma_{\times 2,t}(E_1)+
+\gamma_{\times 2,t}(E_2)-
+2\,\gamma_{\times 2,t}(E_3).
 \]
-
-Compute the minimum possible value for \( x \).
-
-Give the minimum value of x as an exact expression using only integers, rational numbers, and radicals (no trigonometric or inverse trigonometric functions, and no approximations).",(3+sqrt{6})^(-\frac{1}{3})
+Determine the numerical value of $\mathcal{W}$.",88860
 imo-bench-algebra-030,"There exists an infinite sequence $x_1, x_2, \ldots$ where each term belongs to $[0, 777]$ such that for all positive integers $m < n$, we have $$(m+n)|x_n^2 - x_m^2| \ge D.$$
 Let D denote the maximum value satisfying this condition. What is the remainder when D is divided by 99991?
 ",3783,"Find the maximum value of $D$ satisfying the following condition: There exists an infinite sequence $x_1, x_2, \ldots$ where each term belongs to $[0, 777]$ such that for all positive integers $m < n$, we have $$(m+n)|x_n^2 - x_m^2| \ge D.$$
@@ -485,4 +499,4 @@ MIT-math-Q2,"Each monk entering the Temple of Forever is given a bowl with 15 re
 That is, if he starts with i red beads and j green beads, then after he performs this operation, he will have j red beads and i green beads. A monk may leave the Temple of Forever only when he has exactly 5 red beads and 5 green beads in his bowl. Inside the Temple of Forever, the Gong of Time rings on. As you may well imagine,the monks begin to recognize that no matter how many ways they try to exchange or swap their beads, they always seem to end up in some state they've already been in before! For one or two monks, this realization is all they need to propel them instantly into a state of enlightenment. For the overwhelming majority, however, this knowledge does nothing but weaken their resolve. They just get depressed. Taking note of the mental state of this second group, the Keeper of the Temple makes an unannounced appearance and proclaims to the group, ""From now on, any monk who is able to visit 108 (108 being the mystical number that encompasses all of existence) unique states will be allowed to leave the Temple of Forever."" What is the true maximal number of unique states a monk can visit in any execution of the Temple of Forever machine?",52,"Each monk entering the Temple of Forever is given a bowl with 15 red beads and 12 green beads. Each time the Gong of Time rings, a monk must do one of two things: 
 1. Exchange: If he has at least 3 red beads in his bowl, then he may exchange 3 red beads for 2 green beads. 
 2. Swap: He may replace each green bead in his bowl with a red bead and replace each red bead in his bowl with a green bead. That is, if he starts with i red beads and j green beads, then after he performs this operation, he will have j red beads and i green beads. A monk may leave the Temple of Forever only when he has exactly 5 red beads and 5 green beads in his bowl. Inside the Temple of Forever, the Gong of Time rings on. As you may well imagine,the monks begin to recognize that no matter how many ways they try to exchange or swap their beads, they always seem to end up in some state they've already been in before! For one or two monks, this realization is all they need to propel them instantly into a state of enlightenment. For the overwhelming majority, however, this knowledge does nothing but weaken their resolve. They just get depressed. Taking note of the mental state of this second group, the Keeper of the Temple makes an unannounced appearance and proclaims to the group, ""From now on, any monk who is able to visit 108 (108 being the mystical number that encompasses all of existence) unique states will be allowed to leave the Temple of Forever."" Do the monks have any chance of leaving the Temple of Forever? What is the true maximal number of unique states a monk can visit in any execution of the Temple of Forever machine? How can this number be achieved?",52
-EGMO-2016,"Let $m$ be a positive integer. Consider a $4m \times 4m$ array of square unit cells. Two different cells are related to each other if they are in either the same row or in the same column. No cell is related to itself. Some cells are colored blue, such that every cell is related to at least two blue cells. Let $k$ denote the minimum possible number of blue cells. What is the remainder when $(4)^{k}$ is divided by 77795?",4096,"Let m be a positive integer. Consider a 4m × 4m array of square unit cells. Two different cells are related to each other if they are in either the same row or in the same column. No cell is related to itself. Some cells are colored blue, such that every cell is related to at least two blue cells. Determine the minimum number of blue cells.",6
+EGMO-2016,"Let $m$ be a positive integer. Consider a $4m \times 4m$ array of square unit cells. Two different cells are related to each other if they are in either the same row or in the same column. No cell is related to itself. Some cells are colored blue, such that every cell is related to at least two blue cells. Let $k$ denote the minimum possible number of blue cells. What is the remainder when $(4)^{k}$ is divided by 77795?",4096,"Let m be a positive integer. Consider a 4mx4m array of square unit cells. Two different cells are related to each other if they are in either the same row or in the same column. No cell is related to itself. Some cells are colored blue, such that every cell is related to at least two blue cells. Determine the minimum number of blue cells.",6
