@@ -169,11 +169,11 @@
       <p class="overview-text">Token length distribution between Stage 1 and Stage 2 (estimated using gpt-oss-120b harmony encoding). Stage 2 contains the hardest questions, resulting in longer and more complex solution traces.</p>
       <div class="image-row">
         <div class="image-card">
-          <img src="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2Fbb3603f2acea4d8f987103147fbf04b6%2Ftoken_length_distribution_st1.png?generation=1771184289728188&alt=media" alt="Stage 1 token length distribution">
+          <img src="img/token_length_distribution_st1.png" alt="Stage 1 token length distribution">
           <p class="image-caption">Stage 1 &mdash; Majority of traces are under 10k tokens, with a long tail of complex problems reaching 40k+. The distribution shows a healthy spread across difficulty levels.</p>
         </div>
         <div class="image-card">
-          <img src="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2F65116797849e7797c931541d4651abf0%2Ftoken_length_distribution_st2.png?generation=1771184432455164&alt=media" alt="Stage 2 token length distribution">
+          <img src="img/token_length_distribution_st2.png" alt="Stage 2 token length distribution">
           <p class="image-caption">Stage 2 &mdash; Shifted right compared to Stage 1, reflecting the higher difficulty. These are the hardest questions that require extended multi-step reasoning and multiple tool calls.</p>
         </div>
       </div>
@@ -190,7 +190,7 @@
         </div>
         <div class="image-card">
           <img src="img/astralbench.png" alt="AstralBench topic distribution">
-          <p class="image-caption">AstralBench &mdash; 50 curated problems spanning the hardest topics. Selected from IMOBench and Project Euler with current model accuracy between 5-30%.</p>
+          <p class="image-caption">AstralBench &mdash; 50 curated problems spanning the hardest topics. Selected from various benchmarks or math competitions with current model accuracy between 5-30%.</p>
         </div>
       </div>
     </section>
@@ -203,9 +203,13 @@
       <table class="overview-table source-table">
         <thead><tr><th>Source</th><th>Count</th><th>Transformed</th></tr></thead>
         <tbody>
-          <tr><td>IMOBench</td><td>46</td><td>20</td></tr>
-          <tr><td>Project Euler</td><td>4</td><td>4</td></tr>
-          <tr class="total-row"><td><strong>Total</strong></td><td><strong>50</strong></td><td><strong>24</strong></td></tr>
+          <tr><td>IMOBench</td><td>33</td><td>24</td></tr>
+          <tr><td>Project Euler</td><td>2</td><td>2</td></tr>
+          <tr><td>Open rl</td><td>3</td><td>2</td></tr>
+          <tr><td>USA-TSTST</td><td>2</td><td>0</td></tr>
+          <tr><td>EGMO</td><td>2</td><td>0</td></tr>
+          <tr><td>Other</td><td>8</td><td>&mdash;</td></tr>
+          <tr class="total-row"><td><strong>Total</strong></td><td><strong>50</strong></td><td><strong>28</strong></td></tr>
         </tbody>
       </table>
       <p class="overview-text" style="margin-top:1rem">Model Performance on AstralBench:</p>
