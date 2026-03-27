@@ -44,10 +44,10 @@ function getHFDataset(key) {
 // since HF auto-generates these from filenames in different ways.
 const HF_SPLITS = {
   stage1: [
-    { config: 'default', split: 'train' },
+    { config: 'default', split: 'stage1' },
   ],
   stage2: [
-    { config: 'default', split: 'train_2' },
+    { config: 'default', split: 'stage2' },
   ],
   error: [
     { config: 'default', split: 'train' },
