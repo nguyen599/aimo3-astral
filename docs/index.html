@@ -31,6 +31,7 @@
     <a href="#stage1" class="nav-link" data-page="stage1">Stage 1</a>
     <a href="#stage2" class="nav-link" data-page="stage2">Stage 2</a>
     <a href="#bench" class="nav-link" data-page="bench">AstralBench</a>
+    <a href="#error" class="nav-link" data-page="error">Error Traces</a>
     <button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode">&#9790;</button>
   </div>
 </nav>
@@ -184,11 +185,11 @@
       <p class="overview-text">Topic distribution comparison between the full AstralMath-v1 dataset and the AstralBench benchmark subset.</p>
       <div class="image-row">
         <div class="image-card">
-          <img src="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2F14236485fc5d01d744307394070cc3e3%2FScreenshot_20260216_023111_50.png?generation=1771184502604250&alt=media" alt="AstralMath-v1 topic distribution">
+          <img src="img/astralmath.png" alt="AstralMath-v1 topic distribution">
           <p class="image-caption">AstralMath-v1 &mdash; Broad coverage across algebra, number theory, combinatorics, geometry, and analysis. The hierarchical topic classification supports fine-grained curriculum design.</p>
         </div>
         <div class="image-card">
-          <img src="https://www.googleapis.com/download/storage/v1/b/kaggle-forum-message-attachments/o/inbox%2F23660183%2F4b4ad69bff6227e1c7554c645ee09225%2FScreenshot_20260216_023451.png?generation=1771184540030770&alt=media" alt="AstralBench topic distribution">
+          <img src="img/astralbench.png" alt="AstralBench topic distribution">
           <p class="image-caption">AstralBench &mdash; 50 curated problems spanning the hardest topics. Selected from IMOBench and Project Euler with current model accuracy between 5-30%.</p>
         </div>
       </div>
@@ -377,6 +378,44 @@
   </div>
 </div>
 
+<!-- Error Traces Page -->
+<div id="page-error" class="page">
+  <div class="page-header">
+    <h1>Error Traces</h1>
+    <p class="subtitle">520,000+ error traces from multi-model reasoning attempts &mdash; failed solutions with extracted answers for error analysis and DPO/negative training</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val" id="et-total">&mdash;</span><span class="stat-label">Total Traces</span></div>
+      <div class="stat"><span class="stat-val" id="et-models">7</span><span class="stat-label">Models</span></div>
+      <div class="stat"><span class="stat-val" id="et-format">JSONL</span><span class="stat-label">Format</span></div>
+    </div>
+  </div>
+  <div class="filter-row" id="et-filters">
+    <label class="filter-label">Filter:</label>
+    <select class="filter-select" id="et-filter-model"><option value="">All Models</option></select>
+    <select class="filter-select" id="et-filter-source"><option value="">All Sources</option></select>
+    <span class="filter-count" id="et-filter-count"></span>
+  </div>
+  <div class="mini-stats" id="et-mini-stats"></div>
+  <div class="viewer-controls">
+    <button class="btn" id="et-prev" disabled>&larr; Previous</button>
+    <span class="counter" id="et-counter">0 / 0</span>
+    <button class="btn" id="et-next">Next &rarr;</button>
+    <input type="number" class="jump-input" id="et-jump" placeholder="Go to #" min="1">
+    <button class="btn btn-sm" id="et-go">Go</button>
+    <button class="btn btn-sm" id="et-random" title="Random question">&#9861;</button>
+  </div>
+  <div class="card" id="et-card">
+    <div class="card-placeholder">
+      <div class="loading-spinner">Connecting to HuggingFace...</div>
+      <p class="hint">Or upload manually:</p>
+      <label class="btn btn-primary file-label">
+        Choose error_traces.jsonl
+        <input type="file" id="et-file" accept=".jsonl" hidden>
+      </label>
+    </div>
+  </div>
+</div>
+
 <footer class="footer">
   <p>AstralMath-v1 &middot; A Tool-Integrated Reasoning dataset for AIMO3</p>
   <p class="footer-visitors">
@@ -385,6 +424,7 @@
   </p>
 </footer>
 
+<div class="lightbox-overlay" id="lightbox"><img src="" alt="" id="lightbox-img"></div>
 <script src="app.js"></script>
 
 <!-- GoatCounter Analytics -->

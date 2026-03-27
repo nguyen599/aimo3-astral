@@ -29,8 +29,16 @@ if (document.documentElement.getAttribute('data-theme') === 'dark') {
 
 // ── Config ───────────────────────────────────────────────────────
 const HF_DATASET = 'nguyen599/AstralMath-v1';
+const HF_DATASET_ERROR = 'nguyen599/AstralMath-v1-ErrorTraces';
 const HF_API = 'https://datasets-server.huggingface.co';
 const BATCH_SIZE = 20;  // rows to prefetch per batch
+
+function getPrefix(key) {
+  return { stage1: 's1', stage2: 's2', bench: 'b', error: 'et' }[key] || key;
+}
+function getHFDataset(key) {
+  return key === 'error' ? HF_DATASET_ERROR : HF_DATASET;
+}
 
 // HF datasets-server uses config+split. We try multiple patterns
 // since HF auto-generates these from filenames in different ways.
@@ -41,6 +49,9 @@ const HF_SPLITS = {
   stage2: [
     { config: 'default', split: 'train_2' },
   ],
+  error: [
+    { config: 'default', split: 'train' },
+  ],
 };
 
 // ── State ────────────────────────────────────────────────────────
@@ -48,6 +59,7 @@ const state = {
   stage1: { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
   stage2: { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
   bench:  { cache: new Map(), idx: 0, total: 0, localData: null, loading: false },
+  error:  { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
 };
 
 const KNOWN_MODELS = [
@@ -63,6 +75,7 @@ const KNOWN_MODELS = [
 const statsTracker = {
   stage1: { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
   stage2: { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
+  error:  { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
 };
 
 // ── Routing ──────────────────────────────────────────────────────
@@ -70,7 +83,7 @@ function navigate() {
   const raw = location.hash.replace('#', '') || 'overview';
   // Support shareable URLs like #stage1/42
   const parts = raw.split('/');
-  const page = ['overview', 'stage1', 'stage2', 'bench'].includes(parts[0]) ? parts[0] : 'overview';
+  const page = ['overview', 'stage1', 'stage2', 'bench', 'error'].includes(parts[0]) ? parts[0] : 'overview';
   const urlIdx = parts[1] ? parseInt(parts[1], 10) - 1 : null;
 
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -80,14 +93,14 @@ function navigate() {
   const link = document.querySelector(`.nav-link[data-page="${page}"]`);
   if (link) link.classList.add('active');
 
-  // Auto-init HF streaming when navigating to a stage page
-  if ((page === 'stage1' || page === 'stage2') && !state[page].localData && !state[page].hfSplit) {
+  // Auto-init HF streaming when navigating to a stage/error page
+  if ((page === 'stage1' || page === 'stage2' || page === 'error') && !state[page].localData && !state[page].hfSplit) {
     initHFStream(page).then(() => {
       if (urlIdx !== null && urlIdx >= 0 && urlIdx < state[page].total) {
         goToIndex(page, urlIdx);
       }
     });
-  } else if ((page === 'stage1' || page === 'stage2') && urlIdx !== null && urlIdx >= 0) {
+  } else if ((page === 'stage1' || page === 'stage2' || page === 'error') && urlIdx !== null && urlIdx >= 0) {
     goToIndex(page, urlIdx);
   }
 
@@ -122,8 +135,8 @@ window.addEventListener('hashchange', navigate);
 navigate();
 
 // ── HuggingFace Datasets Server API ─────────────────────────────
-async function hfFetchRows(config, split, offset, length) {
-  const url = `${HF_API}/rows?dataset=${encodeURIComponent(HF_DATASET)}&config=${encodeURIComponent(config)}&split=${encodeURIComponent(split)}&offset=${offset}&length=${length}`;
+async function hfFetchRows(config, split, offset, length, dataset = HF_DATASET) {
+  const url = `${HF_API}/rows?dataset=${encodeURIComponent(dataset)}&config=${encodeURIComponent(config)}&split=${encodeURIComponent(split)}&offset=${offset}&length=${length}`;
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`HF API ${resp.status}`);
   return resp.json();
@@ -134,7 +147,7 @@ async function initHFStream(key) {
   if (s.hfSplit || s.localData || s.loading) return;
   s.loading = true;
 
-  const prefix = key === 'stage1' ? 's1' : 's2';
+  const prefix = getPrefix(key);
   const card = document.getElementById(`${prefix}-card`);
   showCardLoading(card, `Connecting to HuggingFace...`);
 
@@ -143,7 +156,7 @@ async function initHFStream(key) {
 
   for (const { config, split } of candidates) {
     try {
-      const result = await hfFetchRows(config, split, 0, 1);
+      const result = await hfFetchRows(config, split, 0, 1, getHFDataset(key));
       if (result && result.num_rows_total > 0) {
         s.hfConfig = config;
         s.hfSplit = split;
@@ -176,7 +189,7 @@ async function fetchAndRender(key, idx) {
   if (idx < 0 || idx >= s.total) return;
   s.idx = idx;
 
-  const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
+  const prefix = getPrefix(key);
 
   // If local data loaded (from file upload)
   if (s.localData) {
@@ -201,7 +214,7 @@ async function fetchAndRender(key, idx) {
   try {
     const batchStart = idx;
     const batchLen = Math.min(BATCH_SIZE, s.total - batchStart);
-    const result = await hfFetchRows(s.hfConfig, s.hfSplit, batchStart, batchLen);
+    const result = await hfFetchRows(s.hfConfig, s.hfSplit, batchStart, batchLen, getHFDataset(key));
 
     if (result.rows) {
       for (let i = 0; i < result.rows.length; i++) {
@@ -237,7 +250,7 @@ function prefetchBatch(key, startIdx) {
   if (s.cache.has(startIdx)) return;
 
   const batchLen = Math.min(BATCH_SIZE, s.total - startIdx);
-  hfFetchRows(s.hfConfig, s.hfSplit, startIdx, batchLen)
+  hfFetchRows(s.hfConfig, s.hfSplit, startIdx, batchLen, getHFDataset(key))
     .then(result => {
       if (result.rows) {
         for (let i = 0; i < result.rows.length; i++) {
@@ -277,7 +290,8 @@ function showCardUpload(card, prefix) {
   const input = document.getElementById(`${prefix}-file-fallback`);
   if (input) {
     input.addEventListener('change', (e) => {
-      readFile(e.target.files[0], prefix === 's1' ? 'stage1' : 'stage2', 'jsonl');
+      const keyMap = { s1: 'stage1', s2: 'stage2', et: 'error' };
+      readFile(e.target.files[0], keyMap[prefix] || 'stage1', 'jsonl');
     });
   }
 }
@@ -372,7 +386,7 @@ function loadLocalDataset(key, data) {
   s.total = data.length;
   s.idx = 0;
 
-  const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
+  const prefix = getPrefix(key);
   const totalEl = document.getElementById(`${prefix}-total`);
   if (totalEl) totalEl.textContent = data.length.toLocaleString();
 
@@ -616,14 +630,67 @@ function renderBenchItem(item) {
   return html;
 }
 
+function renderErrorTraceItem(item) {
+  let html = '';
+
+  // Meta pills: model, source
+  const pills = [];
+  if (item.model) pills.push(['Model', item.model]);
+  if (item.source) pills.push(['Source', item.source]);
+
+  if (pills.length > 0) {
+    html += '<div class="meta-row">';
+    for (const [k, v] of pills) {
+      html += `<span class="meta-pill"><span class="pill-key">${escapeHtml(k)}</span> <span class="pill-val">${escapeHtml(String(v))}</span></span>`;
+    }
+    html += '</div>';
+  }
+
+  // Question
+  if (item.question) {
+    html += '<div class="field-group">';
+    html += '<div class="field-label">Question</div>';
+    html += `<div class="field-value question-text">${escapeHtml(item.question)}</div>`;
+    html += '</div>';
+  }
+
+  // Answer (ground truth)
+  if (item.answer != null) {
+    html += '<div class="field-group">';
+    html += '<div class="field-label">Answer (Ground Truth)</div>';
+    html += `<div class="field-value answer-text">${escapeHtml(String(item.answer))}</div>`;
+    html += '</div>';
+  }
+
+  // Extracted answer (what the model produced)
+  if (item.extracted_answer != null) {
+    html += '<div class="field-group">';
+    html += '<div class="field-label">Extracted Answer (Model Output)</div>';
+    html += `<div class="field-value" style="font-size:1.1rem;font-weight:700;color:var(--orange)">${escapeHtml(String(item.extracted_answer))}</div>`;
+    html += '</div>';
+  }
+
+  // Messages (full error trace)
+  if (item.messages) {
+    html += '<div class="field-group">';
+    html += '<div class="field-label">Messages / Error Trace</div>';
+    html += `<div class="field-value messages-field">${renderMessages(item.messages)}</div>`;
+    html += '</div>';
+  }
+
+  return html;
+}
+
 function renderItemFromData(key, item) {
-  const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
+  const prefix = getPrefix(key);
   const card = document.getElementById(`${prefix}-card`);
   if (!item) { card.innerHTML = '<div class="card-placeholder"><p>No data</p></div>'; return; }
 
   let html;
   if (key === 'bench') {
     html = renderBenchItem(item);
+  } else if (key === 'error') {
+    html = renderErrorTraceItem(item);
   } else {
     html = renderDatasetItem(item);
   }
@@ -642,7 +709,7 @@ function renderItemFromData(key, item) {
 
 function updateControls(key) {
   const s = state[key];
-  const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
+  const prefix = getPrefix(key);
 
   document.getElementById(`${prefix}-counter`).textContent =
     s.total > 0 ? `${s.idx + 1} / ${s.total.toLocaleString()}` : '0 / 0';
@@ -701,7 +768,7 @@ function goToIndex(key, idx) {
 
 // ── Wire up controls ─────────────────────────────────────────────
 function setupControls(key) {
-  const prefix = key === 'bench' ? 'b' : (key === 'stage1' ? 's1' : 's2');
+  const prefix = getPrefix(key);
 
   document.getElementById(`${prefix}-prev`).addEventListener('click', () => {
     if (key !== 'bench') goToFilteredIndex(key, -1);
@@ -731,6 +798,7 @@ function setupControls(key) {
 setupControls('stage1');
 setupControls('stage2');
 setupControls('bench');
+setupControls('error');
 
 // ── File inputs (fallback) ───────────────────────────────────────
 document.getElementById('s1-file').addEventListener('change', (e) => {
@@ -741,6 +809,9 @@ document.getElementById('s2-file').addEventListener('change', (e) => {
 });
 document.getElementById('b-file').addEventListener('change', (e) => {
   readFile(e.target.files[0], 'bench', 'csv');
+});
+document.getElementById('et-file').addEventListener('change', (e) => {
+  readFile(e.target.files[0], 'error', 'jsonl');
 });
 
 function readFile(file, key, format) {
@@ -780,6 +851,9 @@ document.addEventListener('drop', (e) => {
   if (name.includes('bench') || name.endsWith('.csv')) {
     readFile(file, 'bench', 'csv');
     location.hash = 'bench';
+  } else if (name.includes('error') || name.includes('errortrace')) {
+    readFile(file, 'error', 'jsonl');
+    location.hash = 'error';
   } else if (name.includes('stage2') || name.includes('s2')) {
     readFile(file, 'stage2', 'jsonl');
     location.hash = 'stage2';
@@ -828,7 +902,7 @@ function trackItemStats(key, item) {
 }
 
 function updateFilterOptions(key) {
-  const prefix = key === 'stage1' ? 's1' : 's2';
+  const prefix = getPrefix(key);
   const t = statsTracker[key];
 
   const modelSelect = document.getElementById(`${prefix}-filter-model`);
@@ -856,7 +930,7 @@ function updateFilterOptions(key) {
 }
 
 function updateMiniStats(key) {
-  const prefix = key === 'stage1' ? 's1' : 's2';
+  const prefix = getPrefix(key);
   const t = statsTracker[key];
   const container = document.getElementById(`${prefix}-mini-stats`);
 
@@ -871,7 +945,7 @@ function updateMiniStats(key) {
 }
 
 function getActiveFilter(key) {
-  const prefix = key === 'stage1' ? 's1' : 's2';
+  const prefix = getPrefix(key);
   const modelEl = document.getElementById(`${prefix}-filter-model`);
   const sourceEl = document.getElementById(`${prefix}-filter-source`);
   return {
@@ -898,7 +972,7 @@ async function goToFilteredIndex(key, direction) {
     return;
   }
 
-  const prefix = key === 'stage1' ? 's1' : 's2';
+  const prefix = getPrefix(key);
   let checked = 0;
   let idx = s.idx + direction;
 
@@ -913,7 +987,7 @@ async function goToFilteredIndex(key, direction) {
       try {
         const batchStart = idx;
         const batchLen = Math.min(BATCH_SIZE, s.total - batchStart);
-        const result = await hfFetchRows(s.hfConfig, s.hfSplit, batchStart, batchLen);
+        const result = await hfFetchRows(s.hfConfig, s.hfSplit, batchStart, batchLen, getHFDataset(key));
         if (result.rows) {
           for (let i = 0; i < result.rows.length; i++) {
             s.cache.set(batchStart + i, result.rows[i].row);
@@ -937,8 +1011,8 @@ async function goToFilteredIndex(key, direction) {
 }
 
 // Wire filter change events
-['stage1', 'stage2'].forEach(key => {
-  const prefix = key === 'stage1' ? 's1' : 's2';
+['stage1', 'stage2', 'error'].forEach(key => {
+  const prefix = getPrefix(key);
   const modelSel = document.getElementById(`${prefix}-filter-model`);
   const sourceSel = document.getElementById(`${prefix}-filter-source`);
   const countEl = document.getElementById(`${prefix}-filter-count`);
@@ -975,3 +1049,23 @@ document.addEventListener('keydown', (e) => {
     else goToIndex(key, state[key].idx + 1);
   }
 });
+
+// ── Image lightbox ───────────────────────────────────────────────
+(function initLightbox() {
+  const overlay = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+
+  document.querySelectorAll('.image-card img').forEach(img => {
+    img.addEventListener('click', () => {
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      overlay.classList.add('active');
+    });
+  });
+
+  overlay.addEventListener('click', () => overlay.classList.remove('active'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') overlay.classList.remove('active');
+  });
+})();

@@ -395,7 +395,20 @@ body {
   background: var(--bg-card);
 }
 .image-card img {
-  width: 100%; display: block;
+  width: 100%; display: block; cursor: zoom-in;
+}
+
+/* Lightbox overlay */
+.lightbox-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.85);
+  justify-content: center; align-items: center;
+  cursor: zoom-out;
+}
+.lightbox-overlay.active { display: flex; }
+.lightbox-overlay img {
+  max-width: 90vw; max-height: 90vh; object-fit: contain;
+  border-radius: 8px;
 }
 .image-caption {
   padding: 0.8rem 1rem;
