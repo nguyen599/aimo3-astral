@@ -218,6 +218,9 @@
         <tbody>
           <tr><td>GPT-OSS-120B (public notebook)</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-v1-1-gpt-oss-120b-12-50?scriptVersionId=296931824">9</a>, <a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-v1-1-gpt-oss-120b-12-50?scriptVersionId=297080076">14</a>, <a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-v1-1-gpt-oss-120b-12-50?scriptVersionId=297977804">13</a>/50</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-v1-1-gpt-oss-120b-12-50?scriptVersionId=303295695">12</a>, <a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-v1-1-gpt-oss-120b-12-50?scriptVersionId=303419686">15</a>/50</td></tr>
           <tr><td>GPT-OSS-120B (10h timeout)</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-v1-1-gpt-oss-120b-12-50?scriptVersionId=296924707">15</a>/50 (30%)</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/benchmark-astralbench-v1-1-gpt-oss-120b-12-50?scriptVersionId=303421815">13</a>/50</td></tr>
+          <tr><td>Qwen3-4B-Thinking (5h timeout)</td><td>-</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-qwen3-4b-astral-finetune?scriptVersionId=312410606">3</a>/50</td></tr>
+          <tr><td>DASD-4B-Thinking (5h timeout)</td><td>-</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-qwen3-4b-astral-finetune?scriptVersionId=312410630">5</a>/50</td></tr>
+          <tr><td>Qwen3-4B-Astral-Finetune (5h timeout)</td><td>-</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-qwen3-4b-astral-finetune?scriptVersionId=312263593">9</a>/50</td></tr>
         </tbody>
       </table>
       <p class="overview-note">All models run in a Kaggle-identical Docker environment with no time limit. Problems that originally had symbolic or fraction answers are transformed via modular arithmetic and parameter changes while preserving their original complexity.</p>
@@ -230,7 +233,8 @@
       <table class="overview-table source-table">
         <thead><tr><th>Model</th><th>Original</th><th>Finetuned</th><th>Setting</th></tr></thead>
         <tbody>
-          <tr><td>Qwen/Qwen3-4B-Thinking-2507</td><td>0 (~5h)</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-qwen3-4b-astral-finetune?scriptVersionId=296163785">22</a>, <a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-qwen3-4b-astral-finetune?scriptVersionId=297553855">23</a> (~5h)</td><td>1150 SFT steps, max length 40960, bs 8, ~11h on 1x H100</td></tr>
+          <tr><td>Qwen/Qwen3-4B-Thinking-2507</td><td><a href="https://www.kaggle.com/code/pushkin05/qwen-3-4b-thinking-2507-in-under-6-minutes?scriptVersionId=280767417">5</a></a></td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-qwen3-4b-astral-finetune?scriptVersionId=296163785">22</a>, <a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-qwen3-4b-astral-finetune?scriptVersionId=297553855">23</a> (~5h)</td><td>1150 SFT steps, max length 40960, bs 8, ~11h on 1x H100</td></tr>
+          <tr><td>Alibaba-Apsara/DASD-4B-Thinking</td><td><a href="https://www.kaggle.com/code/shelterw/qwen3-4b-w-python">10</a></td><td>-</td><td>-</td></tr>
           <tr><td>openai/gpt-oss-20b</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-skills-optional-luck-required-gpt-oss-20b">30</a> (~5h)</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-gpt-oss-20b-astral-finetune?scriptVersionId=300741136">34</a>, <a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-gpt-oss-20b-astral-finetune?scriptVersionId=300914454">33</a>, <a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-gpt-oss-20b-astral-finetune?scriptVersionId=301089265">34</a> (~5h)</td><td>400 LoRA (rank 1, alpha 32) steps, max length 50176, bs 12, ~11.5h on 1x H100</td></tr>
           <tr><td>openai/gpt-oss-120b</td><td>37&ndash;45</td><td><a href="https://www.kaggle.com/code/nguyennguyen599/aimo3-gpt-oss-120b-astral-finetune?scriptVersionId=303610382">40</a></td><td>250 LoRA (rank 1, alpha 32) steps, max length 40960, bs 16</td></tr>
         </tbody>
@@ -390,7 +394,7 @@
     <div class="stats-bar">
       <div class="stat"><span class="stat-val" id="et-total">&mdash;</span><span class="stat-label">Total Traces</span></div>
       <div class="stat"><span class="stat-val" id="et-models">7</span><span class="stat-label">Models</span></div>
-      <div class="stat"><span class="stat-val" id="et-format">JSONL</span><span class="stat-label">Format</span></div>
+      <div class="stat"><span class="stat-val" id="et-format">Parquet</span><span class="stat-label">Format</span></div>
     </div>
   </div>
   <div class="filter-row" id="et-filters">
