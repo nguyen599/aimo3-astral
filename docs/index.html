@@ -62,6 +62,7 @@
       <a href="#generation" class="toc-link">Generation</a>
       <a href="#tokens" class="toc-link">Tokens</a>
       <a href="#toolcalls" class="toc-link">Tool Calls</a>
+      <a href="#libraries" class="toc-link">Libraries</a>
       <a href="#topics" class="toc-link">Topics</a>
       <a href="#astralbench" class="toc-link">Bench</a>
       <a href="#training" class="toc-link">Training</a>
@@ -187,6 +188,16 @@
       <div class="image-card" style="max-width:100%">
         <img src="img/figure_tool_usage.png" alt="Tool call distribution" style="width:100%;border-radius:8px">
         <p class="image-caption">Tool call distribution &mdash; blue bars (left axis) show per-trace call counts; orange line (right axis) shows mean tool-execution time. Beyond count 60 both metrics become noisy due to small sample sizes.</p>
+      </div>
+    </section>
+
+    <!-- Library Usage Distribution -->
+    <section class="overview-section" id="libraries">
+      <h2>Library Usage Distribution</h2>
+      <p class="overview-text">The 30 most frequently imported Python libraries across all AstralMath traces. <code>sympy</code> is by far the most common (156,548 traces), reflecting the prevalence of symbolic algebra, equation solving, and number-theory operations in competition mathematics. <code>math</code> (94,150) and <code>numpy</code> (74,527) follow as the primary numerical workhorses, while <code>itertools</code> (42,770) and <code>fractions</code> (28,236) appear frequently in combinatorics and exact rational arithmetic problems. Specialised libraries such as <code>mpmath</code> (19,019) for arbitrary-precision arithmetic and <code>pulp</code> (1,512) for linear programming round out the long tail, confirming that the pre-installed sandbox covers a wide range of mathematical sub-disciplines.</p>
+      <div class="image-card" style="max-width:100%">
+        <img src="img/figure_libraries_bar.png" alt="Library usage distribution" style="width:100%;border-radius:8px">
+        <p class="image-caption">Top 30 Python libraries imported across AstralMath traces &mdash; ranked by number of traces in which each library appears.</p>
       </div>
     </section>
 
