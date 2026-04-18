@@ -60,8 +60,8 @@
       <a href="#filtering" class="toc-link">Filtering</a>
       <a href="#transforms" class="toc-link">Transforms</a>
       <a href="#generation" class="toc-link">Generation</a>
-      <a href="#toolcalls" class="toc-link">Tool Calls</a>
       <a href="#tokens" class="toc-link">Tokens</a>
+      <a href="#toolcalls" class="toc-link">Tool Calls</a>
       <a href="#topics" class="toc-link">Topics</a>
       <a href="#astralbench" class="toc-link">Bench</a>
       <a href="#training" class="toc-link">Training</a>
@@ -164,16 +164,6 @@
       </table>
     </section>
 
-    <!-- Tool Call Distribution -->
-    <section class="overview-section" id="toolcalls">
-      <h2>Tool Call Distribution</h2>
-      <p class="overview-text">Tool-call behaviour across all AstralMath traces. The distribution is heavily right-skewed: 113,342 traces invoke the Python interpreter exactly once, and frequency drops sharply thereafter. Mean tool-execution time rises gradually from ~1 s for single-call traces to a peak of 11.9 s at count 53, reflecting longer-running numerical searches and iterative refinement loops in harder problems.</p>
-      <div class="image-card" style="max-width:100%">
-        <img src="img/figure_tool_usage.png" alt="Tool call distribution" style="width:100%;border-radius:8px">
-        <p class="image-caption">Tool call distribution &mdash; blue bars (left axis) show per-trace call counts; orange line (right axis) shows mean tool-execution time. Beyond count 60 both metrics become noisy due to small sample sizes.</p>
-      </div>
-    </section>
-
     <!-- Token Length Distribution -->
     <section class="overview-section" id="tokens">
       <h2>Token Length Distribution</h2>
@@ -187,6 +177,16 @@
           <img src="img/token_length_distribution_st2.png" alt="Stage 2 token length distribution">
           <p class="image-caption">Stage 2 &mdash; Shifted right compared to Stage 1, reflecting the higher difficulty. These are the hardest questions that require extended multi-step reasoning and multiple tool calls.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- Tool Call Distribution -->
+    <section class="overview-section" id="toolcalls">
+      <h2>Tool Call Distribution</h2>
+      <p class="overview-text">Tool-call behaviour across all AstralMath traces. The distribution is heavily right-skewed: 113,342 traces invoke the Python interpreter exactly once, and frequency drops sharply thereafter. Mean tool-execution time rises gradually from ~1 s for single-call traces to a peak of 11.9 s at count 53, reflecting longer-running numerical searches and iterative refinement loops in harder problems.</p>
+      <div class="image-card" style="max-width:100%">
+        <img src="img/figure_tool_usage.png" alt="Tool call distribution" style="width:100%;border-radius:8px">
+        <p class="image-caption">Tool call distribution &mdash; blue bars (left axis) show per-trace call counts; orange line (right axis) shows mean tool-execution time. Beyond count 60 both metrics become noisy due to small sample sizes.</p>
       </div>
     </section>
 
