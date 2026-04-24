@@ -97,20 +97,10 @@
     <section class="overview-section" id="sources">
       <h2>Data Sources</h2>
       <p class="overview-text">AstralMath-v1 is built from curated questions across multiple high-quality mathematical datasets, deduplicated to remove overlapping problems. A significant portion is synthetically transformed into AIMO3-competition-style questions.</p>
-      <table class="overview-table source-table">
-        <thead><tr><th>Source</th><th>Selected</th><th>Transformed</th><th>Share</th></tr></thead>
-        <tbody>
-          <tr><td>Nemotron-Math-v2</td><td>89,344</td><td>70,596</td><td>51.9%</td></tr>
-          <tr><td>AI-MO/NuminaMath-1.5</td><td>28,363</td><td>0</td><td>20.8%</td></tr>
-          <tr><td>ScaleQuest-Math</td><td>10,139</td><td>0</td><td>7.4%</td></tr>
-          <tr><td>DeepScaleR-Preview-Dataset</td><td>7,580</td><td>7,580</td><td>5.0%</td></tr>
-          <tr><td>DeepMath-103K</td><td>540</td><td>540</td><td>0.4%</td></tr>
-          <tr><td>Project Euler</td><td>199</td><td>0</td><td>0.2%</td></tr>
-          <tr><td>IMO AnswerBench</td><td>24</td><td>0</td><td>&mdash;</td></tr>
-          <tr class="total-row"><td><strong>Total</strong></td><td><strong>136,151</strong></td><td><strong>78,716</strong></td><td><strong>100%</strong></td></tr>
-        </tbody>
-      </table>
-      <p class="overview-note">Nemotron-Math-v2 is the largest contributor, with over half the questions undergoing AIMO3-style transformation. NuminaMath and ScaleQuest provide diverse untransformed problems from competition archives.</p>
+      <div class="image-card" style="max-width:100%">
+        <img src="img/problem_sources_counts.png" alt="Problem sources and selection counts" style="width:100%;border-radius:8px">
+        <p class="image-caption">Problem sources and selection counts — "Transform" indicates the number of questions paired with a consensus-verified integer-answer transformation. Total: 136,151 selected from ~2.3M raw problems (6% retention), with 78,716 transformed variants.</p>
+      </div>
     </section>
 
     <!-- Filtering Pipeline -->
@@ -133,36 +123,155 @@
     <!-- Synthetic Transforms -->
     <section class="overview-section" id="transforms">
       <h2>Synthetic AIMO3-Style Transforms</h2>
-      <p class="overview-text">A key differentiator: existing math problems are rewritten into AIMO3-competition-style questions. All transformed answers are integers in [0, 99999].</p>
-      <table class="overview-table">
-        <thead><tr><th>Transform</th><th>Rule</th><th>Example</th></tr></thead>
-        <tbody>
-          <tr><td class="ot-key">Modular Arithmetic</td><td>"Find X" &rarr; "Find the remainder when X is divided by M"<br><span class="overview-note">M from primes/powers: 99991, 10<sup>5</sup>, 5<sup>7</sup>, 77781, etc.</span></td><td>"Find the sum of..." &rarr; "Find the remainder when the sum is divided by 99991"</td></tr>
-          <tr><td class="ot-key">Power Transforms</td><td>For small answers k &le; 10: compute base<sup>k</sup> mod M<br><span class="overview-note">base from [2, 7]. For k in (10, 20] only base 2 or 3.</span></td><td>answer = 7 &rarr; "Find 5<sup>7</sup> mod 99991" = 78120</td></tr>
-          <tr><td class="ot-key">Answer-Power</td><td>For answers 20 &lt; k &le; 50: compute k<sup>n</sup> mod M<br><span class="overview-note">n from [2, 6].</span></td><td>answer = 42 &rarr; "Find 42<sup>3</sup> mod 99991" = 74088</td></tr>
-          <tr><td class="ot-key">Symbol Substitution</td><td>Replace numeric parameters with algebraic symbols for parametric variants</td><td>Creates new problem families from a single seed by varying constants</td></tr>
-        </tbody>
-      </table>
-      <p class="overview-note">Each transformation is verified through <strong>12-run consensus</strong>: the same prompt with fixed random parameters is sent to gpt-oss-120b 12 times, and the result is only accepted if all runs return the identical answer.</p>
+      <p class="overview-text">A key differentiator: existing math problems are rewritten into AIMO3-competition-style questions with verifiable integer answers in [0,&nbsp;99999]. Each strategy targets a different answer structure. Click any strategy to see a complete before/after example.</p>
+
+      <div class="transform-accordion">
+
+        <details class="transform-item">
+          <summary class="transform-summary">
+            <span class="transform-badge">1</span>
+            <span class="transform-title">Modular Arithmetic</span>
+            <span class="transform-desc">"Find X" &rarr; "X mod M"</span>
+            <span class="transform-chevron">&#9660;</span>
+          </summary>
+          <div class="transform-pair">
+            <div class="transform-col">
+              <span class="transform-col-label original-label">Original</span>
+              <p>Find the maximum value of $D$ satisfying: there exists an infinite sequence $x_1, x_2, \ldots$ where each term belongs to $[0, 777]$ such that for all positive integers $m &lt; n$, $$(m+n)|x_n^2 - x_m^2| \ge D.$$</p>
+              <div class="transform-ans">Ans: 603729</div>
+            </div>
+            <div class="transform-divider"></div>
+            <div class="transform-col">
+              <span class="transform-col-label transformed-label">Transformed</span>
+              <p>There exists an infinite sequence $x_1, x_2, \ldots$ where each term belongs to $[0, 777]$ such that for all positive integers $m &lt; n$, $$(m+n)|x_n^2 - x_m^2| \ge D.$$ Let $D$ denote the maximum value satisfying this condition. What is the remainder when $D$ is divided by 99991?</p>
+              <div class="transform-ans">Ans: 3783</div>
+            </div>
+          </div>
+        </details>
+
+        <details class="transform-item">
+          <summary class="transform-summary">
+            <span class="transform-badge">2</span>
+            <span class="transform-title">Power Transform</span>
+            <span class="transform-desc">Answer k &rarr; base<sup>k</sup> mod M</span>
+            <span class="transform-chevron">&#9660;</span>
+          </summary>
+          <div class="transform-pair">
+            <div class="transform-col">
+              <span class="transform-col-label original-label">Original</span>
+              <p>In an integer set $\{a, b, c, d\}$, exactly 3 integers are positive, at least 2 are divisible by 2, and exactly 2 are negative reciprocals of each other. If $a + b + c + d = p$, find the smallest possible value of $p^2$.</p>
+              <div class="transform-ans">Ans: 36</div>
+            </div>
+            <div class="transform-divider"></div>
+            <div class="transform-col">
+              <span class="transform-col-label transformed-label">Transformed</span>
+              <p>In an integer set $\{a, b, c, d\}$, exactly 3 integers are positive, at least 2 are divisible by 2, and exactly 2 are negative reciprocals of each other. If $a + b + c + d = p$, let $k$ denote the smallest possible value of $p^2$. What is the remainder when $k^6$ is divided by 99999?</p>
+              <div class="transform-ans">Ans: 4104</div>
+            </div>
+          </div>
+        </details>
+
+        <details class="transform-item">
+          <summary class="transform-summary">
+            <span class="transform-badge">3</span>
+            <span class="transform-title">Answer-Power Transform</span>
+            <span class="transform-desc">Answer k &rarr; k<sup>n</sup> mod M</span>
+            <span class="transform-chevron">&#9660;</span>
+          </summary>
+          <div class="transform-pair">
+            <div class="transform-col">
+              <span class="transform-col-label original-label">Original</span>
+              <p>Let $m$ be a positive integer. Consider a $4m \times 4m$ array of square unit cells. Two cells are related if they share a row or column (no cell related to itself). Some cells are colored blue so every cell is related to at least two blue cells. Determine the minimum number of blue cells.</p>
+              <div class="transform-ans">Ans: 4096</div>
+            </div>
+            <div class="transform-divider"></div>
+            <div class="transform-col">
+              <span class="transform-col-label transformed-label">Transformed</span>
+              <p>Let $m$ be a positive integer. Consider a $4m \times 4m$ array of square unit cells. Two cells are related if they share a row or column (no cell related to itself). Some cells are colored blue so every cell is related to at least two blue cells. Let $k$ denote the minimum possible number of blue cells. What is the remainder when $4^k$ is divided by 77795?</p>
+              <div class="transform-ans">Ans: 6</div>
+            </div>
+          </div>
+        </details>
+
+        <details class="transform-item">
+          <summary class="transform-summary">
+            <span class="transform-badge">4</span>
+            <span class="transform-title">Question Rewriting</span>
+            <span class="transform-desc">Rephrase multi-answer problem to force a unique integer</span>
+            <span class="transform-chevron">&#9660;</span>
+          </summary>
+          <div class="transform-pair">
+            <div class="transform-col">
+              <span class="transform-col-label original-label">Original</span>
+              <p>Let $a_0, a_1, \ldots$ be a sequence of non-negative integers. Suppose for all non-negative integers $p$, $$a_{a_{a_p}} = a_{p+1} + 1.$$ Find <em>all</em> possible values of $a_{2025}$.</p>
+              <div class="transform-ans">Ans: 2026, 2030</div>
+            </div>
+            <div class="transform-divider"></div>
+            <div class="transform-col">
+              <span class="transform-col-label transformed-label">Transformed</span>
+              <p>Let $a_0, a_1, \ldots$ be a sequence of non-negative integers. Suppose for all non-negative integers $p$, $$a_{a_{a_p}} = a_{p+1} + 1.$$ Find the <em>sum</em> of all possible values of $a_{2025}$.</p>
+              <div class="transform-ans">Ans: 4056</div>
+            </div>
+          </div>
+        </details>
+
+        <details class="transform-item">
+          <summary class="transform-summary">
+            <span class="transform-badge">5</span>
+            <span class="transform-title">Symbol Substitution</span>
+            <span class="transform-desc">Fix symbolic parameters to specific integer values</span>
+            <span class="transform-chevron">&#9660;</span>
+          </summary>
+          <div class="transform-pair">
+            <div class="transform-col">
+              <span class="transform-col-label original-label">Original</span>
+              <p>A non-equilateral triangle $XYZ$ is inscribed in a circle $\Omega$ with centre $P$, radius $R$; incircle centre $Q$ touches $YZ, ZX, XY$ at $L, M, N$. A circle of centre $Q$, radius $\rho$ meets rays $[QL),[QM),[QN)$ at $X',Y',Z'$. Compute $\frac{QK}{QP}$ in terms of $\rho$ and $R$, where $K$ is the orthocentre of $X'Y'Z'$.</p>
+              <div class="transform-ans">Ans: &rho;/R</div>
+            </div>
+            <div class="transform-divider"></div>
+            <div class="transform-col">
+              <span class="transform-col-label transformed-label">Transformed</span>
+              <p>A non-equilateral triangle $XYZ$ is inscribed in a circle $\Omega$ with centre $P$, radius $R$; incircle centre $Q$ touches $YZ, ZX, XY$ at $L, M, N$. A circle of centre $Q$, radius $\rho$ meets rays $[QL),[QM),[QN)$ at $X',Y',Z'$. Given $\rho = 2$ and $R = 8$, compute $\frac{QP}{QK}$ where $K$ is the orthocentre of $X'Y'Z'$.</p>
+              <div class="transform-ans">Ans: 4</div>
+            </div>
+          </div>
+        </details>
+
+        <details class="transform-item">
+          <summary class="transform-summary">
+            <span class="transform-badge">6</span>
+            <span class="transform-title">Combined</span>
+            <span class="transform-desc">Chains multiple strategies for harder transformations</span>
+            <span class="transform-chevron">&#9660;</span>
+          </summary>
+          <div class="transform-pair">
+            <div class="transform-col">
+              <span class="transform-col-label original-label">Original</span>
+              <p>Positive reals $x, y, z$ satisfy $xyz = 3$, $(x-y)(y-z)(z-x) = 4$, $(x+y)(y+z)(z+x) = 40$. Compute the minimum possible value of $x$ as an exact expression using only integers, rational numbers, and radicals.</p>
+              <div class="transform-ans">Ans: $(3+\sqrt{6})^{-1/3}$</div>
+            </div>
+            <div class="transform-divider"></div>
+            <div class="transform-col">
+              <span class="transform-col-label transformed-label">Transformed</span>
+              <p>Positive reals $x, y, z$ satisfy $xyz = 3$, $(x-y)(y-z)(z-x) = 4$, $(x+y)(y+z)(z+x) = 40$. Let $k$ denote the minimum possible value of $x$, and define $n = \lfloor 37k \rfloor$. What is the remainder when $3^n$ is divided by 78787?</p>
+              <div class="transform-ans">Ans: 39547</div>
+            </div>
+          </div>
+        </details>
+
+      </div>
+
+      <p class="overview-note">Each transformation is verified through <strong>12-run consensus</strong>: the same prompt is sent to gpt-oss-120b 12 times and accepted only when all runs return the identical answer.</p>
     </section>
 
     <!-- Model Generation Stats -->
     <section class="overview-section" id="generation">
       <h2>Reasoning Trace Generation</h2>
       <p class="overview-text">Solutions are generated using 7 frontier models in a Kaggle-identical Docker environment. After the first correct solution, improvement iterations produce shorter solutions with less total tool run time.</p>
-      <table class="overview-table source-table">
-        <thead><tr><th>Model</th><th>Datapoints</th><th>After Deadline</th></tr></thead>
-        <tbody>
-          <tr><td>DeepSeek-V3.2</td><td>116,719</td><td>-2,368</td></tr>
-          <tr><td>Step-3.5-Flash</td><td>74,248</td><td>-451</td></tr>
-          <tr><td>GPT-OSS-120B</td><td>49,046</td><td>+46,573</td></tr>
-          <tr><td>GLM-5</td><td>&mdash;</td><td>+9,525</td></tr>
-          <tr><td>Kimi-K2.5</td><td>&mdash;</td><td>+92,143</td></tr>
-          <tr><td>Qwen3.5-397B-A17B</td><td>&mdash;</td><td>+31,007</td></tr>
-          <tr><td>Nemotron-3-Super-120B-A12B</td><td>&mdash;</td><td>+15,419</td></tr>
-          <tr class="total-row"><td><strong>Total</strong></td><td><strong>240,013</strong></td><td><strong>+191,848</strong></td></tr>
-        </tbody>
-      </table>
+      <div class="image-card" style="max-width:100%">
+        <img src="img/data_by_model.png" alt="Distribution of generated traces by model" style="width:100%;border-radius:8px">
+        <p class="image-caption">Distribution of Generated Traces by Model (Total N = 431,861) — DeepSeek-V3.2 is the largest contributor, followed by GPT-OSS-120B and Kimi-K2.5. Each model brings distinct solution styles, library preferences, and debugging patterns.</p>
+      </div>
     </section>
 
     <!-- Token Length Distribution -->
