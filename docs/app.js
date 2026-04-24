@@ -83,7 +83,7 @@ function navigate() {
   const raw = location.hash.replace('#', '') || 'overview';
   // Support shareable URLs like #stage1/42
   const parts = raw.split('/');
-  const page = ['overview', 'stage1', 'stage2', 'bench', 'error'].includes(parts[0]) ? parts[0] : 'overview';
+  const page = ['overview', 'stage1', 'stage2', 'bench', 'error', 'report'].includes(parts[0]) ? parts[0] : 'overview';
   const urlIdx = parts[1] ? parseInt(parts[1], 10) - 1 : null;
 
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));

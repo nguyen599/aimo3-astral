@@ -32,6 +32,7 @@
     <a href="#stage2" class="nav-link" data-page="stage2">Stage 2</a>
     <a href="#bench" class="nav-link" data-page="bench">AstralBench</a>
     <a href="#error" class="nav-link" data-page="error">Error Traces</a>
+    <a href="#report" class="nav-link" data-page="report">Report</a>
     <button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode">&#9790;</button>
   </div>
 </nav>
@@ -39,8 +40,8 @@
 <!-- Overview Page -->
 <div id="page-overview" class="page">
   <div class="page-header">
-    <h1>AstralMath-v1</h1>
-    <p class="subtitle">A large-scale Tool-Integrated Reasoning (TIR) dataset for mathematical problem solving, designed for SFT and RL training targeting competitive mathematics (AIMO3).</p>
+    <h1>AstralMath-v1 <a href="https://github.com/nguyen599/aimo3-astral/blob/main/report/astral_math_data_report.pdf" target="_blank" rel="noopener" class="report-link" title="Data Report (PDF)">📑</a></h1>
+    <p class="subtitle">A large-scale Tool-Integrated Reasoning (TIR) dataset for mathematical problem solving, designed for SFT and RL training targeting competitive mathematics.</p>
     <div class="stats-bar">
       <div class="stat"><span class="stat-val">431,861</span><span class="stat-label">Datapoints</span></div>
       <div class="stat"><span class="stat-val">136,151</span><span class="stat-label">Unique Questions</span></div>
@@ -401,6 +402,14 @@
     </section>
 
   </div>
+
+  <footer class="footer">
+    <p>AstralMath-v1 &middot; A Tool-Integrated Reasoning dataset for AIMO3</p>
+    <p class="footer-visitors">
+      <span class="visitor-icon">&#128065;</span>
+      Total page views: <span id="visitor-count-val" class="visitor-count">loading…</span>
+    </p>
+  </footer>
 </div>
 
 <!-- Stage 1 Page -->
@@ -555,13 +564,15 @@
   </div>
 </div>
 
-<footer class="footer">
-  <p>AstralMath-v1 &middot; A Tool-Integrated Reasoning dataset for AIMO3</p>
-  <p class="footer-visitors">
-    <span class="visitor-icon">&#128065;</span>
-    Total page views: <span id="visitor-count-val" class="visitor-count">loading…</span>
-  </p>
-</footer>
+<!-- Report Page -->
+<div id="page-report" class="page page-report">
+  <iframe
+    src="https://docs.google.com/viewer?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnguyen599%2Faimo3-astral%2Fmain%2Freport%2Fastral_math_data_report.pdf&embedded=true"
+    title="AstralMath Data Report"
+    class="report-iframe"
+    allowfullscreen
+  ></iframe>
+</div>
 
 <div class="lightbox-overlay" id="lightbox"><img src="" alt="" id="lightbox-img"></div>
 <script src="app.js"></script>

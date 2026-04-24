@@ -580,6 +580,10 @@ body.drag-over::after {
 ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--scroll-hover); }
 
+/* ── Report link icon ────────────────────────────────────────── */
+.report-link { display: inline-flex; align-items: center; vertical-align: middle; margin-left: 8px; color: var(--text-muted); opacity: 0.7; transition: opacity 0.15s, color 0.15s; text-decoration: none; }
+.report-link:hover { opacity: 1; color: var(--accent); }
+
 /* ── Transform Accordion ──────────────────────────────────────── */
 .transform-accordion { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 12px 0; }
 .transform-item { border-bottom: 1px solid var(--border-light); }
@@ -608,4 +612,16 @@ details[open] .transform-chevron { transform: rotate(180deg); }
   .transform-divider { height: 1px; width: 100%; margin: 12px 0; }
   .transform-col { padding: 0; }
   .transform-desc { display: none; }
+}
+
+/* ── Report page PDF embed ───────────────────────────────────── */
+.page-report {
+  padding: 0;
+  max-width: 100%;
+}
+.report-iframe {
+  width: 100%;
+  height: calc(100vh - 52px);
+  border: none;
+  display: block;
 }
