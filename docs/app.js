@@ -610,25 +610,49 @@ function renderJudgePanelHtml(turnIdx, turnAgg, judgeR2sByJudge, judgeMessagesBy
   // Close the judge panel div here
   html += '</div>';
 
-  // Full-width conversation section (outside the panel, still inside turn-group)
+  // Full-width conversation section with judge tab selector
   html += `<div class="judge-conv-full" id="${convId}">`;
+
+  // Tab bar for selecting which judge to view
+  html += `<div class="judge-conv-tabs" id="${convId}_tabs">`;
+  for (let j = 0; j < 4; j++) {
+    const msgMap = judgeMessagesByJudge[j];
+    const turnKey = `turn_${turnIdx}`;
+    const msgs = msgMap ? msgMap[turnKey] : null;
+    const hasData = msgs && Array.isArray(msgs) && msgs.length > 0;
+    html += `<button class="judge-conv-tab${j === 0 ? ' active' : ''}${!hasData ? ' disabled' : ''}" `;
+    html += `onclick="switchJudgeConvTab('${convId}', ${j})" `;
+    html += `${!hasData ? 'disabled' : ''}>Judge ${j}</button>`;
+  }
+  html += `</div>`;
+
+  // One card per judge (only first is visible by default)
   for (let j = 0; j < 4; j++) {
     const msgMap = judgeMessagesByJudge[j];
     const turnKey = `turn_${turnIdx}`;
     const msgs = msgMap ? msgMap[turnKey] : null;
     if (msgs && Array.isArray(msgs) && msgs.length > 0) {
-      html += `<div class="judge-conv-card">`;
+      html += `<div class="judge-conv-card" id="${convId}_j${j}" style="${j === 0 ? '' : 'display:none'}">`;
       html += `<div class="judge-conv-card-header">Judge ${j} — Turn ${turnIdx + 1} Deliberation</div>`;
       for (const m of msgs) {
         const role = m.role || 'unknown';
         const text = typeof m.content === 'string' ? m.content : JSON.stringify(m.content || '');
-        // Show more text, with an expand toggle for very long messages
+        const reasoning = m.reasoning_content || '';
+        html += `<div class="judge-conv-msg role-${role}">`;
+        html += `<div class="judge-conv-role">${escapeHtml(role)}</div>`;
+
+        // Reasoning content (collapsible) — same pattern as main trace
+        if (reasoning) {
+          const rId = 'jr_' + Math.random().toString(36).slice(2, 10);
+          html += `<span class="reasoning-toggle" onclick="toggleReasoning('${rId}')">Show reasoning</span>`;
+          html += `<div class="reasoning-content" id="${rId}">${escapeHtml(reasoning)}</div>`;
+        }
+
+        // Main content with expand toggle for very long messages
         const LIMIT = 3000;
         const isLong = text.length > LIMIT;
         const shortText = isLong ? text.slice(0, LIMIT) : text;
         const longId = 'jcm_' + Math.random().toString(36).slice(2, 10);
-        html += `<div class="judge-conv-msg role-${role}">`;
-        html += `<div class="judge-conv-role">${escapeHtml(role)}</div>`;
         if (isLong) {
           html += `<div class="judge-conv-text">${escapeHtml(shortText)}<span class="judge-conv-more" id="${longId}" style="display:none">${escapeHtml(text.slice(LIMIT))}</span></div>`;
           html += `<span class="judge-conv-expand" onclick="var el=document.getElementById('${longId}');if(el.style.display==='none'){el.style.display='inline';this.textContent='Show less'}else{el.style.display='none';this.textContent='Show full (${Math.round(text.length/1000)}k chars)'}">Show full (${Math.round(text.length/1000)}k chars)</span>`;
@@ -637,6 +661,10 @@ function renderJudgePanelHtml(turnIdx, turnAgg, judgeR2sByJudge, judgeMessagesBy
         }
         html += `</div>`;
       }
+      // Close button at bottom of card
+      html += `<div class="judge-conv-close-row">`;
+      html += `<button class="judge-conv-close-btn" onclick="toggleJudgeSection('${convId}')">✕ Close conversation</button>`;
+      html += `</div>`;
       html += `</div>`;
     }
   }
@@ -748,6 +776,22 @@ function renderSingleMessage(msg) {
   html += '</div>';
   return html;
 }
+
+// Switch judge conversation tab — show only selected judge's card
+window.switchJudgeConvTab = function(convId, judgeIdx) {
+  // Hide all cards, show selected
+  for (let j = 0; j < 4; j++) {
+    const card = document.getElementById(`${convId}_j${j}`);
+    if (card) card.style.display = (j === judgeIdx) ? '' : 'none';
+  }
+  // Update tab active state
+  const tabs = document.getElementById(`${convId}_tabs`);
+  if (tabs) {
+    tabs.querySelectorAll('.judge-conv-tab').forEach((btn, i) => {
+      btn.classList.toggle('active', i === judgeIdx);
+    });
+  }
+};
 
 window.toggleJudgeSection = function(id) {
   const el = document.getElementById(id);

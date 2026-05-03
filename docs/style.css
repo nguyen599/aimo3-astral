@@ -852,6 +852,38 @@ details[open] .transform-chevron { transform: rotate(180deg); }
   padding: 0.6rem 0.8rem;
   margin-bottom: 0.6rem;
 }
+/* ── Judge conversation tab bar ──────────────────────────────── */
+.judge-conv-tabs {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 0.6rem;
+}
+.judge-conv-tab {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.judge-conv-tab:hover:not(.disabled) {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.judge-conv-tab.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.judge-conv-tab.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .judge-conv-card-header {
   font-weight: 700;
   font-size: 0.82rem;
@@ -859,6 +891,30 @@ details[open] .transform-chevron { transform: rotate(180deg); }
   margin-bottom: 0.5rem;
   padding-bottom: 0.35rem;
   border-bottom: 1px solid var(--border);
+}
+
+/* ── Close button at bottom of conversation card ─────────────── */
+.judge-conv-close-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+.judge-conv-close-btn {
+  padding: 0.35rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.judge-conv-close-btn:hover {
+  background: #fef2f2;
+  color: #ef4444;
+  border-color: #ef4444;
 }
 
 /* ── Conversation message bubbles ────────────────────────────── */
