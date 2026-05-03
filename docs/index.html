@@ -30,6 +30,7 @@
     <a href="#overview" class="nav-link" data-page="overview">Overview</a>
     <a href="#stage1" class="nav-link" data-page="stage1">Stage 1</a>
     <a href="#stage2" class="nav-link" data-page="stage2">Stage 2</a>
+    <a href="#preview" class="nav-link" data-page="preview" id="nav-preview">Preview</a>
     <a href="#bench" class="nav-link" data-page="bench">AstralBench</a>
     <a href="#error" class="nav-link" data-page="error">Error Traces</a>
     <a href="#report" class="nav-link" data-page="report">Report</a>
@@ -474,6 +475,11 @@
     <input type="number" class="jump-input" id="s2-jump" placeholder="Go to #" min="1">
     <button class="btn btn-sm" id="s2-go">Go</button>
     <button class="btn btn-sm" id="s2-random" title="Random question">&#9861;</button>
+    <label class="judge-switch" title="Toggle judge score panels">
+      <input type="checkbox" id="s2-judge-toggle">
+      <span class="judge-slider"></span>
+      <span class="judge-switch-label">Judge Scores</span>
+    </label>
   </div>
   <div class="card" id="s2-card">
     <div class="card-placeholder">
@@ -482,6 +488,49 @@
       <label class="btn btn-primary file-label">
         Choose stage2.jsonl
         <input type="file" id="s2-file" accept=".jsonl" hidden>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Page (Stage 2 subset with judge scores — hidden when SHOW_PREVIEW_TAB = false) -->
+<div id="page-preview" class="page">
+  <div class="page-header">
+    <h1>Preview — Stage 2 with Judge Scores</h1>
+    <p class="subtitle">Subset of Stage 2 TIR traces with per-turn quality assessment from 4-judge deliberation</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val" id="pv-total">&mdash;</span><span class="stat-label">Total Traces</span></div>
+      <div class="stat"><span class="stat-val" id="pv-models">7</span><span class="stat-label">Models</span></div>
+      <div class="stat"><span class="stat-val" id="pv-format">JSONL</span><span class="stat-label">Format</span></div>
+    </div>
+  </div>
+  <div class="filter-row" id="pv-filters">
+    <label class="filter-label">Filter:</label>
+    <select class="filter-select" id="pv-filter-model"><option value="">All Models</option></select>
+    <select class="filter-select" id="pv-filter-source"><option value="">All Sources</option></select>
+    <span class="filter-count" id="pv-filter-count"></span>
+  </div>
+  <div class="mini-stats" id="pv-mini-stats"></div>
+  <div class="viewer-controls">
+    <button class="btn" id="pv-prev" disabled>&larr; Previous</button>
+    <span class="counter" id="pv-counter">0 / 0</span>
+    <button class="btn" id="pv-next">Next &rarr;</button>
+    <input type="number" class="jump-input" id="pv-jump" placeholder="Go to #" min="1">
+    <button class="btn btn-sm" id="pv-go">Go</button>
+    <button class="btn btn-sm" id="pv-random" title="Random question">&#9861;</button>
+    <label class="judge-switch" title="Toggle judge score panels">
+      <input type="checkbox" id="pv-judge-toggle" checked>
+      <span class="judge-slider"></span>
+      <span class="judge-switch-label">Judge Scores</span>
+    </label>
+  </div>
+  <div class="card" id="pv-card">
+    <div class="card-placeholder">
+      <div class="loading-spinner">Connecting to HuggingFace...</div>
+      <p class="hint">Or upload manually:</p>
+      <label class="btn btn-primary file-label">
+        Choose preview.jsonl
+        <input type="file" id="pv-file" accept=".jsonl" hidden>
       </label>
     </div>
   </div>

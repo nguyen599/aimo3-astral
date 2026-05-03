@@ -30,14 +30,22 @@ if (document.documentElement.getAttribute('data-theme') === 'dark') {
 // ── Config ───────────────────────────────────────────────────────
 const HF_DATASET = 'nguyen599/AstralMath-v1';
 const HF_DATASET_ERROR = 'nguyen599/AstralMath-v1-ErrorTraces';
+const HF_DATASET_PREVIEW = 'nguyen599/AstralMath-v1-test';
 const HF_API = 'https://datasets-server.huggingface.co';
 const BATCH_SIZE = 20;  // rows to prefetch per batch
 
+// ── Preview tab visibility flag ──────────────────────────────────
+// Set to false to hide the Preview tab once judge scores are
+// merged into the main Stage 1 / Stage 2 datasets.
+const SHOW_PREVIEW_TAB = true;
+
 function getPrefix(key) {
-  return { stage1: 's1', stage2: 's2', bench: 'b', error: 'et' }[key] || key;
+  return { stage1: 's1', stage2: 's2', preview: 'pv', bench: 'b', error: 'et' }[key] || key;
 }
 function getHFDataset(key) {
-  return key === 'error' ? HF_DATASET_ERROR : HF_DATASET;
+  if (key === 'error') return HF_DATASET_ERROR;
+  if (key === 'preview') return HF_DATASET_PREVIEW;
+  return HF_DATASET;
 }
 
 // HF datasets-server uses config+split. We try multiple patterns
@@ -49,6 +57,9 @@ const HF_SPLITS = {
   stage2: [
     { config: 'default', split: 'stage2' },
   ],
+  preview: [
+    { config: 'default', split: 'train' },
+  ],
   error: [
     { config: 'default', split: 'train' },
   ],
@@ -56,10 +67,11 @@ const HF_SPLITS = {
 
 // ── State ────────────────────────────────────────────────────────
 const state = {
-  stage1: { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
-  stage2: { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
-  bench:  { cache: new Map(), idx: 0, total: 0, localData: null, loading: false },
-  error:  { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
+  stage1:  { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
+  stage2:  { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false, showJudge: false },
+  preview: { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false, showJudge: true },
+  bench:   { cache: new Map(), idx: 0, total: 0, localData: null, loading: false },
+  error:   { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
 };
 
 const KNOWN_MODELS = [
@@ -73,9 +85,10 @@ const KNOWN_MODELS = [
 ];
 
 const statsTracker = {
-  stage1: { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
-  stage2: { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
-  error:  { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
+  stage1:  { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
+  stage2:  { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
+  preview: { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
+  error:   { models: Object.fromEntries(KNOWN_MODELS.map(m => [m, 0])), sources: {} },
 };
 
 // ── Routing ──────────────────────────────────────────────────────
@@ -83,7 +96,7 @@ function navigate() {
   const raw = location.hash.replace('#', '') || 'overview';
   // Support shareable URLs like #stage1/42
   const parts = raw.split('/');
-  const page = ['overview', 'stage1', 'stage2', 'bench', 'error', 'report'].includes(parts[0]) ? parts[0] : 'overview';
+  const page = ['overview', 'stage1', 'stage2', 'preview', 'bench', 'error', 'report'].includes(parts[0]) ? parts[0] : 'overview';
   const urlIdx = parts[1] ? parseInt(parts[1], 10) - 1 : null;
 
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -93,14 +106,15 @@ function navigate() {
   const link = document.querySelector(`.nav-link[data-page="${page}"]`);
   if (link) link.classList.add('active');
 
-  // Auto-init HF streaming when navigating to a stage/error page
-  if ((page === 'stage1' || page === 'stage2' || page === 'error') && !state[page].localData && !state[page].hfSplit) {
+  // Auto-init HF streaming when navigating to a stage/error/preview page
+  const hfPages = ['stage1', 'stage2', 'preview', 'error'];
+  if (hfPages.includes(page) && !state[page].localData && !state[page].hfSplit) {
     initHFStream(page).then(() => {
       if (urlIdx !== null && urlIdx >= 0 && urlIdx < state[page].total) {
         goToIndex(page, urlIdx);
       }
     });
-  } else if ((page === 'stage1' || page === 'stage2' || page === 'error') && urlIdx !== null && urlIdx >= 0) {
+  } else if (hfPages.includes(page) && urlIdx !== null && urlIdx >= 0) {
     goToIndex(page, urlIdx);
   }
 
@@ -500,8 +514,266 @@ function renderMessages(messages) {
   return html;
 }
 
-function renderDatasetItem(item) {
+// ── Judge helpers ─────────────────────────────────────────────────
+function parseJSONField(val) {
+  if (val == null) return null;
+  if (typeof val === 'object') return val;
+  if (typeof val === 'string') {
+    try { return JSON.parse(val); } catch (e) { return null; }
+  }
+  return null;
+}
+
+function groupMessagesIntoTurns(messages) {
+  if (!messages || !Array.isArray(messages)) return { leading: [], turns: [] };
+  const leading = [];
+  let i = 0;
+  // Collect leading user messages (the question)
+  while (i < messages.length && messages[i].role === 'user') {
+    leading.push(messages[i]);
+    i++;
+  }
+  const turns = [];
+  let turnIdx = 0;
+  while (i < messages.length) {
+    const msg = messages[i];
+    if (msg.role === 'assistant') {
+      const group = [msg];
+      while (i + 1 < messages.length && (messages[i + 1].role === 'tool' || messages[i + 1].role === 'function')) {
+        i++;
+        group.push(messages[i]);
+      }
+      turns.push({ turnIdx, messages: group });
+      turnIdx++;
+    } else {
+      // Stray non-assistant message — treat as part of leading
+      leading.push(msg);
+    }
+    i++;
+  }
+  return { leading, turns };
+}
+
+function judgeScoreClass(score) {
+  if (score >= 0.7) return 'judge-score-good';
+  if (score >= 0.5) return 'judge-score-mid';
+  return 'judge-score-bad';
+}
+
+function renderJudgePanelHtml(turnIdx, turnAgg, judgeR2sByJudge, judgeMessagesByJudge) {
+  const score = turnAgg ? turnAgg.turn_score : null;
+  const scoreStr = score != null ? Number(score).toFixed(2) : '—';
+  const scoreClass = score != null ? judgeScoreClass(score) : '';
+
+  let html = `<div class="judge-resize-handle"></div>`;
+  html += `<div class="turn-judge-panel">`;
+  html += `<div class="judge-panel-header">Turn ${turnIdx + 1} · <span class="${scoreClass}">${scoreStr}</span></div>`;
+
+  // Criterion table
+  const criteria = ['math_correct', 'code_integrity', 'contribution', 'output_interp'];
+  const criteriaLabels = { math_correct: 'Math Correct', code_integrity: 'Code Integrity', contribution: 'Contribution', output_interp: 'Output Interp' };
+  html += '<table class="judge-criteria-table">';
+  for (const c of criteria) {
+    const val = turnAgg ? turnAgg[c] : null;
+    if (val == null) continue;
+    const cls = judgeScoreClass(val);
+    html += `<tr><td class="crit-name">${criteriaLabels[c]}</td><td class="crit-score ${cls}">${Number(val).toFixed(2)}</td></tr>`;
+  }
+  html += '</table>';
+
+  // Judge notes (collapsible)
+  const notesId = 'jn_' + Math.random().toString(36).slice(2, 10);
+  html += `<span class="judge-section-toggle" onclick="toggleJudgeSection('${notesId}')">▶ Judge notes</span>`;
+  html += `<div class="judge-section-body" id="${notesId}">`;
+  for (let j = 0; j < 4; j++) {
+    const r2list = judgeR2sByJudge[j];
+    const entry = r2list ? r2list.find(e => e.turn_idx === turnIdx) : null;
+    const notes = entry ? entry.notes : null;
+    if (notes && typeof notes === 'object' && Object.keys(notes).length > 0) {
+      html += `<div class="judge-note-card">`;
+      html += `<div class="judge-note-header">Judge ${j}</div>`;
+      for (const [crit, note] of Object.entries(notes)) {
+        html += `<div class="judge-note-row">`;
+        html += `<span class="judge-note-crit">${escapeHtml(crit)}</span>`;
+        html += `<span class="judge-note-text">${escapeHtml(String(note))}</span>`;
+        html += `</div>`;
+      }
+      html += `</div>`;
+    }
+  }
+  html += '</div>';
+
+  // View conversations toggle — rendered OUTSIDE the panel, full-width below the turn
+  const convId = 'jc_' + Math.random().toString(36).slice(2, 10);
+  html += `<span class="judge-section-toggle" onclick="toggleJudgeSection('${convId}')">▶ View conversations</span>`;
+
+  // Close the judge panel div here
+  html += '</div>';
+
+  // Full-width conversation section (outside the panel, still inside turn-group)
+  html += `<div class="judge-conv-full" id="${convId}">`;
+  for (let j = 0; j < 4; j++) {
+    const msgMap = judgeMessagesByJudge[j];
+    const turnKey = `turn_${turnIdx}`;
+    const msgs = msgMap ? msgMap[turnKey] : null;
+    if (msgs && Array.isArray(msgs) && msgs.length > 0) {
+      html += `<div class="judge-conv-card">`;
+      html += `<div class="judge-conv-card-header">Judge ${j} — Turn ${turnIdx + 1} Deliberation</div>`;
+      for (const m of msgs) {
+        const role = m.role || 'unknown';
+        const text = typeof m.content === 'string' ? m.content : JSON.stringify(m.content || '');
+        // Show more text, with an expand toggle for very long messages
+        const LIMIT = 3000;
+        const isLong = text.length > LIMIT;
+        const shortText = isLong ? text.slice(0, LIMIT) : text;
+        const longId = 'jcm_' + Math.random().toString(36).slice(2, 10);
+        html += `<div class="judge-conv-msg role-${role}">`;
+        html += `<div class="judge-conv-role">${escapeHtml(role)}</div>`;
+        if (isLong) {
+          html += `<div class="judge-conv-text">${escapeHtml(shortText)}<span class="judge-conv-more" id="${longId}" style="display:none">${escapeHtml(text.slice(LIMIT))}</span></div>`;
+          html += `<span class="judge-conv-expand" onclick="var el=document.getElementById('${longId}');if(el.style.display==='none'){el.style.display='inline';this.textContent='Show less'}else{el.style.display='none';this.textContent='Show full (${Math.round(text.length/1000)}k chars)'}">Show full (${Math.round(text.length/1000)}k chars)</span>`;
+        } else {
+          html += `<div class="judge-conv-text">${escapeHtml(text)}</div>`;
+        }
+        html += `</div>`;
+      }
+      html += `</div>`;
+    }
+  }
+  html += '</div>';
+
+  // Note: the panel </div> was already closed above before the conversation section
+  return html;
+}
+
+function renderMessagesWithJudge(item) {
+  const messages = item.messages;
+  const turnAggregated = parseJSONField(item.turn_aggregated) || [];
+
+  // Read from consolidated columns (judges_r2, judges_messages)
+  // or fall back to legacy per-judge columns (judge_0_r2, etc.)
+  const allR2 = parseJSONField(item.judges_r2);
+  const allMsgs = parseJSONField(item.judges_messages);
+  const judgeR2s = [];
+  const judgeMsgs = [];
+  for (let j = 0; j < 4; j++) {
+    judgeR2s.push((allR2 && allR2[j]) ? allR2[j] : (parseJSONField(item[`judge_${j}_r2`]) || []));
+    judgeMsgs.push((allMsgs && allMsgs[j]) ? allMsgs[j] : (parseJSONField(item[`judge_${j}_messages`]) || {}));
+  }
+
+  const { leading, turns } = groupMessagesIntoTurns(messages);
+
+  // Build lookup for turn_aggregated by turn_idx
+  const aggMap = {};
+  for (const agg of turnAggregated) {
+    aggMap[agg.turn_idx] = agg;
+  }
+
+  let html = '<div class="messages-container">';
+
+  // Render leading user messages (no judge panel)
+  for (const msg of leading) {
+    html += renderSingleMessage(msg);
+  }
+
+  // Render each turn with judge panel
+  for (const turn of turns) {
+    html += '<div class="turn-group">';
+    // Messages column
+    html += '<div class="turn-messages-col">';
+    for (const msg of turn.messages) {
+      html += renderSingleMessage(msg);
+    }
+    html += '</div>';
+    // Judge panel column
+    html += renderJudgePanelHtml(turn.turnIdx, aggMap[turn.turnIdx] || null, judgeR2s, judgeMsgs);
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function renderSingleMessage(msg) {
+  const role = msg.role || 'unknown';
+  const roleClass = `msg-role-${role}`;
+  const msgClass = `msg-${role}`;
+  let html = `<div class="msg ${msgClass}">`;
+  html += `<div class="msg-role ${roleClass}">${escapeHtml(role)}</div>`;
+
+  if (msg.reasoning_content) {
+    const id = 'r_' + Math.random().toString(36).slice(2, 10);
+    html += `<span class="reasoning-toggle" onclick="toggleReasoning('${id}')">Show reasoning</span>`;
+    html += `<div class="reasoning-content" id="${id}">${escapeHtml(msg.reasoning_content)}</div>`;
+  }
+
+  if (msg.tool_calls && msg.tool_calls.length > 0) {
+    for (const tc of msg.tool_calls) {
+      const fname = tc.function?.name || 'tool';
+      let args = tc.function?.arguments || '';
+      let isPython = false;
+      if (typeof args === 'string') {
+        try {
+          const parsed = JSON.parse(args);
+          if (parsed && typeof parsed.code === 'string') { args = parsed.code; isPython = true; }
+          else { args = JSON.stringify(parsed, null, 2); }
+        } catch (e) { /* keep raw string */ }
+      } else if (typeof args === 'object') {
+        if (typeof args.code === 'string') { args = args.code; isPython = true; }
+        else { args = JSON.stringify(args, null, 2); }
+      }
+      html += `<div style="margin-top:0.3rem"><span style="color:#f5a623;font-size:0.75rem">${escapeHtml(fname)}()</span></div>`;
+      if (isPython) {
+        html += `<pre class="tool-code"><code class="language-python">${escapeHtml(args)}</code></pre>`;
+      } else {
+        html += `<div class="tool-code">${escapeHtml(args)}</div>`;
+      }
+    }
+  }
+
+  if (msg.content && !(typeof msg.content === 'string' && msg.content.trim() === '')) {
+    const text = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content, null, 2);
+    const isLongTool = role === 'tool' && text.length > 600;
+    if (isLongTool) {
+      const tid = 'to_' + Math.random().toString(36).slice(2, 10);
+      html += `<div class="tool-output-wrapper">`;
+      html += `<div class="tool-output-collapsed" id="${tid}" style="margin-top:0.2rem">${escapeHtml(text)}</div>`;
+      html += `<button class="tool-output-toggle" onclick="toggleToolOutput('${tid}')">Show full output</button>`;
+      html += `</div>`;
+    } else {
+      html += `<div style="margin-top:0.2rem">${escapeHtml(text)}</div>`;
+    }
+  }
+
+  html += '</div>';
+  return html;
+}
+
+window.toggleJudgeSection = function(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    const isOpen = el.classList.contains('open');
+    el.classList.toggle('open');
+    // Find the toggle button: it's either the previousElementSibling directly,
+    // or the last child of the previousElementSibling (for conv-full sections)
+    let toggle = el.previousElementSibling;
+    if (toggle && !toggle.classList.contains('judge-section-toggle')) {
+      // The conv-full section is after the panel div; the toggle is the last child of that panel
+      const lastChild = toggle.lastElementChild;
+      if (lastChild && lastChild.classList.contains('judge-section-toggle')) {
+        toggle = lastChild;
+      }
+    }
+    if (toggle && toggle.classList.contains('judge-section-toggle')) {
+      toggle.textContent = (isOpen ? '▶ ' : '▼ ') + toggle.textContent.slice(2);
+    }
+  }
+};
+
+function renderDatasetItem(item, key) {
   let html = '';
+  const stKey = (key === 'preview') ? 'preview' : 'stage2';
+  const isJudgeMode = state[stKey].showJudge && item.trace_score != null;
 
   // Meta pills
   const pills = [];
@@ -514,10 +786,16 @@ function renderDatasetItem(item) {
   if (item.transform != null) pills.push(['Transformed', item.transform ? 'Yes' : 'No']);
   if (item.license) pills.push(['License', item.license]);
 
-  if (pills.length > 0) {
+  if (pills.length > 0 || isJudgeMode) {
     html += '<div class="meta-row">';
     for (const [k, v] of pills) {
       html += `<span class="meta-pill"><span class="pill-key">${escapeHtml(k)}</span> <span class="pill-val">${escapeHtml(String(v))}</span></span>`;
+    }
+    // Judge score pill
+    if (isJudgeMode) {
+      const ts = Number(item.trace_score);
+      const cls = judgeScoreClass(ts);
+      html += `<span class="meta-pill"><span class="pill-key">Judge Score</span> <span class="pill-val ${cls}">${ts.toFixed(3)}</span></span>`;
     }
     html += '</div>';
   }
@@ -538,11 +816,15 @@ function renderDatasetItem(item) {
     html += '</div>';
   }
 
-  // Messages
+  // Messages — with or without judge panels
   if (item.messages) {
     html += '<div class="field-group">';
     html += '<div class="field-label">Messages / TIR Trace</div>';
-    html += `<div class="field-value messages-field">${renderMessages(item.messages)}</div>`;
+    if (isJudgeMode) {
+      html += `<div class="field-value messages-field">${renderMessagesWithJudge(item)}</div>`;
+    } else {
+      html += `<div class="field-value messages-field">${renderMessages(item.messages)}</div>`;
+    }
     html += '</div>';
   }
 
@@ -692,7 +974,7 @@ function renderItemFromData(key, item) {
   } else if (key === 'error') {
     html = renderErrorTraceItem(item);
   } else {
-    html = renderDatasetItem(item);
+    html = renderDatasetItem(item, key);
   }
   card.innerHTML = html;
   requestAnimationFrame(() => {
@@ -797,8 +1079,26 @@ function setupControls(key) {
 }
 setupControls('stage1');
 setupControls('stage2');
+setupControls('preview');
 setupControls('bench');
 setupControls('error');
+
+// ── Judge toggle (shared for stage2 + preview) ───────────────────
+function wireJudgeToggle(key) {
+  const prefix = getPrefix(key);
+  const checkbox = document.getElementById(`${prefix}-judge-toggle`);
+  checkbox.addEventListener('change', () => {
+    state[key].showJudge = checkbox.checked;
+    if (state[key].total > 0) {
+      const item = state[key].localData
+        ? state[key].localData[state[key].idx]
+        : state[key].cache.get(state[key].idx);
+      if (item) renderItemFromData(key, item);
+    }
+  });
+}
+wireJudgeToggle('stage2');
+wireJudgeToggle('preview');
 
 // ── File inputs (fallback) ───────────────────────────────────────
 document.getElementById('s1-file').addEventListener('change', (e) => {
@@ -806,6 +1106,9 @@ document.getElementById('s1-file').addEventListener('change', (e) => {
 });
 document.getElementById('s2-file').addEventListener('change', (e) => {
   readFile(e.target.files[0], 'stage2', 'jsonl');
+});
+document.getElementById('pv-file').addEventListener('change', (e) => {
+  readFile(e.target.files[0], 'preview', 'jsonl');
 });
 document.getElementById('b-file').addEventListener('change', (e) => {
   readFile(e.target.files[0], 'bench', 'csv');
@@ -854,6 +1157,9 @@ document.addEventListener('drop', (e) => {
   } else if (name.includes('error') || name.includes('errortrace')) {
     readFile(file, 'error', 'jsonl');
     location.hash = 'error';
+  } else if (name.includes('preview')) {
+    readFile(file, 'preview', 'jsonl');
+    location.hash = 'preview';
   } else if (name.includes('stage2') || name.includes('s2')) {
     readFile(file, 'stage2', 'jsonl');
     location.hash = 'stage2';
@@ -1011,7 +1317,7 @@ async function goToFilteredIndex(key, direction) {
 }
 
 // Wire filter change events
-['stage1', 'stage2', 'error'].forEach(key => {
+['stage1', 'stage2', 'preview', 'error'].forEach(key => {
   const prefix = getPrefix(key);
   const modelSel = document.getElementById(`${prefix}-filter-model`);
   const sourceSel = document.getElementById(`${prefix}-filter-source`);
@@ -1067,5 +1373,63 @@ document.addEventListener('keydown', (e) => {
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') overlay.classList.remove('active');
+  });
+})();
+
+// ── Preview tab visibility ───────────────────────────────────────
+// Hide the Preview tab and page when SHOW_PREVIEW_TAB is false.
+(function applyPreviewVisibility() {
+  if (!SHOW_PREVIEW_TAB) {
+    const navLink = document.getElementById('nav-preview');
+    if (navLink) navLink.style.display = 'none';
+    const page = document.getElementById('page-preview');
+    if (page) page.style.display = 'none';
+  }
+})();
+
+// ── Judge panel drag-to-resize ───────────────────────────────────
+// Allows users to drag the border between messages and judge panel
+// to adjust the judge panel width. Syncs all panels on the page.
+(function initJudgeResize() {
+  let dragging = false;
+  let startX = 0;
+  let startWidth = 0;
+  let activeHandle = null;
+
+  document.addEventListener('mousedown', (e) => {
+    const handle = e.target.closest('.judge-resize-handle');
+    if (!handle) return;
+    e.preventDefault();
+    activeHandle = handle;
+    activeHandle.classList.add('active');
+    const panel = activeHandle.nextElementSibling;
+    if (!panel || !panel.classList.contains('turn-judge-panel')) return;
+    dragging = true;
+    startX = e.clientX;
+    startWidth = panel.offsetWidth;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    // Dragging LEFT makes panel wider (negative delta = wider)
+    const delta = startX - e.clientX;
+    const newWidth = Math.max(200, Math.min(window.innerWidth * 0.6, startWidth + delta));
+    // Apply to ALL judge panels on the page for consistent layout
+    document.querySelectorAll('.turn-judge-panel').forEach(p => {
+      p.style.width = newWidth + 'px';
+    });
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    if (activeHandle) {
+      activeHandle.classList.remove('active');
+      activeHandle = null;
+    }
   });
 })();

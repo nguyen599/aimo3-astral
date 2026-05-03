@@ -625,3 +625,286 @@ details[open] .transform-chevron { transform: rotate(180deg); }
   border: none;
   display: block;
 }
+
+/* ── Judge toggle switch ─────────────────────────────────────── */
+.judge-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+}
+.judge-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.judge-slider {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  background: var(--border);
+  border-radius: 9px;
+  transition: background 0.25s;
+  flex-shrink: 0;
+}
+.judge-slider::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.25s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+.judge-switch input:checked + .judge-slider {
+  background: var(--accent);
+}
+.judge-switch input:checked + .judge-slider::after {
+  transform: translateX(16px);
+}
+.judge-switch-label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+.judge-switch input:checked ~ .judge-switch-label {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── Turn group layout (messages + judge panel side by side) ── */
+.turn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  align-items: flex-start;
+  margin-bottom: 0.6rem;
+}
+.turn-messages-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-right: 0.4rem;
+}
+
+/* ── Resize handle between messages and judge panel ──────────── */
+.judge-resize-handle {
+  width: 14px;
+  min-height: 60px;
+  cursor: col-resize;
+  flex-shrink: 0;
+  position: relative;
+  align-self: stretch;
+  user-select: none;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+.judge-resize-handle::after {
+  content: "⋮";
+  font-size: 14px;
+  color: var(--border);
+  transition: color 0.2s;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.judge-resize-handle:hover::after,
+.judge-resize-handle.active::after {
+  color: var(--accent);
+}
+.judge-resize-handle:hover,
+.judge-resize-handle.active {
+  background: rgba(59, 130, 246, 0.06);
+  border-radius: 3px;
+}
+
+/* ── Judge panel (sticky sidebar per turn) ───────────────────── */
+.turn-judge-panel {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--bg-field);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem;
+  font-size: 0.78rem;
+  align-self: flex-start;
+  position: sticky;
+  top: 60px;
+}
+.judge-panel-header {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-heading);
+  font-size: 0.85rem;
+}
+
+/* Score color classes */
+.judge-score-good { color: var(--green); }
+.judge-score-mid  { color: var(--orange); }
+.judge-score-bad  { color: #ef4444; }
+
+/* ── Criterion rows ──────────────────────────────────────────── */
+.judge-criteria-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0.5rem;
+}
+.judge-criteria-table td {
+  padding: 0.15rem 0.3rem;
+}
+.judge-criteria-table .crit-name {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+.judge-criteria-table .crit-score {
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ── Judge notes & conversations collapse ────────────────────── */
+.judge-section-toggle {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.75rem;
+  display: block;
+  margin: 0.3rem 0;
+  user-select: none;
+}
+.judge-section-toggle:hover {
+  text-decoration: underline;
+}
+.judge-section-body {
+  display: none;
+  margin-top: 0.3rem;
+}
+.judge-section-body.open {
+  display: block;
+}
+
+/* ── Per-judge note card ──────────────────────────────────────── */
+.judge-note-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.45rem 0.55rem;
+  margin-bottom: 0.4rem;
+}
+.judge-note-header {
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--text-heading);
+  margin-bottom: 0.3rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid var(--border);
+}
+.judge-note-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
+  line-height: 1.5;
+}
+.judge-note-crit {
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  font-weight: 600;
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  text-transform: lowercase;
+  margin-top: 0.1rem;
+}
+.judge-note-text {
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* ── Judge full-width conversation section ───────────────────── */
+.judge-conv-full {
+  display: none;
+  flex-basis: 100%;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+.judge-conv-full.open {
+  display: block;
+}
+.judge-conv-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.6rem;
+}
+.judge-conv-card-header {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--text-heading);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Conversation message bubbles ────────────────────────────── */
+.judge-conv-msg {
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+.judge-conv-msg.role-user {
+  background: var(--bg-msg-user);
+}
+.judge-conv-msg.role-assistant {
+  background: var(--bg-msg-assistant);
+}
+.judge-conv-role {
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+  color: var(--text-secondary);
+}
+.judge-conv-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.judge-conv-expand {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 500;
+}
+.judge-conv-expand:hover {
+  text-decoration: underline;
+}
+
+/* ── Responsive: stack on narrow screens ─────────────────────── */
+@media (max-width: 900px) {
+  .turn-group {
+    flex-direction: column;
+  }
+  .turn-judge-panel {
+    width: 100%;
+    position: static;
+  }
+}
