@@ -33,6 +33,7 @@
     <a href="#preview" class="nav-link" data-page="preview" id="nav-preview">Preview</a>
     <a href="#bench" class="nav-link" data-page="bench">AstralBench</a>
     <a href="#error" class="nav-link" data-page="error">Error Traces</a>
+    <a href="#tfail" class="nav-link" data-page="tfail">Transform Failures</a>
     <a href="#report" class="nav-link" data-page="report">Report</a>
     <button class="theme-toggle" id="theme-toggle" title="Toggle light/dark mode">&#9790;</button>
   </div>
@@ -611,6 +612,44 @@
         Choose error_traces.jsonl
         <input type="file" id="et-file" accept=".jsonl" hidden>
       </label>
+    </div>
+  </div>
+</div>
+
+<!-- Transform Failures Page -->
+<div id="page-tfail" class="page">
+  <div class="page-header">
+    <h1>Transform Failures</h1>
+    <p class="subtitle">1,087 numeric transform consensus failures &mdash; problems where 12 independent verifier runs could not agree on the same answer</p>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-val" id="tf-total">1,087</span><span class="stat-label">Records</span></div>
+      <div class="stat"><span class="stat-val">12</span><span class="stat-label">Verifier Runs</span></div>
+      <div class="stat"><span class="stat-val">5</span><span class="stat-label">Failure Types</span></div>
+    </div>
+  </div>
+  <div class="filter-row" id="tf-filters">
+    <label class="filter-label">Category:</label>
+    <select class="filter-select" id="tf-filter-category">
+      <option value="">All Categories</option>
+      <option value="near_consensus">Near Consensus (11:1)</option>
+      <option value="precision_rounding">Precision / Rounding</option>
+      <option value="symbolic_vs_numeric">Symbolic vs Numeric</option>
+      <option value="sign_error">Sign Error</option>
+      <option value="genuine_disagreement">Genuine Disagreement</option>
+    </select>
+    <span class="filter-count" id="tf-filter-count"></span>
+  </div>
+  <div class="viewer-controls">
+    <button class="btn" id="tf-prev" disabled>&larr; Previous</button>
+    <span class="counter" id="tf-counter">0 / 0</span>
+    <button class="btn" id="tf-next">Next &rarr;</button>
+    <input type="number" class="jump-input" id="tf-jump" placeholder="Go to #" min="1">
+    <button class="btn btn-sm" id="tf-go">Go</button>
+    <button class="btn btn-sm" id="tf-random" title="Random">&#9861;</button>
+  </div>
+  <div class="card" id="tf-card">
+    <div class="card-placeholder">
+      <div class="loading-spinner">Loading...</div>
     </div>
   </div>
 </div>

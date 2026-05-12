@@ -31,8 +31,11 @@ if (document.documentElement.getAttribute('data-theme') === 'dark') {
 const HF_DATASET = 'nguyen599/AstralMath-v1';
 const HF_DATASET_ERROR = 'nguyen599/AstralMath-v1-ErrorTraces';
 const HF_DATASET_PREVIEW = 'nguyen599/AstralMath-v1-test';
+const HF_DATASET_TFAIL = 'nguyen599/AstralMath-v1-consensus-failed';
 const HF_API = 'https://datasets-server.huggingface.co';
 const BATCH_SIZE = 20;  // rows to prefetch per batch
+// Colors for grouping verifier solutions by extracted answer
+const ANSWER_COLORS = ['#16a34a','#2563eb','#d97706','#db2777','#7c3aed','#ea580c','#0891b2','#dc2626'];
 
 // ── Preview tab visibility flag ──────────────────────────────────
 // Set to false to hide the Preview tab once judge scores are
@@ -40,11 +43,12 @@ const BATCH_SIZE = 20;  // rows to prefetch per batch
 const SHOW_PREVIEW_TAB = true;
 
 function getPrefix(key) {
-  return { stage1: 's1', stage2: 's2', preview: 'pv', bench: 'b', error: 'et' }[key] || key;
+  return { stage1: 's1', stage2: 's2', preview: 'pv', bench: 'b', error: 'et', tfail: 'tf' }[key] || key;
 }
 function getHFDataset(key) {
   if (key === 'error') return HF_DATASET_ERROR;
   if (key === 'preview') return HF_DATASET_PREVIEW;
+  if (key === 'tfail') return HF_DATASET_TFAIL;
   return HF_DATASET;
 }
 
@@ -63,6 +67,9 @@ const HF_SPLITS = {
   error: [
     { config: 'default', split: 'train' },
   ],
+  tfail: [
+    { config: 'default', split: 'train' },
+  ],
 };
 
 // ── State ────────────────────────────────────────────────────────
@@ -72,6 +79,7 @@ const state = {
   preview: { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false, showJudge: true },
   bench:   { cache: new Map(), idx: 0, total: 0, localData: null, loading: false },
   error:   { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false },
+  tfail:   { cache: new Map(), idx: 0, total: 0, hfConfig: null, hfSplit: null, localData: null, loading: false, filterCategory: '', _filtered: null },
 };
 
 const KNOWN_MODELS = [
@@ -96,7 +104,7 @@ function navigate() {
   const raw = location.hash.replace('#', '') || 'overview';
   // Support shareable URLs like #stage1/42
   const parts = raw.split('/');
-  const page = ['overview', 'stage1', 'stage2', 'preview', 'bench', 'error', 'report'].includes(parts[0]) ? parts[0] : 'overview';
+  const page = ['overview', 'stage1', 'stage2', 'preview', 'bench', 'error', 'report', 'tfail'].includes(parts[0]) ? parts[0] : 'overview';
   const urlIdx = parts[1] ? parseInt(parts[1], 10) - 1 : null;
 
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -127,6 +135,17 @@ function navigate() {
     });
   } else if (page === 'bench' && urlIdx !== null && urlIdx >= 0) {
     goToIndex('bench', urlIdx);
+  }
+
+  // Auto-load transform failures from HuggingFace when navigating to tfail page
+  if (page === 'tfail' && !state.tfail.localData && !state.tfail.hfSplit && !state.tfail.loading) {
+    initHFStream('tfail').then(() => {
+      if (urlIdx !== null && urlIdx >= 0 && urlIdx < state.tfail.total) {
+        goToIndex('tfail', urlIdx);
+      }
+    });
+  } else if (page === 'tfail' && (state.tfail.localData || state.tfail.hfSplit) && urlIdx !== null && urlIdx >= 0) {
+    goToIndex('tfail', urlIdx);
   }
 
   // Render math on overview page
@@ -241,7 +260,7 @@ async function fetchAndRender(key, idx) {
           if (row.source) t.sources[row.source] = (t.sources[row.source] || 0) + 1;
         }
       }
-      if (key !== 'bench') {
+      if (key !== 'bench' && key !== 'tfail') {
         updateFilterOptions(key);
         updateMiniStats(key);
       }
@@ -277,7 +296,7 @@ function prefetchBatch(key, startIdx) {
             if (row.source) t.sources[row.source] = (t.sources[row.source] || 0) + 1;
           }
         }
-        if (key !== 'bench') {
+        if (key !== 'bench' && key !== 'tfail') {
           updateFilterOptions(key);
           updateMiniStats(key);
         }
@@ -304,7 +323,7 @@ function showCardUpload(card, prefix) {
   const input = document.getElementById(`${prefix}-file-fallback`);
   if (input) {
     input.addEventListener('change', (e) => {
-      const keyMap = { s1: 'stage1', s2: 'stage2', et: 'error' };
+      const keyMap = { s1: 'stage1', s2: 'stage2', et: 'error', tf: 'tfail', pv: 'preview' };
       readFile(e.target.files[0], keyMap[prefix] || 'stage1', 'jsonl');
     });
   }
@@ -423,6 +442,53 @@ function loadLocalDataset(key, data) {
 function escapeHtml(str) {
   if (str == null) return '';
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Wraps bare LaTeX in $...$ so KaTeX will render it.
+// If the string already has math delimiters ($, \[, \() it is returned as-is.
+// Plain non-math strings are HTML-escaped normally.
+function renderMathText(str) {
+  str = String(str == null ? '' : str);
+  if (!str) return '';
+  // Check for real math delimiters (negative lookbehind avoids matching \\[ or \\()
+  //   \\[2ex] is a LaTeX line-break → contains \[ but preceded by \, so ignored
+  //   \( f(x) \)  → \( NOT preceded by \ → real inline delimiter
+  const hasDelim = str.includes('$') ||
+                   /(?<!\\)\\\(/.test(str) ||
+                   /(?<!\\)\\\[/.test(str);
+  if (hasDelim) return escapeHtml(str); // KaTeX will process delimiters in the text node
+
+  // Bare LaTeX (\command, ^, _, {}, etc.) — wrap in appropriate delimiters
+  if (/\\[a-zA-Z{]/.test(str) || /[\^_{}]/.test(str)) {
+    // HTML-escape < > & to prevent innerHTML parsing corruption
+    const safe = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // \begin{...} environments and multi-line content need display math
+    if (/\\begin\{/.test(str) || str.includes('\n')) return '\\[' + safe + '\\]';
+    return '$' + safe + '$';
+  }
+  // Plain text
+  return escapeHtml(str);
+}
+
+// Prose text with embedded bare LaTeX tokens (e.g. analyst notes).
+// Splits on whitespace; wraps math-looking tokens in $...$; HTML-escapes plain words.
+// Also renders **bold** markdown.
+function renderProseWithMath(text) {
+  if (!text) return '';
+  let result;
+  if (/\$|\\\[|\\\(/.test(text)) {
+    // Text already has math delimiters — HTML-escape (KaTeX will process $...$)
+    result = escapeHtml(text);
+  } else {
+    // Whitespace-split; wrap bare LaTeX tokens in $...$; escape plain words
+    result = text.split(/(\s+)/).map(part => {
+      if (/^\s+$/.test(part)) return part;
+      if (/[_^{}]/.test(part) || /\\[a-zA-Z]/.test(part)) return `$${part}$`;
+      return escapeHtml(part);
+    }).join('');
+  }
+  // **bold** → <strong>bold</strong> — always applied (asterisks survive escapeHtml)
+  return result.replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>');
 }
 
 function renderMath(container) {
@@ -1059,6 +1125,222 @@ function renderErrorTraceItem(item) {
   return html;
 }
 
+// ── Verifier solution grid ───────────────────────────────────────
+function extractVerifierAnswer(msgs) {
+  for (let i = msgs.length - 1; i >= 0; i--) {
+    if (msgs[i].role !== 'assistant') continue;
+    const raw = msgs[i].content;
+
+    // Case 1: content is already a parsed object (HF may return structured columns)
+    if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+      if (raw.new_answer !== undefined) return String(raw.new_answer).trim();
+      if (raw.answer    !== undefined) return String(raw.answer).trim();
+    }
+
+    // Case 2: content is a JSON string — transformation pipeline format
+    if (typeof raw === 'string') {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          if (parsed.new_answer !== undefined) return String(parsed.new_answer).trim();
+          if (parsed.answer    !== undefined) return String(parsed.answer).trim();
+        }
+      } catch (e) { /* not JSON */ }
+
+      // Case 3: plain text with \boxed{} (fallback)
+      const matches = [...raw.matchAll(/\\boxed\{([^}]{0,80})\}/g)];
+      if (matches.length > 0) return matches[matches.length - 1][1].trim();
+    }
+  }
+  return null;
+}
+
+
+// Shared helper: build answer→color map from verifier solution data
+function getAnswerColorMap(solutionData) {
+  const solutions = parseJSONField(solutionData);
+  if (!solutions || !Array.isArray(solutions)) return {};
+  const answers = solutions.map(sol => extractVerifierAnswer(Array.isArray(sol) ? sol : []));
+  const uniqueAnswers = [...new Set(answers.filter(a => a !== null))];
+  const map = {};
+  uniqueAnswers.forEach((ans, i) => { map[ans] = ANSWER_COLORS[i % ANSWER_COLORS.length]; });
+  return map;
+}
+
+function renderSolutionGrid(solutionData, colorMap) {
+
+  const solutions = parseJSONField(solutionData);
+  if (!solutions || !Array.isArray(solutions) || solutions.length === 0) return '';
+
+  const answers = solutions.map(sol => extractVerifierAnswer(Array.isArray(sol) ? sol : []));
+  // Use pre-computed colorMap if provided, otherwise compute here
+  const answerColor = colorMap || getAnswerColorMap(solutionData);
+
+  // Build legend counts
+  const legendCounts = {};
+  for (const ans of answers) {
+    const k = ans ?? '(no answer)';
+    legendCounts[k] = (legendCounts[k] || 0) + 1;
+  }
+
+  let html = '<div class="field-group">';
+  html += `<div class="field-label">Verifier Solutions (${solutions.length} runs)</div>`;
+
+  // Legend
+  html += '<div class="solution-legend">';
+  for (const [ans, cnt] of Object.entries(legendCounts).sort((a, b) => b[1] - a[1])) {
+    const color = answerColor[ans] || '#9ca3af';
+    html += `<span class="solution-legend-item" style="border-left:3px solid ${color}">`;
+    html += `<span class="solution-legend-ans" style="color:${color}">${escapeHtml(ans)}</span>`;
+    html += `<span class="solution-legend-cnt">×${cnt}</span>`;
+    html += '</span>';
+  }
+  html += '</div>';
+
+  // Grid of cards
+  html += '<div class="solution-grid">';
+  solutions.forEach((sol, i) => {
+    const ans = answers[i];
+    const color = (ans && answerColor[ans]) ? answerColor[ans] : '#9ca3af';
+    const bodyId = 'sb_' + Math.random().toString(36).slice(2, 10);
+    const togId  = 'st_' + Math.random().toString(36).slice(2, 10);
+
+    html += `<div class="solution-card" style="border-left-color:${color}">`;
+    html += '<div class="solution-card-header">';
+    html += `<span class="solution-run-badge" style="background:${color}">Run ${i + 1}</span>`;
+    html += `<span class="solution-ans-text" style="color:${color}">${ans !== null ? escapeHtml(ans) : '—'}</span>`;
+    html += `<span class="solution-card-toggle" id="${togId}" onclick="toggleSolutionBody('${bodyId}','${togId}')">&#9654; Show</span>`;
+    html += '</div>';
+
+    html += `<div class="solution-card-body" id="${bodyId}" style="display:none">`;
+    const msgs = Array.isArray(sol) ? sol : [];
+    for (const msg of msgs) {
+      const role = msg.role || 'unknown';
+      const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content || '');
+      const LIMIT = 1500;
+      html += `<div class="solution-msg role-${role}">`;
+      html += `<div class="solution-msg-role">${escapeHtml(role)}</div>`;
+
+      // Reasoning ABOVE content (same pattern as Stage 1/2)
+      const rc = msg.reasoning_content;
+      if (rc) {
+        const rcText = typeof rc === 'string' ? rc : JSON.stringify(rc);
+        const rcId = 'rc_' + Math.random().toString(36).slice(2, 10);
+        html += `<span class="reasoning-toggle" onclick="toggleReasoning('${rcId}')">Show reasoning (\u2248${Math.round(rcText.length / 1000)}k chars)</span>`;
+        html += `<div class="reasoning-content" id="${rcId}">${escapeHtml(rcText)}</div>`;
+      }
+
+      // Main content
+      const moreId = 'sm_' + Math.random().toString(36).slice(2, 10);
+      if (content.length > LIMIT) {
+        html += `<div class="solution-msg-text">${escapeHtml(content.slice(0, LIMIT))}<span id="${moreId}" style="display:none">${escapeHtml(content.slice(LIMIT))}</span></div>`;
+        html += `<span class="solution-expand" onclick="var e=document.getElementById('${moreId}'),s=e.style.display==='none';e.style.display=s?'inline':'none';this.textContent=s?'Show less':'Show more (${Math.round(content.length/1000)}k chars)'">Show more (${Math.round(content.length/1000)}k chars)</span>`;
+      } else {
+        html += `<div class="solution-msg-text">${escapeHtml(content)}</div>`;
+      }
+      html += '</div>';
+    }
+
+    html += '</div></div>'; // body + card
+  });
+  html += '</div></div>'; // grid + field-group
+  return html;
+}
+
+
+function renderTransformFailureItem(item) {
+  const CATEGORY_LABELS = {
+    near_consensus:      'Near Consensus',
+    precision_rounding:  'Precision / Rounding',
+    symbolic_vs_numeric: 'Symbolic vs Numeric',
+    sign_error:          'Sign Error',
+    genuine_disagreement:'Genuine Disagreement',
+    no_answers:          'No Answers',
+  };
+  const CATEGORY_COLORS = {
+    near_consensus:      'var(--orange, #f39c12)',
+    precision_rounding:  'var(--blue, #3498db)',
+    symbolic_vs_numeric: '#9b59b6',
+    sign_error:          'var(--red, #e74c3c)',
+    genuine_disagreement:'#555',
+    no_answers:          '#aaa',
+  };
+
+  const cat      = item.failure_category || 'genuine_disagreement';
+  const catLabel = CATEGORY_LABELS[cat] || cat;
+  const catColor = CATEGORY_COLORS[cat] || '#555';
+
+  // Pre-compute answer→color map (shared with answer distribution + verifier grid)
+  const answerColorMap = getAnswerColorMap(item.solution);
+
+  // ── Meta pills ────────────────────────────────────────────────
+  let html = '<div class="meta-row">';
+  html += `<span class="meta-pill"><span class="pill-key">Category</span> <span class="pill-val" style="color:${catColor};font-weight:700">${escapeHtml(catLabel)}</span></span>`;
+  html += `<span class="meta-pill"><span class="pill-key">Split</span> <span class="pill-val">${escapeHtml(item.split_info || '?')}</span></span>`;
+  html += `<span class="meta-pill"><span class="pill-key">Runs</span> <span class="pill-val">${item.n_successful}/${item.n_total}</span></span>`;
+  html += `<span class="meta-pill"><span class="pill-key">Unique answers</span> <span class="pill-val">${item.n_unique}</span></span>`;
+  if (item.question_uuid) html += `<span class="meta-pill"><span class="pill-key">UUID</span> <span class="pill-val">${escapeHtml(item.question_uuid)}</span></span>`;
+  html += '</div>';
+
+  // ── 1. Problem ────────────────────────────────────────────────
+  html += '<div class="field-group"><div class="field-label">Original Problem</div>';
+  html += `<div class="field-value question-text">${renderMathText(item.original_problem)}</div></div>`;
+
+  // ── 2. Answer ─────────────────────────────────────────────────
+  html += '<div class="field-group"><div class="field-label">Original Answer</div>';
+  html += `<div class="field-value answer-text" style="font-size:1.05rem">${renderMathText(item.original_answer)}</div></div>`;
+
+  // ── 3. Answer distribution (verifier colors) ──────────────────
+  const _answerCounts = parseJSONField(item.answer_counts);
+  if (_answerCounts && Object.keys(_answerCounts).length > 0) {
+    const entries = Object.entries(_answerCounts).sort((a, b) => b[1] - a[1]);
+    const total = entries.reduce((s, [, c]) => s + c, 0);
+    html += '<div class="field-group"><div class="field-label">Answer Distribution</div><div class="field-value">';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:0.5rem">';
+    for (const [ans, cnt] of entries) {
+      const pct   = Math.round(100 * cnt / total);
+      const color = answerColorMap[String(ans)] || catColor;
+      html += `<span style="background:${color};color:#fff;padding:0.3rem 0.7rem;border-radius:4px;font-weight:700">`;
+      html += `${renderMathText(String(ans))} \u00d7${cnt} (${pct}%)`;
+      html += '</span>';
+    }
+    html += '</div></div></div>';
+  }
+
+  // ── 4. Analyst review ─────────────────────────────────────────
+  if (item.analyst_note) {
+    html += '<div class="field-group"><div class="field-label" style="color:#27ae60">Analyst Review</div>';
+    html += `<div class="field-value" style="background:#f0faf4;border-left:3px solid #27ae60;padding:0.75rem 1rem;border-radius:4px;white-space:pre-wrap">${renderProseWithMath(item.analyst_note)}</div>`;
+    html += '</div>';
+  }
+
+  // ── 5. Transformation note ────────────────────────────────────
+  if (item.transformation_note) {
+    html += '<div class="field-group"><div class="field-label">Transformation Note</div>';
+    html += `<div class="field-value" style="font-size:0.88rem;white-space:pre-wrap;line-height:1.55">${escapeHtml(item.transformation_note)}</div>`;
+    html += '</div>';
+  }
+
+  // ── 6. Verifier solutions grid ────────────────────────────────
+  html += renderSolutionGrid(item.solution, answerColorMap);
+
+  return html;
+}
+
+
+window.toggleSolutionBody = function(bodyId, togId) {
+  const body = document.getElementById(bodyId);
+  const tog  = document.getElementById(togId);
+  if (!body) return;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  // Expand card to full grid width when open so trace text is readable
+  const card = body.closest ? body.closest('.solution-card') : null;
+  if (card) card.style.gridColumn = open ? '' : '1 / -1';
+  if (tog) tog.innerHTML = open ? '&#9654; Show' : '&#9660; Hide';
+};
+
+
 function renderItemFromData(key, item) {
   const prefix = getPrefix(key);
   const card = document.getElementById(`${prefix}-card`);
@@ -1069,6 +1351,8 @@ function renderItemFromData(key, item) {
     html = renderBenchItem(item);
   } else if (key === 'error') {
     html = renderErrorTraceItem(item);
+  } else if (key === 'tfail') {
+    html = renderTransformFailureItem(item);
   } else {
     html = renderDatasetItem(item, key);
   }
@@ -1128,6 +1412,20 @@ function goToIndex(key, idx) {
     history.replaceState(null, '', newHash);
   }
 
+  if (key === 'tfail') {
+    if (s.localData) {
+      // Local file mode (filtered array)
+      const arr = s._filtered || s.localData || [];
+      s.idx = idx;
+      renderItemFromData(key, arr[idx]);
+      updateControls(key);
+    } else if (s.hfSplit) {
+      // HF streaming mode
+      fetchAndRender(key, idx);
+    }
+    return;
+  }
+
   if (s.localData) {
     s.idx = idx;
     renderItemFromData(key, s.localData[idx]);
@@ -1178,6 +1476,7 @@ setupControls('stage2');
 setupControls('preview');
 setupControls('bench');
 setupControls('error');
+setupControls('tfail');
 
 // ── Judge toggle (shared for stage2 + preview) ───────────────────
 function wireJudgeToggle(key) {
@@ -1293,6 +1592,66 @@ function loadBenchCSV() {
 }
 loadBenchCSV();
 
+// ── Transform Failures ───────────────────────────────────────────
+async function loadTfailData() {
+  if (state.tfail.loading || state.tfail.localData) return;
+  state.tfail.loading = true;
+  const card = document.getElementById('tf-card');
+  if (card) card.innerHTML = '<div class="card-placeholder"><div class="loading-spinner">Loading...</div></div>';
+  try {
+    const resp = await fetch('consensus_failures_compact.json');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    state.tfail.localData = data;
+    state.tfail._filtered = data;
+    state.tfail.total = data.length;
+    state.tfail.idx = 0;
+    const totalEl = document.getElementById('tf-total');
+    if (totalEl) totalEl.textContent = data.length.toLocaleString();
+    if (data.length > 0) renderItemFromData('tfail', data[0]);
+    updateControls('tfail');
+  } catch (e) {
+    if (card) card.innerHTML = `<div class="card-placeholder"><p style="color:var(--red,#e74c3c)">Failed to load consensus_failures_compact.json: ${escapeHtml(e.message)}</p></div>`;
+  } finally {
+    state.tfail.loading = false;
+  }
+}
+
+function updateTfailFilter() {
+  const cat = state.tfail.filterCategory;
+  const countEl = document.getElementById('tf-filter-count');
+
+  // Local file mode: rebuild filtered array
+  if (state.tfail.localData) {
+    const filtered = cat ? state.tfail.localData.filter(r => r.failure_category === cat) : state.tfail.localData;
+    if (countEl) countEl.textContent = cat ? `${filtered.length.toLocaleString()} matching` : '';
+    state.tfail._filtered = filtered;
+    state.tfail.total = filtered.length;
+    state.tfail.idx = 0;
+    if (filtered.length > 0) {
+      renderItemFromData('tfail', filtered[0]);
+    } else {
+      const card = document.getElementById('tf-card');
+      if (card) card.innerHTML = '<div class="card-placeholder"><p>No records match this filter.</p></div>';
+    }
+    updateControls('tfail');
+    return;
+  }
+
+  // HF streaming mode: mark filter active and navigate from start
+  if (countEl) countEl.textContent = cat ? '(filtered — skipping non-matching rows)' : '';
+  state.tfail.idx = 0;
+  updateControls('tfail');
+  if (state.tfail.hfSplit) {
+    goToIndex('tfail', 0);
+  }
+}
+
+document.getElementById('tf-filter-category').addEventListener('change', (e) => {
+  state.tfail.filterCategory = e.target.value;
+  updateTfailFilter();
+});
+
 // ── Filter & Stats tracking ──────────────────────────────────────
 function trackItemStats(key, item) {
   if (!item || !statsTracker[key]) return;
@@ -1358,6 +1717,10 @@ function getActiveFilter(key) {
 
 function itemMatchesFilter(key, item) {
   if (!item) return true;
+  if (key === 'tfail') {
+    if (state.tfail.filterCategory && item.failure_category !== state.tfail.filterCategory) return false;
+    return true;
+  }
   const f = getActiveFilter(key);
   if (f.model && item.model !== f.model) return false;
   if (f.source && item.source !== f.source) return false;
@@ -1367,8 +1730,15 @@ function itemMatchesFilter(key, item) {
 // Filtered navigation: find next matching item in given direction
 async function goToFilteredIndex(key, direction) {
   const s = state[key];
-  const f = getActiveFilter(key);
-  if (!f.model && !f.source) {
+  // Determine if any filter is active for this page type
+  let hasFilter;
+  if (key === 'tfail') {
+    hasFilter = !!state.tfail.filterCategory;
+  } else {
+    const f = getActiveFilter(key);
+    hasFilter = !!(f.model || f.source);
+  }
+  if (!hasFilter) {
     // No filter active, normal nav
     goToIndex(key, s.idx + direction);
     return;
