@@ -524,6 +524,38 @@ function parseJSONField(val) {
   return null;
 }
 
+// Mirror of src/prompts/judge.py:parse_judge_response
+function parseJudgeResponse(text) {
+  if (!text) return null;
+  // 1. Fenced code block
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fenced) {
+    try {
+      const r = JSON.parse(fenced[1]);
+      if (r && typeof r === 'object' && 'scores' in r) return r;
+    } catch (e) {}
+  }
+  // 2. Scan right-to-left for balanced {...} containing a 'scores' key
+  const positions = [];
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '{') positions.push(i);
+  }
+  for (let pi = positions.length - 1; pi >= 0; pi--) {
+    const pos = positions[pi];
+    let depth = 0, end = -1;
+    for (let i = pos; i < text.length; i++) {
+      if (text[i] === '{') depth++;
+      else if (text[i] === '}') { depth--; if (depth === 0) { end = i + 1; break; } }
+    }
+    if (end === -1) continue;
+    try {
+      const r = JSON.parse(text.slice(pos, end));
+      if (r && typeof r === 'object' && 'scores' in r) return r;
+    } catch (e) {}
+  }
+  return null;
+}
+
 function groupMessagesIntoTurns(messages) {
   if (!messages || !Array.isArray(messages)) return { leading: [], turns: [] };
   const leading = [];
@@ -678,15 +710,35 @@ function renderMessagesWithJudge(item) {
   const messages = item.messages;
   const turnAggregated = parseJSONField(item.turn_aggregated) || [];
 
-  // Read from consolidated columns (judges_r2, judges_messages)
-  // or fall back to legacy per-judge columns (judge_0_r2, etc.)
-  const allR2 = parseJSONField(item.judges_r2);
+  // Read from consolidated judges_messages column or legacy per-judge columns.
+  // judgeR2s is derived on-the-fly from the R2 assistant message in each conversation.
   const allMsgs = parseJSONField(item.judges_messages);
   const judgeR2s = [];
   const judgeMsgs = [];
   for (let j = 0; j < 4; j++) {
-    judgeR2s.push((allR2 && allR2[j]) ? allR2[j] : (parseJSONField(item[`judge_${j}_r2`]) || []));
-    judgeMsgs.push((allMsgs && allMsgs[j]) ? allMsgs[j] : (parseJSONField(item[`judge_${j}_messages`]) || {}));
+    const msgs = (allMsgs && allMsgs[j]) ? allMsgs[j] : (parseJSONField(item[`judge_${j}_messages`]) || {});
+    judgeMsgs.push(msgs);
+    // Legacy fallback: if judges_r2 column still present (old files), use it directly
+    const legacyR2 = parseJSONField(item.judges_r2);
+    if (legacyR2 && legacyR2[j]) {
+      judgeR2s.push(legacyR2[j]);
+      continue;
+    }
+    const legacyPerJudge = parseJSONField(item[`judge_${j}_r2`]);
+    if (legacyPerJudge) {
+      judgeR2s.push(legacyPerJudge);
+      continue;
+    }
+    // Derive R2 results by parsing the R2 assistant message (index 3) per turn
+    const r2list = [];
+    for (const [turnKey, turnMsgs] of Object.entries(msgs)) {
+      const turn_idx = parseInt(turnKey.split('_')[1], 10);
+      const r2msg = turnMsgs[3];
+      const fullText = ((r2msg && r2msg.reasoning_content) || '') + ((r2msg && r2msg.content) || '');
+      const parsed = parseJudgeResponse(fullText) || {};
+      r2list.push({ turn_idx, scores: parsed.scores || {}, notes: parsed.notes || {} });
+    }
+    judgeR2s.push(r2list);
   }
 
   const { leading, turns } = groupMessagesIntoTurns(messages);
