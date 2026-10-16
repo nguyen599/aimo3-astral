@@ -114,6 +114,12 @@ function navigate() {
   const link = document.querySelector(`.nav-link[data-page="${page}"]`);
   if (link) link.classList.add('active');
 
+  // Hidden iframes still load their src, so wait until Report is opened.
+  if (page === 'report') {
+    const frame = document.getElementById('report-frame');
+    if (!frame.hasAttribute('src')) frame.src = frame.dataset.src;
+  }
+
   // Auto-init HF streaming when navigating to a stage/error/preview page
   const hfPages = ['stage1', 'stage2', 'preview', 'error'];
   if (hfPages.includes(page) && !state[page].localData && !state[page].hfSplit) {
